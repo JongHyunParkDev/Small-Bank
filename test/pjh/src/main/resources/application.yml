@@ -1,11 +1,11 @@
 spring:
   application:
-    name: order-service
+    name: SPPD-SERVICE
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/ecc
-    username: ecc
-    password: ecc1234!
+    url: jdbc:postgresql://localhost:5432/sppd
+    username: sppd
+    password: sppd1234!
 
 datago:
   serviceKey: 9G4mXvJnJcvcO5RL3kH8WZhCiyCDl00AeqxkvWBoZydbNBK4K/BWd1iZcmoI3AYdCu++bMpkdrNr/5LG8SdPhA==
