@@ -3,9 +3,24 @@ spring:
     name: SPPD-SERVICE
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/sppd
-    username: sppd
-    password: sppd1234!
+    url: jdbc:postgresql://localhost:5432/ecc
+    username: ecc
+    password: ecc1234!
+  jpa:
+    database: PostgreSQL
+    hibernate:
+      dialect: org.hibernate.dialect.PostgreSQL10Dialect
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    generate-ddl: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      data-locations: classpath:data.sql
+      mode: always
 
 datago:
-  serviceKey: 9G4mXvJnJcvcO5RL3kH8WZhCiyCDl00AeqxkvWBoZydbNBK4K/BWd1iZcmoI3AYdCu++bMpkdrNr/5LG8SdPhA==
+  serviceKey: 9G4mXvJnJcvcO5RL3kH8WZhCiyCDl00AeqxkvWBoZydbNBK4K%2FBWd1iZcmoI3AYdCu%2B%2BbMpkdrNr%2F5LG8SdPhA%3D%3D

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class AptTradingDataVo {
+public class AptTradeDataVo {
     private Response response;
 
     @Data
@@ -40,32 +40,34 @@ public class AptTradingDataVo {
     @Data
     public static class Item {
         // item 객체 내의 멤버 변수
-        @JsonProperty("거래금액")
-        private int dealAmount;
-        @JsonProperty("거래유형")
-        private String reqGbn;
+
         @JsonProperty("건축년도")
         private int buildYear;
-        @JsonProperty("년")
-        private int dealYear;
+        @JsonProperty("지역코드")
+        private int regionalCode;
         @JsonProperty("법정동")
         private String dong;
+        @JsonProperty("지번")
+        private String jibun;
         @JsonProperty("아파트")
         private String apartmentName;
+        @JsonProperty("층")
+        private int floor;
+        @JsonProperty("년")
+        private int dealYear;
         @JsonProperty("월")
         private int dealMonth;
         @JsonProperty("일")
         private int dealDay;
+        @JsonProperty("거래금액")
+        private int dealAmount;
+
+        @JsonProperty("거래유형")
+        private String reqGbn;
         @JsonProperty("전용면적")
         private double areaForExclusiveUse;
         @JsonProperty("중개사소재지")
         private String rdealerLawdnm;
-        @JsonProperty("지번")
-        private String jibun;
-        @JsonProperty("지역코드")
-        private int regionalCode;
-        @JsonProperty("층")
-        private int floor;
         @JsonProperty("해제사유발생일")
         private String cancelDealDay;
         @JsonProperty("해제여부")
