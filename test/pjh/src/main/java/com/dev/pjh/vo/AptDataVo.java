@@ -35,7 +35,7 @@ public class AptDataVo<T> {
 
     @Data
     public static class Items<T> {
-        private List<T> item = new ArrayList<>();
+        private List<T> item;
     }
 
     // 얘가 있어야 다형성 성립하게 만들 수 있다.
