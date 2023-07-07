@@ -35,7 +35,7 @@ public class AptTradeEntity {
     @Column(nullable = false)
     private String cancelDealType;
 
-    public AptTradeEntity(AptTradeDataVo.Item item) {
+    public AptTradeEntity(AptTradeDataVo.TradeItem item) {
         this.dealAmount = item.getDealAmount();
         this.reqGbn = item.getReqGbn();
         this.buildYear = item.getBuildYear();

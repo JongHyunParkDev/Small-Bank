@@ -4,6 +4,7 @@ import com.dev.pjh.entity.AptRentEntity;
 import com.dev.pjh.entity.AptTradeEntity;
 import com.dev.pjh.repository.AptRentRepository;
 import com.dev.pjh.repository.AptTradeRepository;
+import com.dev.pjh.vo.AptDataVo;
 import com.dev.pjh.vo.AptRentDataVo;
 import com.dev.pjh.vo.AptTradeDataVo;
 import jakarta.annotation.PostConstruct;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -43,18 +45,23 @@ public class DataGoAptTradeService {
 
         RestTemplate restTemplate = new RestTemplate();
         URI url = URI.create(urlStr);
-        ResponseEntity<AptTradeDataVo> responseEntity = restTemplate.getForEntity(url, AptTradeDataVo.class);
 
-        if (responseEntity.getStatusCode() == HttpStatus.OK
-                && responseEntity.getBody().getResponse().getHeader().getResultCode().equals("00")) {
+        ResponseEntity<AptDataVo<AptTradeDataVo.TradeItem>> tradeResponseEntity = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<AptDataVo<AptTradeDataVo.TradeItem>>() {}
+        );
 
-            List<AptTradeDataVo.Item> list = responseEntity.getBody().getResponse().getBody().getItems().getItem();
+        if (tradeResponseEntity.getStatusCode() == HttpStatus.OK
+                && tradeResponseEntity.getBody().getResponse().getHeader().getResultCode().equals("00")) {
+
+            List<AptTradeDataVo.TradeItem> list = tradeResponseEntity.getBody().getResponse().getBody().getItems().getItem();
             logger.info(list.toString());
 
             list.forEach(item -> {
                 aptTradeRepository.save(new AptTradeEntity(item));
             });
-
         }
     }
 
@@ -68,12 +75,16 @@ public class DataGoAptTradeService {
 
         RestTemplate restTemplate = new RestTemplate();
         URI url = URI.create(urlStr);
-        ResponseEntity<AptRentDataVo> responseEntity = restTemplate.getForEntity(url, AptRentDataVo.class);
+        ResponseEntity<AptDataVo<AptRentDataVo.RentItem>> rentResponseEntity = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<AptDataVo<AptRentDataVo.RentItem>>() {}
+        );
+        if (rentResponseEntity.getStatusCode() == HttpStatus.OK
+                && rentResponseEntity.getBody().getResponse().getHeader().getResultCode().equals("00")) {
 
-        if (responseEntity.getStatusCode() == HttpStatus.OK
-                && responseEntity.getBody().getResponse().getHeader().getResultCode().equals("00")) {
-
-            List<AptRentDataVo.Item> list = responseEntity.getBody().getResponse().getBody().getItems().getItem();
+            List<AptRentDataVo.RentItem> list = rentResponseEntity.getBody().getResponse().getBody().getItems().getItem();
             logger.info(list.toString());
 
             list.forEach(item -> {
