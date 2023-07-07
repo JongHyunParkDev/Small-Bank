@@ -40,7 +40,7 @@ public class AptRentEntity {
     private String termOfContract;
     private String useRequestRenewalContractRight;
 
-    public AptRentEntity(AptRentDataVo.Item item) {
+    public AptRentEntity(AptRentDataVo.RentItem item) {
         this.buildYear = item.getBuildYear();
         this.regionalCode = item.getRegionalCode();
         this.dong = item.getDong();
