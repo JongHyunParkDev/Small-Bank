@@ -1,12 +1,12 @@
 <template>
-  <q-page class="row items-center justify-evenly">
-    <example-component
+  <QPage class="row items-center justify-evenly">
+    <ExampleComponent
       title="Example component"
       active
       :todos="todos"
       :meta="meta"
-    ></example-component>
-  </q-page>
+    ></ExampleComponent>
+  </QPage>
 </template>
 
 <script lang="ts">
