@@ -1,6 +1,6 @@
 <template>
     <QLayout view="lHh Lpr lFf">
-        <QHeader elevated>
+        <QHeader elevated class="header">
             <QToolbar>
                 <QBtn
                     flat
@@ -112,3 +112,10 @@ export default defineComponent({
     },
 });
 </script>
+
+<style lang="scss" scoped>
+.header {
+    background-color: white;
+    color: black;
+}
+</style>

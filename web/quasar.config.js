@@ -7,7 +7,7 @@
 
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
-
+const path = require('node:path');
 const { configure } = require('quasar/wrappers');
 
 module.exports = configure(function (/* ctx */) {
@@ -75,6 +75,9 @@ module.exports = configure(function (/* ctx */) {
             // vitePlugins: [
             //   [ 'package-name', { ..options.. } ]
             // ]
+            alias: {
+                '@': path.join(__dirname, 'src')
+              }
         },
 
         // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
