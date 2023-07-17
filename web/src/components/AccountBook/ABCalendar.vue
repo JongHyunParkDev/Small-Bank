@@ -15,32 +15,23 @@
             v-for="(row, idx) in dayArray"
             :key="idx"
         >
-            <div
+            <ABDay
                 class="row-item"
                 v-for="(item, idx2) in row"
                 :key="idx2"
                 :class="convertClass(idx2)"
-            >
-                {{item.num}}
-            </div>
+                :num="item.num"
+                :account="item.account"
+            />
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import ABDay from '@/components/AccountBook/ABDay.vue';
 import { dateToDateStr } from '@/lib/DateUtil';
-
-type DayOfTheWeek = {
-  name: string;
-  class?: string;
-};
-
-type ABDay = {
-  id: string;
-  num?: number;
-};
-
+import { AccountBookDay } from './models';
 
 const now = new Date();
 
@@ -60,7 +51,7 @@ const colArray = [
     '토요일',
 ];
 
-const tempArray: Array<ABDay> = [];
+const tempArray: Array<AccountBookDay> = [];
 for (let i = 0; i < firstDate.getDay(); i++)
     tempArray.push({
         id: 'empty'
@@ -69,15 +60,19 @@ for (let i = 0; i < firstDate.getDay(); i++)
 for (let i = 1; i <= lastDate.getDate(); i++)
     tempArray.push({
         id: 'day',
-        num: i
+        num: i,
+        account: {
+            income: Math.floor(Math.random() * 10),
+            spend: Math.floor(Math.random() * 10)
+        }
     });
 
-const dayArray: Array<Array<ABDay>> = [];
+const dayArray: Array<Array<AccountBookDay>> = [];
 for (let i = 0; i < tempArray.length; i += 7) {
-    const chunk: Array<ABDay> = tempArray.slice(i, i + 7);
+    const chunk: Array<AccountBookDay> = tempArray.slice(i, i + 7);
 
     while (chunk.length < 7) {
-        chunk.push({id: 'empty'}); // 강제로 null 값으로 채우기
+        chunk.push({id: 'empty'}); // 강제로 채우기
     }
 
     dayArray.push(chunk);
@@ -92,6 +87,9 @@ function convertClass (idx: number): string {
 
 export default defineComponent({
     name: 'ABCalendar',
+    components: {
+        ABDay,
+    },
     setup() {
 
 
@@ -112,7 +110,7 @@ export default defineComponent({
         > .col-item {
             flex: 1;
             text-align: center;
-            padding: 15px 10px;
+            padding: 10px 10px;
         }
 
         > .red {
@@ -130,7 +128,7 @@ export default defineComponent({
         > .row-item {
             flex: 1;
             text-align: center;
-            padding: 20px 10px;
+            padding: 15px 10px;
         }
     }
 }
