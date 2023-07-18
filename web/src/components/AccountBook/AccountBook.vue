@@ -1,6 +1,8 @@
 <template>
     <div class="accountBook">
-        <ABCalendar />
+        <ABCalendar 
+            @selectDay="selectDay($event)"
+        />
         <div>
 
         </div>
@@ -12,12 +14,16 @@
 import { defineComponent, ref } from 'vue';
 import ABCalendar from 'components/AccountBook/ABCalendar.vue';
 
+function selectDay(a) {
+    console.log(a.id);
+}
+
 export default defineComponent({
     name: 'AccountBook',
     components: { ABCalendar },
     setup() {
 
-        return { };
+        return {selectDay };
     },
 });
 </script>

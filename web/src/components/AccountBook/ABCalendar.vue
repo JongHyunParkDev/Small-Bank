@@ -20,21 +20,22 @@
                 v-for="(item, idx2) in row"
                 :key="idx2"
                 :class="convertClass(idx2)"
-                :num="item.num"
-                :account="item.account"
+                :item="item"
+                :selected-abday="selectedABDay"
+                @selectDay="selectDay($event)"
             />
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, Ref } from 'vue';
 import ABDay from '@/components/AccountBook/ABDay.vue';
 import { dateToDateStr } from '@/lib/DateUtil';
 import { AccountBookDay } from './models';
+import { emit } from 'process';
 
-const now = new Date();
-
+const now = new Date().getDate();
 const firstDate = new Date();
 const lastDate = new Date();
 firstDate.setDate(1);
@@ -57,15 +58,21 @@ for (let i = 0; i < firstDate.getDay(); i++)
         id: 'empty'
     });
 
-for (let i = 1; i <= lastDate.getDate(); i++)
-    tempArray.push({
+    
+const selectedABDay: Ref<AccountBookDay | undefined> = ref(undefined);
+
+for (let i = 1; i <= lastDate.getDate(); i++) {
+    const ABDay = {
         id: 'day',
         num: i,
         account: {
             income: Math.floor(Math.random() * 10),
             spend: Math.floor(Math.random() * 10)
         }
-    });
+    };
+    tempArray.push(ABDay);
+    if (i === now) selectedABDay.value = ABDay;
+}
 
 const dayArray: Array<Array<AccountBookDay>> = [];
 for (let i = 0; i < tempArray.length; i += 7) {
@@ -84,17 +91,26 @@ function convertClass (idx: number): string {
     return '';
 }
 
-
 export default defineComponent({
     name: 'ABCalendar',
+    emits: ['select-day'],
     components: {
         ABDay,
     },
     setup() {
-
-
-        return { colArray, dayArray, convertClass};
+        return { 
+            selectedABDay, 
+            colArray, 
+            dayArray, 
+            convertClass, 
+        };
     },
+    methods: {
+        selectDay(day: AccountBookDay) {
+            selectedABDay.value = day;
+            this.$emit('select-day', selectedABDay.value);
+        }
+    }
 });
 </script>
 
@@ -110,7 +126,7 @@ export default defineComponent({
         > .col-item {
             flex: 1;
             text-align: center;
-            padding: 10px 10px;
+            padding: 10px 5px;
         }
 
         > .red {
@@ -128,7 +144,7 @@ export default defineComponent({
         > .row-item {
             flex: 1;
             text-align: center;
-            padding: 15px 10px;
+            margin: 10px 2%;
         }
     }
 }

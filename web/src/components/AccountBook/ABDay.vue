@@ -1,42 +1,55 @@
 <template>
     <div class="ab-day">
-        {{ num }}
-        <div 
-            v-if="account"
-            class="account"
+        <div
+            v-if="item?.num"
+            :class="{'selected': selectedAbday.num === item.num}"
+            class="day"
+            @click="selectDay"
         >
-            <span 
-                v-if="account?.income"
-                class="income item"
+            {{ item.num }}
+            <div 
+                v-if="item.account"
+                class="account"
             >
-                <QIcon name="circle" />
-            </span>
-            <span 
-                v-if="account?.spend"
-                class="spend item"
-            >
-                <QIcon name="circle" />
-            </span>
+                <span 
+                    v-if="item.account.income"
+                    class="income item"
+                >
+                    <QIcon name="circle" />
+                </span>
+                <span 
+                    v-if="item.account.spend"
+                    class="spend item"
+                >
+                    <QIcon name="circle" />
+                </span>
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { Account } from './models';
+import { AccountBookDay } from './models';
 
 export default defineComponent({
     name: 'ABDay',
+    emits: ['select-day'],
     props: {
-        num: {
-            type: Number,
+        item: {
+            type: Object as PropType<AccountBookDay>,
+            required: true,
+        },
+        selectedAbday: {
+            type: Object as PropType<AccountBookDay>,
             required: false,
         },
-        account: {
-            type: Object as PropType<Account>,
-            required: false
-        }
     },
+    methods: {
+        selectDay() {
+            this.$emit('select-day', this.item);
+        }
+    }
 });
 </script>
 
@@ -44,17 +57,29 @@ export default defineComponent({
 .ab-day {
     font-size: 1em;
     font-weight: bold;
-    > .account {
-        font-size: 0.75em;
-        > .item {
-            padding: 0px 3px;
-        }
-        > .income {
-            color: $pink-14;
+
+    > .day {
+        border-radius: 10px;
+        > .account {
+            font-size: 0.75em;
+            > .item {
+                padding: 0px 3px;
+            }
+            > .income {
+                color: $pink-14;
+            }
+
+            > .spend {
+                color: $indigo-14;
+            }
         }
 
-        > .spend {
-            color: $indigo-14;
+        &:hover {
+            background-color: $grey-3;
+        }
+
+        &.selected {
+            background-color: $grey-5;
         }
     }
 }
