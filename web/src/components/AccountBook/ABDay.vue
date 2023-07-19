@@ -2,7 +2,7 @@
     <div class="ab-day">
         <div
             v-if="item?.num"
-            :class="{'selected': selectedAbday.num === item.num}"
+            :class="{'selected': selectedAbday?.num === item.num}"
             class="day"
             @click="selectDay"
         >

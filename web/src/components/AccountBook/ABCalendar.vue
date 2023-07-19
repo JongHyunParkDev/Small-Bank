@@ -1,14 +1,21 @@
 <template>
     <div class="abcalendar">
         <div class="heaeder">
+            <QBtn 
+                color="white"
+                text-color="black"
+                icon="chevron_left" 
+                padding="sm"
+                @click="setMonth(-1)"
+            />
             <QInput
                 class="abc-outer"
                 input-class="abc-input"
                 :dense="true"
-                outlined
+                borderless
                 v-model.number="nowYear"
                 type="number"
-                @update="updateYear"
+                @update:model-value="updateYear"
             >
                 <template v-slot:append>
                     <span class="input-append">
@@ -17,13 +24,13 @@
                 </template>
             </QInput>
             <QInput 
-            class="abc-outer"
+                class="abc-outer"
                 input-class="abc-input"
                 :dense="true"
-                outlined
+                borderless 
                 v-model.number="nowMonth" 
                 type="number"
-                @update="updateMonth"
+                @update:model-value="updateMonth"
             >
                 <template v-slot:append>
                     <span class="input-append">
@@ -31,6 +38,13 @@
                     </span>
                 </template>
             </QInput>
+            <QBtn 
+                color="white" 
+                text-color="black"
+                icon="chevron_right" 
+                padding="sm"
+                @click="setMonth(1)"
+            />
         </div>
         <div class="row">
             <div
@@ -67,17 +81,11 @@ import { dateToDateStr } from '@/lib/DateUtil';
 import { AccountBookDay } from './models';
 import { emit } from 'process';
 
-const now = new Date();
-
-const nowYear = ref(now.getFullYear());
-const nowMonth = ref(now.getMonth());
-const nowDate = now.getDate();
-
-const firstDate = new Date();
-const lastDate = new Date();
-firstDate.setDate(1);
-lastDate.setMonth(lastDate.getMonth() + 1);
-lastDate.setDate(0);
+// Date 객체
+const now = ref(new Date());
+// ui
+const nowYear = ref(now.value.getFullYear());
+const nowMonth = ref(now.value.getMonth() + 1);
 
 const colArray = [
     '일요일',
@@ -89,51 +97,78 @@ const colArray = [
     '토요일',
 ];
 
-const tempArray: Array<AccountBookDay> = [];
-for (let i = 0; i < firstDate.getDay(); i++)
-    tempArray.push({
-        id: 'empty'
-    });
-
-    
 const selectedABDay: Ref<AccountBookDay | undefined> = ref(undefined);
+const dayArray: Ref<Array<Array<AccountBookDay>>> = ref([]);
 
-for (let i = 1; i <= lastDate.getDate(); i++) {
-    const ABDay = {
-        id: 'day',
-        num: i,
-        account: {
-            income: Math.floor(Math.random() * 10),
-            spend: Math.floor(Math.random() * 10)
-        }
-    };
-    tempArray.push(ABDay);
-    if (i === nowDate) selectedABDay.value = ABDay;
-}
+updateCalendar();
 
-const dayArray: Array<Array<AccountBookDay>> = [];
-for (let i = 0; i < tempArray.length; i += 7) {
-    const chunk: Array<AccountBookDay> = tempArray.slice(i, i + 7);
+function updateCalendar() {
+    dayArray.value = [];
+    selectedABDay.value = undefined;
 
-    while (chunk.length < 7) {
-        chunk.push({id: 'empty'}); // 강제로 채우기
+    const firstDate = new Date(now.value);
+    const lastDate = new Date(now.value);
+    firstDate.setDate(1);
+    lastDate.setMonth(lastDate.getMonth() + 1);
+    lastDate.setDate(0);
+
+    const tempArray: Array<AccountBookDay> = [];
+    for (let i = 0; i < firstDate.getDay(); i++)
+        tempArray.push({
+            id: 'empty'
+        });
+
+    for (let i = 1; i <= lastDate.getDate(); i++) {
+        const ABDay = {
+            id: 'day',
+            num: i,
+            account: {
+                income: Math.floor(Math.random() * 10),
+                spend: Math.floor(Math.random() * 10)
+            }
+        };
+        tempArray.push(ABDay);
     }
 
-    dayArray.push(chunk);
+    for (let i = 0; i < tempArray.length; i += 7) {
+        const chunk: Array<AccountBookDay> = tempArray.slice(i, i + 7);
+
+        while (chunk.length < 7) {
+            chunk.push({id: 'empty'}); // 강제로 채우기
+        }
+
+        dayArray.value.push(chunk);
+    }
 }
 
-function updateYear(num1: number, num2: number) {
-    console.log(num1, num2);
-    if (num1 < 1910) num1 = 1910; 
-    if (num1 > 2100) num1 = 2100;
-    nowMonth.value = num1;
+function setMonth(num: number) {
+    now.value.setMonth(now.value.getMonth() + num);
+
+    nowMonth.value = now.value.getMonth() + 1;
+    nowYear.value = now.value.getFullYear();
+
+    updateCalendar();
 }
 
-function updateMonth(num1: number, num2: number) {
-    console.log(num1, num2);
-    if (num1 < 1) num1 = 1; 
-    if (num1 > 12) num1 = 12;
-    nowMonth.value = num1;
+function updateYear(num: number) {
+    if (num < 1910) num = 1910; 
+    if (num > 2100) num = 2100;
+    nowYear.value = num;
+
+    now.value.setFullYear(num);
+
+    updateCalendar();
+}
+
+function updateMonth(num: number) {
+    if (num < 1) num = 1; 
+    if (num > 12) num = 12;
+    nowMonth.value = num;
+    
+    now.value.setFullYear(nowYear.value);
+    now.value.setMonth(num - 1);
+
+    updateCalendar();
 }
 
 function convertClass (idx: number): string {
@@ -153,12 +188,13 @@ export default defineComponent({
             selectedABDay, 
             colArray, 
             dayArray, 
-            convertClass, 
+            convertClass,
+            now,
             nowYear,
             nowMonth,
             updateYear,
             updateMonth,
-        
+            setMonth
         };
     },
     methods: {
@@ -182,6 +218,8 @@ export default defineComponent({
         > .abc-outer {
             max-width: 100px;
             margin: 0px 5px;
+            border-radius: 5px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2), 0 2px 2px rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12);
 
             ::v-deep .abc-input {
                 text-align: center;
@@ -190,8 +228,10 @@ export default defineComponent({
             
             .input-append {
                 font-weight: bold;
-                font-size: 18px;
+                font-size: 14px;
+                padding-right: 5px;
             }
+
         }
     }
 
