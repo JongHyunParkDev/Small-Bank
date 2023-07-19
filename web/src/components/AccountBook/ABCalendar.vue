@@ -1,5 +1,37 @@
 <template>
     <div class="abcalendar">
+        <div class="heaeder">
+            <QInput
+                class="abc-outer"
+                input-class="abc-input"
+                :dense="true"
+                outlined
+                v-model.number="nowYear"
+                type="number"
+                @update="updateYear"
+            >
+                <template v-slot:append>
+                    <span class="input-append">
+                        년
+                    </span>
+                </template>
+            </QInput>
+            <QInput 
+            class="abc-outer"
+                input-class="abc-input"
+                :dense="true"
+                outlined
+                v-model.number="nowMonth" 
+                type="number"
+                @update="updateMonth"
+            >
+                <template v-slot:append>
+                    <span class="input-append">
+                        월
+                    </span>
+                </template>
+            </QInput>
+        </div>
         <div class="row">
             <div
                 class="col-item strong"
@@ -35,7 +67,12 @@ import { dateToDateStr } from '@/lib/DateUtil';
 import { AccountBookDay } from './models';
 import { emit } from 'process';
 
-const now = new Date().getDate();
+const now = new Date();
+
+const nowYear = ref(now.getFullYear());
+const nowMonth = ref(now.getMonth());
+const nowDate = now.getDate();
+
 const firstDate = new Date();
 const lastDate = new Date();
 firstDate.setDate(1);
@@ -71,7 +108,7 @@ for (let i = 1; i <= lastDate.getDate(); i++) {
         }
     };
     tempArray.push(ABDay);
-    if (i === now) selectedABDay.value = ABDay;
+    if (i === nowDate) selectedABDay.value = ABDay;
 }
 
 const dayArray: Array<Array<AccountBookDay>> = [];
@@ -83,6 +120,20 @@ for (let i = 0; i < tempArray.length; i += 7) {
     }
 
     dayArray.push(chunk);
+}
+
+function updateYear(num1: number, num2: number) {
+    console.log(num1, num2);
+    if (num1 < 1910) num1 = 1910; 
+    if (num1 > 2100) num1 = 2100;
+    nowMonth.value = num1;
+}
+
+function updateMonth(num1: number, num2: number) {
+    console.log(num1, num2);
+    if (num1 < 1) num1 = 1; 
+    if (num1 > 12) num1 = 12;
+    nowMonth.value = num1;
 }
 
 function convertClass (idx: number): string {
@@ -103,6 +154,11 @@ export default defineComponent({
             colArray, 
             dayArray, 
             convertClass, 
+            nowYear,
+            nowMonth,
+            updateYear,
+            updateMonth,
+        
         };
     },
     methods: {
@@ -120,8 +176,28 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
 
+    > .heaeder {
+        display: flex;
+        margin: 5px auto;
+        > .abc-outer {
+            max-width: 100px;
+            margin: 0px 5px;
+
+            ::v-deep .abc-input {
+                text-align: center;
+                font-size: 18px;
+            }
+            
+            .input-append {
+                font-weight: bold;
+                font-size: 18px;
+            }
+        }
+    }
+
     > .row {
         display: flex;
+        height: 6%;
 
         > .col-item {
             flex: 1;

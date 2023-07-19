@@ -60,6 +60,7 @@ export default defineComponent({
 
     > .day {
         border-radius: 10px;
+        height: 100%;
         > .account {
             font-size: 0.75em;
             > .item {
