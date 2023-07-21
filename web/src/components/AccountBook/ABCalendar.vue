@@ -77,7 +77,7 @@
 <script lang="ts">
 import { defineComponent, ref, Ref } from 'vue';
 import ABDay from '@/components/AccountBook/ABDay.vue';
-import { dateToDateStr } from '@/lib/DateUtil';
+import { dateToApiDateStr } from '@/lib/DateUtil';
 import { AccountBookDay } from './models';
 import { emit } from 'process';
 
@@ -122,6 +122,7 @@ function updateCalendar() {
         const ABDay = {
             id: 'day',
             num: i,
+            //TODO 거래 내역은 추후에 api 로 변경해야한다.
             account: {
                 income: Math.floor(Math.random() * 10),
                 spend: Math.floor(Math.random() * 10)
@@ -200,7 +201,7 @@ export default defineComponent({
     methods: {
         selectDay(day: AccountBookDay) {
             selectedABDay.value = day;
-            this.$emit('select-day', selectedABDay.value);
+            this.$emit('select-day', dateToApiDateStr(nowYear.value, nowMonth.value, day.num));
         }
     }
 });
@@ -208,7 +209,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .abcalendar {
-    flex: 1;
     display: flex;
     flex-direction: column;
 
@@ -257,9 +257,11 @@ export default defineComponent({
         }
 
         > .row-item {
+            position: relative;
             flex: 1;
             text-align: center;
             margin: 10px 2%;
+            height: 70%;
         }
     }
 }

@@ -7,17 +7,17 @@
             @click="selectDay"
         >
             {{ item.num }}
-            <div 
+            <div
                 v-if="item.account"
                 class="account"
             >
-                <span 
+                <span
                     v-if="item.account.income"
                     class="income item"
                 >
                     <QIcon name="circle" />
                 </span>
-                <span 
+                <span
                     v-if="item.account.spend"
                     class="spend item"
                 >
@@ -66,11 +66,11 @@ export default defineComponent({
             > .item {
                 padding: 0px 3px;
             }
-            > .income {
+            > .spend {
                 color: $pink-14;
             }
 
-            > .spend {
+            > .income {
                 color: $indigo-14;
             }
         }

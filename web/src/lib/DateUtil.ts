@@ -8,3 +8,12 @@ export function dateToDateStr(date: Date): string {
         date.getDate()
     );
 }
+
+export function dateToApiDateStr(year: number, month: number, day: number): string {
+    return format(
+        '%04d%02d%02d',
+        year,
+        month,
+        day
+    );
+}
