@@ -1,13 +1,12 @@
 <template>
     <div class="accountBook">
-        <ABCalendar 
+        <ABCalendar
             @selectDay="selectDay($event)"
         />
-        <div>
+        <div class="history">
 
         </div>
     </div>
-
 </template>
 
 <script lang="ts">
@@ -33,5 +32,10 @@ export default defineComponent({
     width: 100%;
     display: flex;
     flex-direction: column;
+
+    > .history {
+        flex: 1;
+        overflow-y: auto;
+    }
 }
 </style>

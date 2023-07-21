@@ -1,10 +1,10 @@
 <template>
     <div class="abcalendar">
         <div class="heaeder">
-            <QBtn 
+            <QBtn
                 color="white"
                 text-color="black"
-                icon="chevron_left" 
+                icon="chevron_left"
                 padding="sm"
                 @click="setMonth(-1)"
             />
@@ -23,12 +23,12 @@
                     </span>
                 </template>
             </QInput>
-            <QInput 
+            <QInput
                 class="abc-outer"
                 input-class="abc-input"
                 :dense="true"
-                borderless 
-                v-model.number="nowMonth" 
+                borderless
+                v-model.number="nowMonth"
                 type="number"
                 @update:model-value="updateMonth"
             >
@@ -38,10 +38,10 @@
                     </span>
                 </template>
             </QInput>
-            <QBtn 
-                color="white" 
+            <QBtn
+                color="white"
                 text-color="black"
-                icon="chevron_right" 
+                icon="chevron_right"
                 padding="sm"
                 @click="setMonth(1)"
             />
@@ -151,7 +151,7 @@ function setMonth(num: number) {
 }
 
 function updateYear(num: number) {
-    if (num < 1910) num = 1910; 
+    if (num < 1910) num = 1910;
     if (num > 2100) num = 2100;
     nowYear.value = num;
 
@@ -161,10 +161,10 @@ function updateYear(num: number) {
 }
 
 function updateMonth(num: number) {
-    if (num < 1) num = 1; 
+    if (num < 1) num = 1;
     if (num > 12) num = 12;
     nowMonth.value = num;
-    
+
     now.value.setFullYear(nowYear.value);
     now.value.setMonth(num - 1);
 
@@ -184,10 +184,10 @@ export default defineComponent({
         ABDay,
     },
     setup() {
-        return { 
-            selectedABDay, 
-            colArray, 
-            dayArray, 
+        return {
+            selectedABDay,
+            colArray,
+            dayArray,
             convertClass,
             now,
             nowYear,
@@ -225,7 +225,7 @@ export default defineComponent({
                 text-align: center;
                 font-size: 18px;
             }
-            
+
             .input-append {
                 font-weight: bold;
                 font-size: 14px;
@@ -237,7 +237,6 @@ export default defineComponent({
 
     > .row {
         display: flex;
-        height: 6%;
 
         > .col-item {
             flex: 1;

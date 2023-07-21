@@ -1,1 +1,14 @@
 // app global css in SCSS form
+
+::-webkit-scrollbar {
+    width: 6px;               /* width of the entire scrollbar */
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #393939;        /* color of the tracking area */
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #6e6e6e;    /* color of the scroll thumb */
+    border-radius: 2px;       /* roundness of the scroll thumb */
+  }
