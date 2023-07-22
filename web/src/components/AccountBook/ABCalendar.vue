@@ -2,6 +2,7 @@
     <div class="abcalendar">
         <div class="heaeder">
             <QBtn
+                class="btn-left"
                 color="white"
                 text-color="black"
                 icon="chevron_left"
@@ -39,6 +40,7 @@
                 </template>
             </QInput>
             <QBtn
+                class="btn-right"
                 color="white"
                 text-color="black"
                 icon="chevron_right"
@@ -231,7 +233,14 @@ export default defineComponent({
                 font-size: 14px;
                 padding-right: 5px;
             }
+        }
 
+        > .btn-right {
+            margin-left: 10px;
+        }
+
+        > .btn-left {
+            margin-right: 10px;
         }
     }
 

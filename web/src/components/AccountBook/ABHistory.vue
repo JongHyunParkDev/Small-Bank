@@ -24,6 +24,7 @@
                     <QTooltip
                         class="bg-indigo"
                         anchor="top middle"
+                        self="center middle"
                     >
                         {{ dayAccount.text }}
                     </QTooltip>
