@@ -6,20 +6,31 @@
                 :key="idx"
                 class="history-row"
             >
-            <!-- TODO API 구현 후 변경 가능성 많음 -->
-                <div class="time item">
+                <!-- TODO API 구현 후 변경 가능성 많음 -->
+                <div class="btn item">
+                    <QBtn
+                        color="white"
+                        text-color="black"
+                        icon="close"
+                        size="sm"
+                        padding="sm"
+                        :ripple="false"
+                        @click="deleteHistroy(idx)"
+                    />
+                </div>
+                <div class="time item text">
                     {{ dayAccount.time }}
                 </div>
-                <div class="type item">
+                <div class="type item text">
                     {{ dayAccount.type === 'income' ? '수입' : '지출' }}
                 </div>
                 <div
-                    class="money item"
+                    class="money item text"
                     :class="dayAccount.type"
                 >
-                    {{ dayAccount.money }}
+                    {{ dayAccount.money.toLocaleString() }}
                 </div>
-                <div class="text item">
+                <div class="memo item text">
                     {{ dayAccount.text }}
                     <QTooltip
                         class="bg-indigo"
@@ -49,6 +60,11 @@ export default defineComponent({
 
         return { };
     },
+    methods: {
+        deleteHistroy(idx) {
+            this.$emit('delete-history', idx);
+        }
+    }
 });
 </script>
 
@@ -68,10 +84,15 @@ export default defineComponent({
             font-size: 16px;
             font-weight: bold;
 
+            > .btn {
+                flex-grow: 1;
+            }
+
             > .item {
                 text-align: center;
                 flex-shrink: 0; /* 기본적으로 줄어드는 비율을 0으로 설정 */
                 flex-basis: 10%; /* 기본 크기 설정을 자동으로 유지 */
+                padding: 10px;
             }
             > .time {
                 flex-grow: 1;
@@ -93,11 +114,15 @@ export default defineComponent({
                 color: $indigo-14;
             }
 
-            > .text {
+            > .memo {
                 flex-grow: 3;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
+            }
+
+            > .text {
+                padding: 15px 0px;
             }
 
         }

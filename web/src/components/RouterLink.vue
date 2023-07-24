@@ -27,12 +27,18 @@ export default defineComponent({
     name: 'RouterLink',
     setup () {
         const routeList = ref<Route[]>([
-          {
-            title: '가계부',
-            caption: '간단한 가계부 서비스',
-            icon: 'calendar_today',
-            to: '/AccountBook'
-          },
+            {
+                title: '가계부',
+                caption: '간단한 가계부 서비스 (일)',
+                icon: 'calendar_today',
+                to: '/AccountBook'
+            },
+            {
+                title: '가계부 통계',
+                caption: '간단한 가계부 서비스 (달)',
+                icon: 'list',
+                to: '/AccountBookDetail'
+            },
         ]);
 
 

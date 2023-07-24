@@ -8,8 +8,9 @@
         <ABHistory
             class="history"
             :day-account-arr="dayAccountArr"
+            @deleteHistory="deleteHistory"
         />
-        <QFab
+        <!-- <QFab
             class="fab"
             color="primary"
             icon="keyboard_arrow_up"
@@ -22,7 +23,81 @@
                 color="primary"
                 icon="add"
             />
-        </QFab>
+        </QFab> -->
+        <QBtn
+            class="fab"
+            round
+            color="primary"
+            icon="add"
+            @click="isAddDialog = true"
+        />
+        <QDialog
+            class="abhistory-add-dialog"
+            v-model="isAddDialog"
+            persistent
+        >
+            <QCard>
+                <QCardSection class="row items-center">
+                    <QToolbar>
+                        <QToolbarTitle>
+                            내역 추가하기
+                        </QToolbarTitle>
+                    </QToolbar>
+                    <diV class="dialog-content">
+                        <QInput
+                            outlined
+                            stack-label
+                            label="시간"
+                            v-model="time"
+                            mask="time"
+                            :rules="['time']"
+                        >
+                            <template v-slot:append>
+                            <QIcon name="access_time" class="cursor-pointer">
+                                <QPopupProxy cover transition-show="scale" transition-hide="scale">
+                                    <QTime v-model="time">
+                                        <div class="row items-center justify-end">
+                                            <QBtn v-close-popup label="Close" color="primary" flat />
+                                        </div>
+                                    </QTime>
+                                </QPopupProxy>
+                            </QIcon>
+                            </template>
+                        </QInput>
+                        <QInput
+                            class="input"
+                            outlined
+                            stack-label
+                            label="카테고리"
+                            v-model="category"
+                        />
+                        <QInput
+                            class="input"
+                            outlined
+                            stack-label
+                            label="금액"
+                            type="number"
+                            v-model="money"
+                        />
+                        <QInput
+                            class="input"
+                            outlined
+                            stack-label
+                            label="메모"
+                            v-model="memo"
+                            type="textarea"
+                            :input-style="{resize: 'none'}"
+                        />
+                    </diV>
+
+                </QCardSection>
+
+                <QCardActions align="right">
+                    <QBtn flat label="취소" color="primary" v-close-popup />
+                    <QBtn flat label="추가" color="primary" @click="addHistory" v-close-popup />
+                </QCardActions>
+            </QCard>
+        </QDialog>
     </div>
 </template>
 
@@ -34,6 +109,9 @@ import ABHistory from 'components/AccountBook/ABHistory.vue';
 //TODO 거래 내역은 추후에 api 로 변경해야한다.
 // id, timestamp, text, money, category, type
 const dayAccountArr: Ref<Array<any>> = ref([]);
+const isAddDialog = ref(false);
+
+const time: Ref<string> = ref('00:00');
 
 function selectDay(a) {
     console.log(a);
@@ -70,8 +148,23 @@ export default defineComponent({
     },
     setup() {
 
-        return {selectDay, dayAccountArr};
+        return {
+            selectDay,
+            dayAccountArr,
+            isAddDialog,
+            time
+        };
     },
+    methods: {
+        deleteHistory(idx) {
+            //TODO API 구현
+            dayAccountArr.value.splice(idx, 1);
+        },
+        addHistory() {
+            console.log('ㅇㅇ');
+            // dayAccountArr.value.push({});
+        }
+    }
 });
 </script>
 
@@ -102,6 +195,18 @@ export default defineComponent({
         position: fixed;
         bottom: 20px;
         right: 20px;
+    }
+}
+
+.abhistory-add-dialog {
+    .dialog-content {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        > .input {
+            margin-bottom: 10px;
+        }
     }
 }
 </style>
