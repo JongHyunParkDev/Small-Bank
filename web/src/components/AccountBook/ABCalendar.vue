@@ -81,7 +81,6 @@ import { defineComponent, ref, Ref } from 'vue';
 import ABDay from '@/components/AccountBook/ABDay.vue';
 import { dateToApiDateStr } from '@/lib/DateUtil';
 import { AccountBookDay } from './models';
-import { emit } from 'process';
 
 // Date 객체
 const now = ref(new Date());
@@ -101,78 +100,6 @@ const colArray = [
 
 const selectedABDay: Ref<AccountBookDay | undefined> = ref(undefined);
 const dayArray: Ref<Array<Array<AccountBookDay>>> = ref([]);
-
-updateCalendar();
-
-function updateCalendar() {
-    dayArray.value = [];
-    selectedABDay.value = undefined;
-
-    const firstDate = new Date(now.value);
-    const lastDate = new Date(now.value);
-    firstDate.setDate(1);
-    lastDate.setMonth(lastDate.getMonth() + 1);
-    lastDate.setDate(0);
-
-    const tempArray: Array<AccountBookDay> = [];
-    for (let i = 0; i < firstDate.getDay(); i++)
-        tempArray.push({
-            id: 'empty'
-        });
-
-    for (let i = 1; i <= lastDate.getDate(); i++) {
-        const ABDay = {
-            id: 'day',
-            num: i,
-            //TODO 거래 내역은 추후에 api 로 변경해야한다.
-            account: {
-                income: Math.floor(Math.random() * 10),
-                spend: Math.floor(Math.random() * 10)
-            }
-        };
-        tempArray.push(ABDay);
-    }
-
-    for (let i = 0; i < tempArray.length; i += 7) {
-        const chunk: Array<AccountBookDay> = tempArray.slice(i, i + 7);
-
-        while (chunk.length < 7) {
-            chunk.push({id: 'empty'}); // 강제로 채우기
-        }
-
-        dayArray.value.push(chunk);
-    }
-}
-
-function setMonth(num: number) {
-    now.value.setMonth(now.value.getMonth() + num);
-
-    nowMonth.value = now.value.getMonth() + 1;
-    nowYear.value = now.value.getFullYear();
-
-    updateCalendar();
-}
-
-function updateYear(num: number) {
-    if (num < 1910) num = 1910;
-    if (num > 2100) num = 2100;
-    nowYear.value = num;
-
-    now.value.setFullYear(num);
-
-    updateCalendar();
-}
-
-function updateMonth(num: number) {
-    if (num < 1) num = 1;
-    if (num > 12) num = 12;
-    nowMonth.value = num;
-
-    now.value.setFullYear(nowYear.value);
-    now.value.setMonth(num - 1);
-
-    updateCalendar();
-}
 
 function convertClass (idx: number): string {
     if (idx === 0) return 'red';
@@ -195,15 +122,82 @@ export default defineComponent({
             now,
             nowYear,
             nowMonth,
-            updateYear,
-            updateMonth,
-            setMonth
         };
     },
+    mounted() {
+        this.updateCalendar();
+    },
     methods: {
-        selectDay(day: AccountBookDay) {
+        updateCalendar() {
+            dayArray.value = [];
+            selectedABDay.value = undefined;
+            this.selectDay(undefined);
+
+            const firstDate = new Date(now.value);
+            const lastDate = new Date(now.value);
+            firstDate.setDate(1);
+            lastDate.setMonth(lastDate.getMonth() + 1);
+            lastDate.setDate(0);
+
+            const tempArray: Array<AccountBookDay> = [];
+            for (let i = 0; i < firstDate.getDay(); i++)
+                tempArray.push({
+                    id: 'empty'
+                });
+
+            for (let i = 1; i <= lastDate.getDate(); i++) {
+                const ABDay = {
+                    id: 'day',
+                    num: i,
+                    //TODO 거래 내역은 추후에 api 로 변경해야한다.
+                    account: {
+                        income: Math.floor(Math.random() * 10),
+                        spend: Math.floor(Math.random() * 10)
+                    }
+                };
+                tempArray.push(ABDay);
+            }
+
+            for (let i = 0; i < tempArray.length; i += 7) {
+                const chunk: Array<AccountBookDay> = tempArray.slice(i, i + 7);
+
+                while (chunk.length < 7) {
+                    chunk.push({id: 'empty'}); // 강제로 채우기
+                }
+
+                dayArray.value.push(chunk);
+            }
+        },
+        setMonth(num: number) {
+            now.value.setMonth(now.value.getMonth() + num);
+
+            nowMonth.value = now.value.getMonth() + 1;
+            nowYear.value = now.value.getFullYear();
+
+            this.updateCalendar();
+        },
+        updateYear(num: number) {
+            if (num < 1910) num = 1910;
+            if (num > 2100) num = 2100;
+            nowYear.value = num;
+
+            now.value.setFullYear(num);
+
+            this.updateCalendar();
+        },
+        updateMonth(num: number) {
+            if (num < 1) num = 1;
+            if (num > 12) num = 12;
+            nowMonth.value = num;
+
+            now.value.setFullYear(nowYear.value);
+            now.value.setMonth(num - 1);
+
+            this.updateCalendar();
+        },
+        selectDay(day: AccountBookDay | undefined) {
             selectedABDay.value = day;
-            this.$emit('select-day', dateToApiDateStr(nowYear.value, nowMonth.value, day.num));
+            this.$emit('select-day', day ? dateToApiDateStr(nowYear.value, nowMonth.value, day?.num) : undefined);
         }
     }
 });

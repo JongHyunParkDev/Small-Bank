@@ -29,6 +29,7 @@
             round
             color="primary"
             icon="add"
+            :disable="sel"
             @click="isAddDialog = true"
         />
         <QDialog
@@ -36,65 +37,85 @@
             v-model="isAddDialog"
             persistent
         >
-            <QCard>
+            <QCard class="abhistory-card">
                 <QCardSection class="row items-center">
                     <QToolbar>
                         <QToolbarTitle>
                             내역 추가하기
                         </QToolbarTitle>
                     </QToolbar>
-                    <diV class="dialog-content">
+                    <QForm class="dialog-content">
                         <QInput
                             outlined
                             stack-label
                             label="시간"
                             v-model="time"
                             mask="time"
-                            :rules="['time']"
+                            :rules="['time' || '시간을 입력해주세요.']"
                         >
                             <template v-slot:append>
-                            <QIcon name="access_time" class="cursor-pointer">
-                                <QPopupProxy cover transition-show="scale" transition-hide="scale">
-                                    <QTime v-model="time">
-                                        <div class="row items-center justify-end">
-                                            <QBtn v-close-popup label="Close" color="primary" flat />
-                                        </div>
-                                    </QTime>
-                                </QPopupProxy>
-                            </QIcon>
+                                <QIcon name="access_time" class="cursor-pointer">
+                                    <QPopupProxy cover transition-show="scale" transition-hide="scale">
+                                        <QTime v-model="time">
+                                            <div class="row items-center justify-end">
+                                                <QBtn v-close-popup label="Close" color="primary" flat />
+                                            </div>
+                                        </QTime>
+                                    </QPopupProxy>
+                                </QIcon>
                             </template>
                         </QInput>
                         <QInput
-                            class="input"
+                            name="category"
                             outlined
                             stack-label
                             label="카테고리"
                             v-model="category"
+                            :rules="[(val) => (val !== '') || '카테고리를 입력해주세요.']"
+                        />
+                        <QBtnToggle
+                            v-model="type"
+                            toggle-color="primary"
+                            :options="[
+                                {label: '지출', value: 'spend'},
+                                {label: '수입', value: 'income'}
+                            ]"
                         />
                         <QInput
-                            class="input"
+                            name="money"
                             outlined
                             stack-label
                             label="금액"
                             type="number"
                             v-model="money"
+                            :rules="[(val) => (val !== '' && val != '0') || '금액을 입력해주세요.']"
                         />
                         <QInput
-                            class="input"
+                            name="memo"
                             outlined
                             stack-label
                             label="메모"
                             v-model="memo"
                             type="textarea"
                             :input-style="{resize: 'none'}"
+                            :rules="[(val) => (val !== '') || '메모를 입력해주세요.']"
                         />
-                    </diV>
-
+                    </QForm>
                 </QCardSection>
-
                 <QCardActions align="right">
-                    <QBtn flat label="취소" color="primary" v-close-popup />
-                    <QBtn flat label="추가" color="primary" @click="addHistory" v-close-popup />
+                    <QBtn
+                        flat
+                        label="취소"
+                        color="primary"
+                        @click="clear"
+                        v-close-popup
+                    />
+                    <QBtn
+                        label="추가"
+                        color="primary"
+                        @click="addHistory"
+                        v-close-popup
+                    />
                 </QCardActions>
             </QCard>
         </QDialog>
@@ -112,32 +133,26 @@ const dayAccountArr: Ref<Array<any>> = ref([]);
 const isAddDialog = ref(false);
 
 const time: Ref<string> = ref('00:00');
+const category = ref('');
+const memo = ref('');
+const money = ref(0);
+const selectedDay = ref('');
+const type = ref('spend');
 
-function selectDay(a) {
-    console.log(a);
-    const spendSize = Math.floor(Math.random() * 7) + 20;
-    const incomeSize = Math.floor(Math.random() * 30) < 1 ? 0 : 1;
+function selectDay(day) {
+    selectedDay.value = day;
 
     dayAccountArr.value = [];
 
-    for (let i = 0; i < spendSize; i++) {
-        dayAccountArr.value.push({
-            time: '00:00', // DateUtil.getTime
-            text: '지출 ' + i,
-            money: (Math.floor(Math.random() * 10) + 1) * 1000,
-            type: 'spend'
-        })
-    }
+    // TODO API getList
+}
 
-    for (let i = 0; i < incomeSize; i++) {
-        dayAccountArr.value.push({
-            time: '00:00', // DateUtil.getTime
-            text: '소득 ' + i,
-            money: Math.floor(Math.random() * 5) * 1000,
-            type: 'income'
-        })
-    }
-
+function clear() {
+    time.value ='00:00';
+    category.value = '';
+    type.value = 'spend';
+    memo.value = '';
+    money.value = 0;
 }
 
 export default defineComponent({
@@ -147,12 +162,18 @@ export default defineComponent({
         ABHistory
     },
     setup() {
-
         return {
             selectDay,
             dayAccountArr,
             isAddDialog,
-            time
+            clear,
+
+            selectedDay,
+            time,
+            category,
+            type,
+            money,
+            memo
         };
     },
     methods: {
@@ -161,9 +182,15 @@ export default defineComponent({
             dayAccountArr.value.splice(idx, 1);
         },
         addHistory() {
-            console.log('ㅇㅇ');
-            // dayAccountArr.value.push({});
-        }
+            dayAccountArr.value.push({
+                time: time.value,
+                text: memo.value,
+                money: +money.value,
+                type: type.value,
+            });
+            clear();
+        },
+
     }
 });
 </script>
@@ -199,14 +226,14 @@ export default defineComponent({
 }
 
 .abhistory-add-dialog {
+    .abhistory-card {
+        max-width: 350px;
+        min-width: 350px;
+    }
     .dialog-content {
         display: flex;
         flex-direction: column;
         width: 100%;
-
-        > .input {
-            margin-bottom: 10px;
-        }
     }
 }
 </style>
