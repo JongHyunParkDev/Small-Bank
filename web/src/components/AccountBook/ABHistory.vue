@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, Ref, PropType } from 'vue';
+import { defineComponent, ref, Ref, PropType, computed } from 'vue';
 
 export default defineComponent({
     name: 'ABHistroy',
@@ -61,7 +61,7 @@ export default defineComponent({
         return { };
     },
     methods: {
-        deleteHistroy(idx) {
+        deleteHistroy(idx : number) {
             this.$emit('delete-history', idx);
         }
     }

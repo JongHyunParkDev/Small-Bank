@@ -69,6 +69,7 @@
                 :key="idx2"
                 :class="convertClass(idx2)"
                 :item="item"
+                :account-map="dayAccountTypeMap[item.num]"
                 :selected-abday="selectedABDay"
                 @selectDay="selectDay($event)"
             />
@@ -77,7 +78,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, Ref } from 'vue';
+import { defineComponent, ref, Ref, PropType } from 'vue';
 import ABDay from '@/components/AccountBook/ABDay.vue';
 import { dateToApiDateStr } from '@/lib/DateUtil';
 import { AccountBookDay } from './models';
@@ -109,9 +110,14 @@ function convertClass (idx: number): string {
 
 export default defineComponent({
     name: 'ABCalendar',
-    emits: ['select-day'],
+    emits: ['select-day', 'update-calendar'],
     components: {
         ABDay,
+    },
+    props: {
+        dayAccountArr: {
+            type: Array as PropType<Array<any>>
+        }
     },
     setup() {
         return {
@@ -124,6 +130,17 @@ export default defineComponent({
             nowMonth,
         };
     },
+    computed: {
+        dayAccountTypeMap() {
+            const map = {};
+            this.dayAccountArr.forEach(dayAccount => {
+                if (map[+dayAccount.date.substring(6, 8)] === undefined)
+                    map[+dayAccount.date.substring(6, 8)] = {};
+                map[+dayAccount.date.substring(6, 8)][dayAccount.type] = true;
+            })
+            return map;
+        }
+    },
     mounted() {
         this.updateCalendar();
     },
@@ -131,7 +148,11 @@ export default defineComponent({
         updateCalendar() {
             dayArray.value = [];
             selectedABDay.value = undefined;
-            this.selectDay(undefined);
+
+            this.$emit('update-calendar', {
+                year: nowYear.value,
+                month: nowMonth.value
+            });
 
             const firstDate = new Date(now.value);
             const lastDate = new Date(now.value);
@@ -149,11 +170,6 @@ export default defineComponent({
                 const ABDay = {
                     id: 'day',
                     num: i,
-                    //TODO 거래 내역은 추후에 api 로 변경해야한다.
-                    account: {
-                        income: Math.floor(Math.random() * 10),
-                        spend: Math.floor(Math.random() * 10)
-                    }
                 };
                 tempArray.push(ABDay);
             }
@@ -195,9 +211,9 @@ export default defineComponent({
 
             this.updateCalendar();
         },
-        selectDay(day: AccountBookDay | undefined) {
+        selectDay(day: AccountBookDay) {
             selectedABDay.value = day;
-            this.$emit('select-day', day ? dateToApiDateStr(nowYear.value, nowMonth.value, day?.num) : undefined);
+            this.$emit('select-day', dateToApiDateStr(nowYear.value, nowMonth.value, day.num));
         }
     }
 });

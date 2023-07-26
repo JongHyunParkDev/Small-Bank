@@ -8,20 +8,27 @@
         >
             {{ item.num }}
             <div
-                v-if="item.account"
+                v-if="accountMap"
                 class="account"
             >
                 <span
-                    v-if="item.account.income"
+                    v-if="accountMap.income"
                     class="income item"
                 >
                     <QIcon name="circle" />
                 </span>
                 <span
-                    v-if="item.account.spend"
+                    v-if="accountMap.spend"
                     class="spend item"
                 >
                     <QIcon name="circle" />
+                </span>
+            </div>
+            <div
+                v-else
+                class="account"
+            >
+                <span class="item">
                 </span>
             </div>
         </div>
@@ -44,6 +51,10 @@ export default defineComponent({
             type: Object as PropType<AccountBookDay>,
             required: false,
         },
+        accountMap: {
+            type: Object,
+            required: false,
+        }
     },
     methods: {
         selectDay() {
