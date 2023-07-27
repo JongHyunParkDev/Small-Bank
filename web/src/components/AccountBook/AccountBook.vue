@@ -10,7 +10,7 @@
         <ABHistory
             class="history"
             :day-account-arr="sortAccountArr"
-            @delete-history="deleteHistory"
+            @modify-history="showModifyDialog"
         />
         <!-- <QFab
             class="fab"
@@ -26,14 +26,23 @@
                 icon="add"
             />
         </QFab> -->
-        <QBtn
-            class="fab"
-            round
-            color="primary"
-            icon="add"
-            :disable="selectedDay === undefined"
-            @click="isAddDialog = true"
-        />
+        <div class="fab-area">
+            <QBtn
+                class="fab"
+                round
+                color="primary"
+                icon="add"
+                :disable="selectedDay === undefined"
+                @click="isAddDialog = true"
+            />
+            <QTooltip 
+                v-if="selectedDay === undefined"
+                class="bg-indigo" 
+            >
+                일을 선택해주세요
+            </QTooltip>
+        </div>
+        
         <QDialog
             class="abhistory-add-dialog"
             v-model="isAddDialog"
@@ -110,15 +119,117 @@
                     >
                         <QBtn
                             flat
+                            padding="xs lg"
                             label="취소"
                             color="primary"
                             @click="clear"
                             v-close-popup
                         />
                         <QBtn
+                            padding="xs lg"
                             type="submit"
                             label="추가"
                             color="primary"
+                        />
+                    </QCardActions>
+                </QForm>
+            </QCard>
+        </QDialog>
+        <QDialog
+            class="abhistory-modify-dialog"
+            v-model="isModifyDialog"
+            persistent
+        >
+            <QCard class="abhistory-card">
+                <QForm @submit="modifyHistory">
+                    <QCardSection class="row items-center">
+                        <QToolbar>
+                            <QToolbarTitle>
+                                내역 추가하기
+                            </QToolbarTitle>
+                        </QToolbar>
+                        <div class="dialog-content">
+                            <QInput
+                                outlined
+                                stack-label
+                                label="시간"
+                                v-model="time"
+                                mask="time"
+                                :rules="['time' || '시간을 입력해주세요.']"
+                            >
+                                <template v-slot:append>
+                                    <QIcon name="access_time" class="cursor-pointer">
+                                        <QPopupProxy cover transition-show="scale" transition-hide="scale">
+                                            <QTime v-model="time">
+                                                <div class="row items-center justify-end">
+                                                    <QBtn v-close-popup label="Close" color="primary" flat />
+                                                </div>
+                                            </QTime>
+                                        </QPopupProxy>
+                                    </QIcon>
+                                </template>
+                            </QInput>
+                            <QInput
+                                name="category"
+                                outlined
+                                stack-label
+                                label="카테고리"
+                                v-model="category"
+                                :rules="[(val) => (val !== '') || '카테고리를 입력해주세요.']"
+                            />
+                            <QBtnToggle
+                                v-model="type"
+                                toggle-color="primary"
+                                :options="[
+                                    {label: '지출', value: 'spend'},
+                                    {label: '수입', value: 'income'}
+                                ]"
+                            />
+                            <QInput
+                                name="money"
+                                outlined
+                                stack-label
+                                label="금액"
+                                type="number"
+                                v-model="money"
+                                :rules="[(val) => (val !== '' && val != '0') || '금액을 입력해주세요.']"
+                            />
+                            <QInput
+                                name="memo"
+                                outlined
+                                stack-label
+                                label="메모"
+                                v-model="memo"
+                                type="textarea"
+                                :input-style="{resize: 'none'}"
+                                :rules="[(val) => (val !== '') || '메모를 입력해주세요.']"
+                            />
+                        </div>
+                    </QCardSection>
+                    <QCardActions
+                        align="between"
+                    >
+                        <QBtn
+                            flat
+                            padding="xs lg"
+                            label="취소"
+                            color="primary"
+                            @click="clear"
+                            v-close-popup
+                        />
+                        <QBtn
+                            padding="xs lg"
+                            label="삭제"
+                            color="primary"
+                            @click="deleteHistory()"
+                            v-close-popup
+                        />
+                        <QBtn
+                            padding="xs lg"
+                            type="submit"
+                            label="변경"
+                            color="primary"
+                            v-close-popup
                         />
                     </QCardActions>
                 </QForm>
@@ -137,6 +248,7 @@ import { compare } from '@/lib/StrUtil';
 // id, timestamp, text, money, category, type
 const dayAccountArr: Ref<Array<any>> = ref([]);
 const isAddDialog = ref(false);
+const isModifyDialog = ref(false);
 
 const time: Ref<string> = ref('00:00');
 const category = ref('');
@@ -144,6 +256,7 @@ const memo = ref('');
 const money = ref(0);
 const selectedDay: Ref<string | undefined> = ref(undefined);
 const type = ref('spend');
+const selectedIdx = ref(0);
 
 const filterAccountArr = computed(() => {
     return dayAccountArr.value.filter(account => account.date === selectedDay.value);
@@ -159,7 +272,6 @@ function selectDay(day : string) {
 }
 
 function updateCalendar(obj: any) {
-    console.log(obj);
     selectedDay.value = undefined;
     // TODO API getList 'YYYYmm' 으로 조회 해야함
 }
@@ -170,6 +282,19 @@ function clear() {
     type.value = 'spend';
     memo.value = '';
     money.value = 0;
+}
+
+function showModifyDialog(idx: number) {
+    selectedIdx.value = idx;
+    const account = sortAccountArr.value[idx];
+
+    time.value = account.time;
+    category.value = account.category;
+    type.value = account.type;
+    memo.value = account.memo;
+    money.value = account.money;
+
+    isModifyDialog.value = true;
 }
 
 updateCalendar({
@@ -190,8 +315,11 @@ export default defineComponent({
             dayAccountArr,
             sortAccountArr,
             isAddDialog,
-            clear,
+            isModifyDialog,
+            selectedIdx,
 
+            clear,
+            showModifyDialog,
             selectedDay,
             time,
             category,
@@ -201,23 +329,37 @@ export default defineComponent({
         };
     },
     methods: {
-        deleteHistory(idx : number) {
-            //TODO API 구현
-            dayAccountArr.value.splice(idx, 1);
-        },
         addHistory() {
             dayAccountArr.value.push({
                 date: selectedDay.value,
                 time: time.value,
-                text: memo.value,
+                category: category.value,
+                memo: memo.value,
                 money: +money.value,
                 type: type.value,
             });
 
             isAddDialog.value = false;
-
+            //TODO API 구현
             clear();
         },
+        deleteHistory() {            
+            const account = sortAccountArr.value[selectedIdx.value];
+
+            dayAccountArr.value = dayAccountArr.value.filter(item => item !== account);
+
+            clear();
+            //TODO API 구현
+        },
+        modifyHistory() {
+            const account = sortAccountArr.value[selectedIdx.value];
+            account.time = time.value;
+            account.text = memo.value;
+            account.money = +money.value;
+            account.type = type.value;
+            clear();
+            //TODO API 구현
+        }
 
     }
 });
@@ -246,14 +388,17 @@ export default defineComponent({
         position: relative;
     }
 
-    > .fab {
+    > .fab-area {
         position: fixed;
         bottom: 20px;
         right: 20px;
+        > .fab {
+
+        }
     }
 }
 
-.abhistory-add-dialog {
+.abhistory-add-dialog, .abhistory-modify-dialog {
     .abhistory-card {
         max-width: 350px;
         min-width: 350px;
@@ -262,6 +407,7 @@ export default defineComponent({
         display: flex;
         flex-direction: column;
         width: 100%;
+
     }
 }
 </style>

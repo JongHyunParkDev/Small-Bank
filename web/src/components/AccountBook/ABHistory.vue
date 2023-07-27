@@ -11,11 +11,11 @@
                     <QBtn
                         color="white"
                         text-color="black"
-                        icon="close"
+                        icon="edit"
                         size="sm"
                         padding="sm"
                         :ripple="false"
-                        @click="deleteHistroy(idx)"
+                        @click="modifyHistroy(idx)"
                     />
                 </div>
                 <div class="time item text">
@@ -31,13 +31,13 @@
                     {{ dayAccount.money.toLocaleString() }}
                 </div>
                 <div class="memo item text">
-                    {{ dayAccount.text }}
+                    {{ dayAccount.memo }}
                     <QTooltip
                         class="bg-indigo"
                         anchor="top middle"
                         self="center middle"
                     >
-                        {{ dayAccount.text }}
+                        {{ dayAccount.memo }}
                     </QTooltip>
                 </div>
             </div>
@@ -50,7 +50,7 @@ import { defineComponent, ref, Ref, PropType, computed } from 'vue';
 
 export default defineComponent({
     name: 'ABHistroy',
-    emits: ['delete-history'],
+    emits: ['modify-history'],
     props: {
         dayAccountArr: {
             type: Array as PropType<Array<any>>
@@ -61,8 +61,9 @@ export default defineComponent({
         return { };
     },
     methods: {
-        deleteHistroy(idx : number) {
-            this.$emit('delete-history', idx);
+        modifyHistroy(idx : number) {
+            console.log(idx);
+            this.$emit('modify-history', idx);
         }
     }
 });
