@@ -1,49 +1,49 @@
 <template>
-  <QItem
-    clickable
-    tag="a"
-    target="_blank"
-    :href="link"
-  >
-    <QItemSection
-      v-if="icon"
-      avatar
+    <QItem
+        clickable
+        tag="a"
+        target="_blank"
+        :href="link"
     >
-      <QIcon :name="icon" />
-    </QItemSection>
+        <QItemSection
+            v-if="icon"
+            avatar
+        >
+            <QIcon :name="icon" />
+        </QItemSection>
 
-    <QItemSection>
-      <QItemLabel>{{ title }}</QItemLabel>
-      <QItemLabel caption>{{ caption }}</QItemLabel>
-    </QItemSection>
-  </QItem>
+        <QItemSection>
+            <QItemLabel>{{ title }}</QItemLabel>
+            <QItemLabel caption>{{ caption }}</QItemLabel>
+        </QItemSection>
+    </QItem>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'EssentialLink',
-  props: {
-    title: {
-      type: String,
-      required: true
-    },
+    name: 'EssentialLink',
+    props: {
+        title: {
+            type: String,
+            required: true,
+        },
 
-    caption: {
-      type: String,
-      default: ''
-    },
+        caption: {
+            type: String,
+            default: '',
+        },
 
-    link: {
-      type: String,
-      default: '#'
-    },
+        link: {
+            type: String,
+            default: '#',
+        },
 
-    icon: {
-      type: String,
-      default: ''
-    }
-  }
+        icon: {
+            type: String,
+            default: '',
+        },
+    },
 });
 </script>

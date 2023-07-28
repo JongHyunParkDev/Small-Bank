@@ -1,1 +1,34 @@
 // app global css in SCSS form
+
+@font-face {
+    font-family:'NanumBarunGothic';
+    src: url('../assets/fonts/NanumBarunGothic.ttf') format('truetype');
+    font-weight: 400;
+}
+@font-face {
+    font-family:'NanumBarunGothic';
+    src: url('../assets/fonts/NanumBarunGothicLight.ttf') format('truetype');
+    font-weight: 300;
+}
+@font-face {
+    font-family:'NanumBarunGothic';
+    src: url('../assets/fonts/NanumBarunGothicBold.ttf') format('truetype');
+    font-weight: 700;
+}
+
+body {
+    font-family: 'NanumBarunGothic', sans-serif !important;
+}
+
+::-webkit-scrollbar {
+    width: 6px;               /* width of the entire scrollbar */
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: $grey-6;        /* color of the tracking area */
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb {
+    background-color: $grey-9;    /* color of the scroll thumb */
+    border-radius: 2px;       /* roundness of the scroll thumb */
+}
