@@ -1,55 +1,52 @@
 package com.dev.was.security;
 
-import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
-import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientPropertiesRegistrationAdapter;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import com.dev.was.service.OAuth2MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
+@RequiredArgsConstructor
 @EnableWebSecurity
-@EnableConfigurationProperties(OAuth2ClientProperties.class)
 public class SecurityConfig {
+    private final OAuth2MemberService oAuth2MemberService;
 
-    private final ClientRegistrationRepository clientRegistrationRepository;
-
-    public SecurityConfig(ClientRegistrationRepository clientRegistrationRepository) {
-        this.clientRegistrationRepository = clientRegistrationRepository;
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
+        return httpSecurity
+                .httpBasic().disable()
+                .csrf().disable()
+                .cors().and()
+                .authorizeRequests()
+                .requestMatchers("/private/**").authenticated() //private로 시작하는 uri는 로그인 필수
+                .anyRequest().permitAll() //나머지 uri는 모든 접근 허용
+                .and().oauth2Login()
+                .loginPage("/loginForm") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
+                .defaultSuccessUrl("/") //OAuth 구글 로그인이 성공하면 이동할 uri 설정
+                .userInfoEndpoint()//로그인 완료 후 회원 정보 받기
+                .userService(oAuth2MemberService).and().and().build(); //로그인 후 받아온 유저 정보 처리
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests()
-                .requestMatchers("/", "/login**", "/error**")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-            .oauth2Login()
-                .defaultSuccessUrl("/profile")
-                .and()
-            .logout()
-                .logoutSuccessUrl("/")
-                .and()
-            .csrf()
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-        return http.build();
+    public PasswordEncoder customPasswordEncoder()
+    {
+        // 참고: https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#pe-dpe
+        String idForEncode = "bcrypt";
+        Map<String, PasswordEncoder> encoders = new HashMap<>();
+        encoders.put(idForEncode, new BCryptPasswordEncoder());
+        // 위 참고의 StandardPasswordEncoder의 sha265표준과 다른 형태라서 md-sha256 이라고 만들었다.
+        encoders.put("md-sha256", new MessageDigestPasswordEncoder("SHA-256"));
+        return new DelegatingPasswordEncoder(idForEncode, encoders);
     }
 
-    // 네이버 OAuth 클라이언트 등록
-    private ClientRegistration naveroauthClientRegistration() {
-        return clientRegistrationRepository.findByRegistrationId("naver");
-    }
 }
