@@ -1,4 +1,4 @@
-package com.dev.was.security;
+package com.dev.was.dto;
 
 import lombok.Data;
 

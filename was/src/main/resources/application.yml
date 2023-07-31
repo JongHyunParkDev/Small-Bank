@@ -13,7 +13,9 @@ spring:
           naver:
             client-id: QgOzdZCgQ8ZaWCR8fB3G
             client-secret: K6solI01Qa
-            redirect-url: http://localhost:1132/login/oauth2/code/naver
+            client-name: Naver
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:1132/login/oauth2/code/naver
         provider:
           naver:
             authorization-uri: https://nid.naver.com/oauth2.0/authorize
