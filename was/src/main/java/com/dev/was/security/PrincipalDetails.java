@@ -1,6 +1,6 @@
 package com.dev.was.security;
 
-import com.dev.was.dto.Member;
+import com.dev.was.dto.UserDto;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -11,15 +11,15 @@ import java.util.Map;
 
 @Getter
 public class PrincipalDetails implements OAuth2User {
-    private Member member;
+    private UserDto userDto;
     private Map<String, Object> attributes;
 
-    public PrincipalDetails(Member member) {
-        this.member = member;
+    public PrincipalDetails(UserDto userDto) {
+        this.userDto = userDto;
     }
 
-    public PrincipalDetails(Member member, Map<String, Object> attributes) {
-        this.member = member;
+    public PrincipalDetails(UserDto userDto, Map<String, Object> attributes) {
+        this.userDto = userDto;
         this.attributes = attributes;
     }
 
@@ -30,7 +30,7 @@ public class PrincipalDetails implements OAuth2User {
         collect.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return member.getRole();
+                return userDto.getRole();
             }
         });
         return collect;
