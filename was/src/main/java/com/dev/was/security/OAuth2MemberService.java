@@ -1,6 +1,6 @@
-package com.dev.was.service;
+package com.dev.was.security;
 
-import com.dev.was.dto.UserDto;
+import com.dev.was.entity.UserEntity;
 import com.dev.was.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,10 +32,10 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         String email = map.get("email");
         String profileImg = map.get("profile_image");
         String role = "ROLE_USER"; //일반 유저
-        Optional<UserDto> findMember = memberRepository.findByUserId(userId);
+        Optional<UserEntity> findMember = memberRepository.findByUserId(userId);
 
         if (findMember.isEmpty()) { //찾지 못했다면
-            UserDto userDto = UserDto.builder()
+            UserEntity userEntity = UserEntity.builder()
                     .userId(userId)
                     .name(name)
                     .email(email)
@@ -45,7 +45,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
                     .profileImg(profileImg)
                     .role(role)
                     .build();
-            memberRepository.save(userDto);
+            memberRepository.save(userEntity);
         }
         return oAuth2User;
     }

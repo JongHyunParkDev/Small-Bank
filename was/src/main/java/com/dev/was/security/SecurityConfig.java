@@ -1,6 +1,5 @@
 package com.dev.was.security;
 
-import com.dev.was.service.OAuth2MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,12 +22,12 @@ public class SecurityConfig {
                 .and()
                     .authorizeHttpRequests()
                     .requestMatchers("/login.html").permitAll()
-                    .requestMatchers("/user/**").authenticated() // user 시작하는 uri는 로그인 필수
-                    .requestMatchers("/admin/**").hasRole("ADMIN") // admin 시작하는 uri는 관리자 계정만 접근 가능
+                    .requestMatchers("/api/user/**").authenticated() // user 시작하는 uri는 로그인 필수
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN") // admin 시작하는 uri는 관리자 계정만 접근 가능
                     .anyRequest().authenticated() //나머지 uri는 모든 접근 허용
                 .and()
                     .logout()
-                    .logoutUrl("/user/logout") // URL mapping for logout
+                    .logoutUrl("/api/user/logout") // URL mapping for logout
                     .logoutSuccessUrl("/login.html") // Redirect to login page after successful logout
                     .invalidateHttpSession(true) // Invalidate HTTP session after logout
                     .clearAuthentication(true) // Clear authentication information after logout
