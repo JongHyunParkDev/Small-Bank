@@ -1,6 +1,7 @@
 package com.dev.was.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -30,4 +31,15 @@ public class AccountEntity {
 
     @LastModifiedDate
     private LocalDateTime modifiedDate;
+
+    @Builder
+    public AccountEntity(Long id, String userId, LocalDate date, String memo, Long money, String time, String type, LocalDateTime createdDate, LocalDateTime modifiedDate) {
+        this.id = id;
+        this.userId = userId;
+        this.date = date;
+        this.memo = memo;
+        this.money = money;
+        this.time = time;
+        this.type = type;
+    }
 }

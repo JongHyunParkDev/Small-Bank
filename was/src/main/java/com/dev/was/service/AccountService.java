@@ -1,11 +1,13 @@
 package com.dev.was.service;
 
+import com.dev.was.dto.AccountDto;
 import com.dev.was.entity.AccountEntity;
 import com.dev.was.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -13,15 +15,41 @@ import java.util.List;
 public class AccountService {
     private final AccountRepository accountRepository;
 
-    public List<AccountEntity> getAccountsByUserIdAndDatetimeBetween(String userId, LocalDate startDate, LocalDate endDate) {
-        return accountRepository.findByUserIdAndDatetimeBetween(userId, startDate, endDate);
+    public List<AccountDto> getAccountsByUserIdAndDatetimeBetween(String userId, LocalDate startDate, LocalDate endDate) {
+        List<AccountEntity> accountEntityList = accountRepository.findByUserIdAndDatetimeBetween(userId, startDate, endDate);
+
+        List<AccountDto> accountDtoList = new ArrayList<>();
+        accountEntityList.forEach(entity -> {
+            accountDtoList.add(new AccountDto(entity));
+        });
+
+        return accountDtoList;
     }
 
     public void deleteAccount(Long id) {
         accountRepository.deleteById(id);
     }
 
-    public AccountEntity saveAccount(AccountEntity accountEntity) {
-        return accountRepository.save(accountEntity);
+    public AccountDto saveAccount(
+            Long id,
+            String userId,
+            LocalDate date,
+            String memo,
+            Long money,
+            String time,
+            String type
+            ) {
+        AccountEntity saveAccountEntity = AccountEntity.builder()
+                .id(id)
+                .userId(userId)
+                .date(date)
+                .memo(memo)
+                .money(money)
+                .time(time)
+                .type(type)
+                .build();
+
+        AccountEntity accountEntity = accountRepository.save(saveAccountEntity);
+        return new AccountDto(accountEntity);
     }
 }
