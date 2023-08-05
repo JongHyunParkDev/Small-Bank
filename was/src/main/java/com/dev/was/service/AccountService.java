@@ -15,8 +15,8 @@ import java.util.List;
 public class AccountService {
     private final AccountRepository accountRepository;
 
-    public List<AccountDto> getAccountsByUserIdAndDatetimeBetween(String userId, LocalDate startDate, LocalDate endDate) {
-        List<AccountEntity> accountEntityList = accountRepository.findByUserIdAndDatetimeBetween(userId, startDate, endDate);
+    public List<AccountDto> getAccountsByUserIdAndDateBetween(String userId, LocalDate startDate, LocalDate endDate) {
+        List<AccountEntity> accountEntityList = accountRepository.findByUserIdAndDateBetween(userId, startDate, endDate);
 
         List<AccountDto> accountDtoList = new ArrayList<>();
         accountEntityList.forEach(entity -> {

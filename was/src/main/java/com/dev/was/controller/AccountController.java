@@ -1,7 +1,6 @@
 package com.dev.was.controller;
 
 import com.dev.was.dto.AccountDto;
-import com.dev.was.entity.AccountEntity;
 import com.dev.was.security.AuthenticationUtil;
 import com.dev.was.service.AccountService;
 import com.dev.was.util.DBUtil;
@@ -11,8 +10,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -27,7 +24,7 @@ public class AccountController {
         @RequestParam(value = "endDate") String endDate) {
         String userId = AuthenticationUtil.getCurrentUserId();
 
-        return accountService.getAccountsByUserIdAndDatetimeBetween(userId,
+        return accountService.getAccountsByUserIdAndDateBetween(userId,
                 DBUtil.toLocalDate(startDate), DBUtil.toLocalDate(endDate));
     }
 
@@ -66,7 +63,7 @@ public class AccountController {
         accountService.deleteAccount(requestDeleteAccountDto.id);
     }
 
-    private class RequestAddAccountDto {
+    public static class RequestAddAccountDto {
         @NotNull
         private String date;
         @NotBlank
@@ -79,7 +76,7 @@ public class AccountController {
         private String type;
     }
 
-    private class RequestUpdateAccountDto {
+    public static class RequestUpdateAccountDto {
         @NotNull
         private Long id;
         @NotNull
@@ -94,7 +91,7 @@ public class AccountController {
         private String type;
     }
 
-    private class RequestDeleteAccountDto {
+    public static class RequestDeleteAccountDto {
         @NotNull
         private Long id;
     }
