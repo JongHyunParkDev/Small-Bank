@@ -13,6 +13,7 @@
 import { Todo, Meta } from '@/components/models';
 import ExampleComponent from 'components/ExampleComponent.vue';
 import { defineComponent, ref } from 'vue';
+import { Api } from '@/lib/Api';
 
 export default defineComponent({
     name: 'IndexPage',
@@ -45,5 +46,8 @@ export default defineComponent({
         });
         return { todos, meta };
     },
+    async mounted() {
+        await Api.get('user/userinfo');
+    }
 });
 </script>

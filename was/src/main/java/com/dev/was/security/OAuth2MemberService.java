@@ -1,7 +1,7 @@
 package com.dev.was.security;
 
 import com.dev.was.entity.UserEntity;
-import com.dev.was.repository.MemberRepository;
+import com.dev.was.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OAuth2MemberService extends DefaultOAuth2UserService {
     private final PasswordEncoder encoder;
-    private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -32,10 +32,11 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         String email = map.get("email");
         String profileImg = map.get("profile_image");
         String role = "ROLE_USER"; //일반 유저
-        Optional<UserEntity> findMember = memberRepository.findByUserId(userId);
+        Optional<UserEntity> findUser = userRepository.findByUserId(userId);
+        UserEntity userEntity = null;
 
-        if (findMember.isEmpty()) { //찾지 못했다면
-            UserEntity userEntity = UserEntity.builder()
+        if (findUser.isEmpty()) { //찾지 못했다면
+            userEntity = UserEntity.builder()
                     .userId(userId)
                     .name(name)
                     .email(email)
@@ -45,8 +46,10 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
                     .profileImg(profileImg)
                     .role(role)
                     .build();
-            memberRepository.save(userEntity);
+            userRepository.save(userEntity);
+        } else {
+            userEntity = findUser.get();
         }
-        return oAuth2User;
+        return new PrincipalDetails(userEntity, oAuth2User.getAttributes());
     }
 }

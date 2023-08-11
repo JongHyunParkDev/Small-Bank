@@ -13,7 +13,7 @@ const axios = defaultAxios.create({
 });
 
 export const Api = {
-    get: (url: string, data: object) => {
+    get: (url: string, data: object | undefined) => {
         return axios.get(apiPrefix + url, data);
     },
 
