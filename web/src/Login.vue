@@ -28,6 +28,7 @@
 import { defineComponent } from 'vue';
 import LogoSvgSrc from '@/assets/logo/logo.svg';
 import NaverLoginBtnSrc from '@/assets/images/naver_login_btn.png';
+import { useAuthStore } from '@/stores/AuthStore';
 
 export default defineComponent({
     name: 'App',
@@ -36,6 +37,10 @@ export default defineComponent({
             LogoSvgSrc,
             NaverLoginBtnSrc
         };
+    },
+    async mounted() {
+        await useAuthStore().login();
+        this.$router.push('/');
     },
 });
 </script>

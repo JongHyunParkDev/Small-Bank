@@ -13,7 +13,6 @@
 import { Todo, Meta } from '@/components/models';
 import ExampleComponent from 'components/ExampleComponent.vue';
 import { defineComponent, ref } from 'vue';
-import { Api } from '@/lib/Api';
 
 export default defineComponent({
     name: 'IndexPage',
@@ -42,12 +41,9 @@ export default defineComponent({
             },
         ]);
         const meta = ref<Meta>({
-                totalCount: 1200,
+            totalCount: 1200,
         });
         return { todos, meta };
     },
-    async mounted() {
-        await Api.get('user/userinfo');
-    }
 });
 </script>
