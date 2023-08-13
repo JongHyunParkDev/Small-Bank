@@ -9,7 +9,6 @@
             <a
                 class="login-btn"
                 href="/oauth2/authorization/naver"
-                target="_blank"
             >
                 <img
                     :src="NaverLoginBtnSrc"
@@ -18,7 +17,12 @@
             </a>
         </div>
         <div class="footer">
-            GitHub <a href="https://github.com/JongHyunParkDev/SPPD">https://github.com/JongHyunParkDev/SPPD</a>
+            GitHub
+            <a
+                target="_blank"
+                href="https://github.com/JongHyunParkDev/SPPD">
+                https://github.com/JongHyunParkDev/SPPD
+            </a>
         </div>
 
     </div>
@@ -32,6 +36,12 @@ import { useAuthStore } from '@/stores/AuthStore';
 
 export default defineComponent({
     name: 'App',
+    props: {
+        isSuccess: {
+            type: Boolean,
+            required: true,
+        },
+    },
     setup() {
         return {
             LogoSvgSrc,
@@ -39,8 +49,10 @@ export default defineComponent({
         };
     },
     async mounted() {
-        await useAuthStore().login();
-        this.$router.push('/');
+        if (this.isSuccess) {
+            await useAuthStore().login();
+            this.$router.push('/');
+        }
     },
 });
 </script>

@@ -2,8 +2,14 @@ import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
     {
+        path: '/loginSuccess',
+        component: () => import('../Login.vue'),
+        props: { isSuccess: true }
+    },
+    {
         path: '/login',
         component: () => import('../Login.vue'),
+        props: { isSuccess: false }
     },
     {
         path: '/',
