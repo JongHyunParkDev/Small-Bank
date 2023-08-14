@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,23 +28,25 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/login.html").permitAll()
+                .requestMatchers("/login").permitAll()
                 .requestMatchers("/api/user/**").authenticated() // user 시작하는 uri는 로그인 필수
                 .requestMatchers("/api/admin/**").hasRole("ADMIN") // admin 시작하는 uri는 관리자 계정만 접근 가능
                 .anyRequest().authenticated() //나머지 uri는 모든 접근 허용
                 .and()
                 .logout()
                 .logoutUrl("/api/user/logout") // URL mapping for logout
-                .logoutSuccessUrl("/login.html") // Redirect to login page after successful logout
+                .logoutSuccessUrl("/login") // Redirect to login page after successful logout
                 .invalidateHttpSession(true) // Invalidate HTTP session after logout
                 .clearAuthentication(true) // Clear authentication information after logout
                 .permitAll()
                 .and()
                 .oauth2Login()
-                .loginPage("/login.html") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
-                .successHandler(loginSuccessHandler()) //OAuth 로그인이 성공하면 이동할 uri 설정
                 .userInfoEndpoint()//로그인 완료 후 회원 정보 받기
-                .userService(oAuth2MemberService).and().and().build();
+                .userService(oAuth2MemberService)
+                .and()
+                .loginPage("/login") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
+                .successHandler(loginSuccessHandler()) //OAuth 로그인이 성공하면 이동할 uri 설정
+                .and().build();
     }
 
 
@@ -60,13 +63,23 @@ public class SecurityConfig {
                 HttpSession session = request.getSession();
                 String sessionId = session.getId();
                 String userId = auth.getName();
+                // 이미 로그인 된 상황임.
+
+                // dev 일 경우 proxy port 로 변경해서 redirect 한다.
+                if (isDev)
+                    response.sendRedirect("http://localhost:1133/login");
+                else
+                    response.sendRedirect("http://localhost:1132/login");
+
 
             } catch (Exception e) {
                 // 여기까지 왔으면 이미 로그인은 성공된 경우임.
                 logger.error("handle login success error.", e);
             }
         }
-
+        @Value("${sppd.dev}")
+        private boolean isDev;
     }
+
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 }

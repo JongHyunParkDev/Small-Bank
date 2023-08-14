@@ -36,12 +36,6 @@ import { useAuthStore } from '@/stores/AuthStore';
 
 export default defineComponent({
     name: 'App',
-    props: {
-        isSuccess: {
-            type: Boolean,
-            required: true,
-        },
-    },
     setup() {
         return {
             LogoSvgSrc,
@@ -49,10 +43,8 @@ export default defineComponent({
         };
     },
     async mounted() {
-        if (this.isSuccess) {
-            await useAuthStore().login();
-            this.$router.push('/');
-        }
+        await useAuthStore().login();
+        this.$router.push('/');
     },
 });
 </script>

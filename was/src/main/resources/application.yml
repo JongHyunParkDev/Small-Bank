@@ -15,8 +15,7 @@ spring:
             client-secret: K6solI01Qa
             client-name: Naver
             authorization-grant-type: authorization_code
-#           // Local DEV 용
-            redirect-uri: http://localhost:1133/loginSuccess
+            redirect-uri: http://localhost:1132/login/oauth2/code/naver
         provider:
           naver:
             authorization-uri: https://nid.naver.com/oauth2.0/authorize
@@ -30,5 +29,8 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: create
+
+sppd:
+  dev: true
 server:
   port: 1132
