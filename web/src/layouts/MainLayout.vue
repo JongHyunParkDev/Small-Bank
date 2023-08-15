@@ -38,6 +38,7 @@
         <QPageContainer>
             <RouterView />
         </QPageContainer>
+        <ProcessSpinner v-if="processCount > 0"/>
     </QLayout>
 </template>
 
@@ -45,6 +46,7 @@
 import { defineComponent, ref } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
 import RouterLink from 'components/RouterLink.vue';
+import ProcessSpinner from '@/components/ProcessSpinner.vue';
 
 const linksList = [
     {
@@ -93,12 +95,17 @@ const linksList = [
 
 export default defineComponent({
     name: 'MainLayout',
-
     components: {
         EssentialLink,
         RouterLink,
+        ProcessSpinner
     },
-
+    provide() {
+        return {
+            upProcessSpinner: this.upProcessSpinner,
+            downProcessSpinner: this.downProcessSpinner
+        }
+    },
     setup() {
         const leftDrawerOpen = ref(false);
 
@@ -108,8 +115,18 @@ export default defineComponent({
             toggleLeftDrawer() {
                 leftDrawerOpen.value = !leftDrawerOpen.value;
             },
+
+            processCount: 0,
         };
     },
+    methods: {
+        upProcessSpinner() {
+            this.processCount = 1;
+        },
+        downProcessSpinner() {
+            this.processCount = 0;
+        }
+    }
 });
 </script>
 

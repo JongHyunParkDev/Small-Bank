@@ -1,6 +1,6 @@
-export async function process(that: any, func: () => void)
+export async function process(upProcessSpinner: () => void, downProcessSpinner: () => void, func: () => void)
 {
-    that.processingCount++;
+    upProcessSpinner();
     try {
         return await func();
     }
@@ -8,7 +8,7 @@ export async function process(that: any, func: () => void)
         return Promise.reject(err);
     }
     finally {
-        that.processingCount--;
+        downProcessSpinner();
     }
 }
 

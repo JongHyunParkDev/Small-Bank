@@ -24,27 +24,46 @@
                 https://github.com/JongHyunParkDev/SPPD
             </a>
         </div>
-
+        <ProcessSpinner v-if="processCount > 0"/>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref, Ref } from 'vue';
 import LogoSvgSrc from '@/assets/logo/logo.svg';
 import NaverLoginBtnSrc from '@/assets/images/naver_login_btn.png';
+import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { useAuthStore } from '@/stores/AuthStore';
+import { process } from '@/lib/Async';
+
+const processCount: Ref<number> = ref(0);
 
 export default defineComponent({
     name: 'App',
+    components: {
+        ProcessSpinner
+    },
     setup() {
         return {
             LogoSvgSrc,
-            NaverLoginBtnSrc
+            NaverLoginBtnSrc,
+
+            processCount
         };
     },
-    async mounted() {
-        await useAuthStore().login();
-        this.$router.push('/');
+    methods: {
+        upProcessSpinner() {
+            processCount.value = 1;
+        },
+        downProcessSpinner() {
+            processCount.value = 0;
+        }
+    },
+    mounted() {
+        process(this.upProcessSpinner, this.downProcessSpinner, async () => {
+            await useAuthStore().login();
+            this.$router.push('/');
+        });
     },
 });
 </script>
