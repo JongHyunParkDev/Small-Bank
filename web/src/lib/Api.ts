@@ -1,9 +1,13 @@
-import defaultAxios from 'axios';
+import defaultAxios, { AxiosError, AxiosPromise, AxiosResponse, ResponseType } from 'axios';
 import qs from 'qs';
 
 const apiPrefix = '/api/';
 
 const axios = defaultAxios.create({
+    // 개발 목표
+    // 최대 30초 이상 기간이 걸리지 않도록 하자.
+    timeout: 30000,
+    withCredentials: false,
     // axios는 기본이 'bracket'인데, 그러면 https://...getList?names[]=a&names[]=b 처럼 request
     // url이 만들어지고, Spring Boot에서는 '['에 대해 다음과 같은 오류를 낸다.
     //   Invalid character found in the request target.
@@ -14,18 +18,31 @@ const axios = defaultAxios.create({
 
 export const Api = {
     get: (url: string, data: object | undefined) => {
-        return axios.get(apiPrefix + url, data);
+        return process(axios.get(apiPrefix + url, data));
     },
 
     post: (url: string, data: object) => {
-        return axios.post(apiPrefix + url, data);
+        return process(axios.post(apiPrefix + url, data));
     },
 
     put: (url: string, data: object) => {
-        return axios.put(apiPrefix + url, data);
+        return process(axios.put(apiPrefix + url, data));
     },
 
     delete: (url: string, data: object) => {
-        return axios.delete(apiPrefix + url, data);
+        return process(axios.delete(apiPrefix + url, data));
     },
 };
+
+function process(axiosPromise: AxiosPromise) {
+    return axiosPromise.
+    then((response: AxiosResponse) => {
+        if (response === undefined)
+            return undefined;
+        return response.data;
+    }, (error: AxiosError) => {
+        // TODO Backend 단에서 code 와 message 를 던진 후 만든다.
+        console.log(error);
+        throw error;
+    }) 
+}

@@ -49,7 +49,6 @@ public class SecurityConfig {
                 .and().build();
     }
 
-
     @Bean
     public LoginSuccessHandler loginSuccessHandler() {
         return new LoginSuccessHandler();

@@ -11,7 +11,7 @@ export const useAuthStore = defineStore({
         async login() {
             const userInfo = await Api.get('user/userinfo', undefined);
             // TODO API 에서 http status code, data 등은 Api.ts 에서 처리하자.
-            this.user = userInfo.data;
+            this.user = userInfo;
             this.isLoggedIn = true;
         },
         async logout() {
