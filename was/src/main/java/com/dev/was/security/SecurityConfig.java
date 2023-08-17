@@ -1,5 +1,6 @@
 package com.dev.was.security;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -14,6 +15,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
+
+import java.io.IOException;
 
 @Configuration
 @RequiredArgsConstructor
@@ -26,7 +30,7 @@ public class SecurityConfig {
         return httpSecurity
                 .httpBasic().disable()
                 .csrf().disable()
-                .cors().disable()
+                .cors().and()
                 .authorizeHttpRequests()
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/api/user/**").authenticated() // user 시작하는 uri는 로그인 필수
@@ -35,7 +39,6 @@ public class SecurityConfig {
                 .and()
                 .logout()
                 .logoutUrl("/api/user/logout") // URL mapping for logout
-                .logoutSuccessUrl("/login") // Redirect to login page after successful logout
                 .invalidateHttpSession(true) // Invalidate HTTP session after logout
                 .clearAuthentication(true) // Clear authentication information after logout
                 .permitAll()
@@ -44,7 +47,6 @@ public class SecurityConfig {
                 .userInfoEndpoint()//로그인 완료 후 회원 정보 받기
                 .userService(oAuth2MemberService)
                 .and()
-                .loginPage("/login") //로그인이 필요한데 로그인을 하지 않았다면 이동할 uri 설정
                 .successHandler(loginSuccessHandler()) //OAuth 로그인이 성공하면 이동할 uri 설정
                 .and().build();
     }
@@ -66,9 +68,9 @@ public class SecurityConfig {
 
                 // dev 일 경우 proxy port 로 변경해서 redirect 한다.
                 if (isDev)
-                    response.sendRedirect("http://localhost:1133/login");
+                    response.sendRedirect("http://localhost:1133/");
                 else
-                    response.sendRedirect("http://localhost:1132/login");
+                    response.sendRedirect("http://localhost:1132/");
 
 
             } catch (Exception e) {

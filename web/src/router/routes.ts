@@ -9,13 +9,11 @@ const routes: RouteRecordRaw[] = [
         path: '/',
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
-        meta: { requiresAuth: true }
     },
     {
         path: '/AccountBook',
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/AccountBookPage.vue') }],
-        meta: { requiresAuth: true }
     },
 
     // Always leave this as last one,

@@ -11,9 +11,21 @@
                     @click="toggleLeftDrawer"
                 />
 
-                <QToolbarTitle> SPPD App </QToolbarTitle>
+                <QToolbarTitle> SPPD </QToolbarTitle>
 
-                <div>Quasar v{{ $q.version }}</div>
+                <div class="avatar-content">
+                    <QAvatar>
+                        <img :src="userInfo?.profileImg">
+                    </QAvatar>
+                    <div class="name">
+                        {{ userInfo?.name }}
+                    </div>
+                    <QIcon
+                        class="icon"
+                        name="logout"
+                        @click="logout"
+                    />
+                </div>
             </QToolbar>
         </QHeader>
 
@@ -43,10 +55,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, Ref } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
 import RouterLink from 'components/RouterLink.vue';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
+import { useAuthStore } from '@/stores/AuthStore';
+import { process } from '@/lib/Async';
+import { UserInfo } from '@/stores/Models';
 
 const linksList = [
     {
@@ -108,6 +123,8 @@ export default defineComponent({
     },
     setup() {
         const leftDrawerOpen = ref(false);
+        const userInfo: Ref<UserInfo | undefined> = ref(undefined);
+        const processCount: Ref<number> = ref(0);
 
         return {
             essentialLinks: linksList,
@@ -115,8 +132,8 @@ export default defineComponent({
             toggleLeftDrawer() {
                 leftDrawerOpen.value = !leftDrawerOpen.value;
             },
-
-            processCount: 0,
+            userInfo,
+            processCount,
         };
     },
     methods: {
@@ -125,8 +142,25 @@ export default defineComponent({
         },
         downProcessSpinner() {
             this.processCount = 0;
+        },
+        logout() {
+            process(this.upProcessSpinner, this.downProcessSpinner, async () => {
+                await useAuthStore().logout();
+                this.$router.push('/login');
+            });
         }
-    }
+    },
+    mounted() {
+        if (useAuthStore().isLoggedIn) return;
+        process(this.upProcessSpinner, () => {
+            this.downProcessSpinner();
+            if (! useAuthStore().isLoggedIn) this.$router.push('/login');
+        }, async () => {
+            await useAuthStore().login();
+            this.userInfo = useAuthStore().userInfo;
+
+        });
+    },
 });
 </script>
 
@@ -134,5 +168,25 @@ export default defineComponent({
 .header {
     background-color: white;
     color: black;
+
+    .avatar-content {
+        display: flex;
+        flex-direction: row;
+
+        > .name {
+            padding: 10px;
+        }
+
+        > .icon {
+            font-size: 1.2em;
+            padding: 12px;
+            border-radius: 100%;
+
+            &:hover {
+                cursor: pointer;
+                background-color: green;
+            }
+        }
+    }
 }
 </style>

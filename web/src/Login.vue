@@ -33,8 +33,8 @@ import { defineComponent, ref, Ref } from 'vue';
 import LogoSvgSrc from '@/assets/logo/logo.svg';
 import NaverLoginBtnSrc from '@/assets/images/naver_login_btn.png';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
-import { useAuthStore } from '@/stores/AuthStore';
-import { process } from '@/lib/Async';
+// import { useAuthStore } from '@/stores/AuthStore';
+// import { process } from '@/lib/Async';
 
 const processCount: Ref<number> = ref(0);
 
@@ -59,12 +59,6 @@ export default defineComponent({
             processCount.value = 0;
         }
     },
-    mounted() {
-        process(this.upProcessSpinner, this.downProcessSpinner, async () => {
-            await useAuthStore().login();
-            this.$router.push('/');
-        });
-    },
 });
 </script>
 
@@ -83,10 +77,10 @@ export default defineComponent({
     > .logo {
         filter: drop-shadow(0 0 3px	#4ec525);
         width: 300px;
+        margin: 50px 0px;
     }
 
     > .login-btns {
-        margin: 30px 0px;
 
         > .login-btn {
             width: 200px;
@@ -102,7 +96,7 @@ export default defineComponent({
     }
 
     > .footer {
-
+        margin: 50px 0px;
     }
 
 }

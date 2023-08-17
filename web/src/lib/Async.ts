@@ -1,6 +1,6 @@
-export async function process(upProcessSpinner: () => void, downProcessSpinner: () => void, func: () => void)
+export async function process(firstProcess: () => void, lastProcess: () => void, func: () => void)
 {
-    upProcessSpinner();
+    firstProcess();
     try {
         return await func();
     }
@@ -8,7 +8,7 @@ export async function process(upProcessSpinner: () => void, downProcessSpinner: 
         return Promise.reject(err);
     }
     finally {
-        downProcessSpinner();
+        lastProcess();
     }
 }
 
