@@ -70,12 +70,12 @@ export default defineComponent({
     font-weight: bold;
 
     > .day {
-        border-radius: 10px;
+        border-radius: $spacing-md;
         height: 100%;
         > .account {
             font-size: 0.75em;
             > .item {
-                padding: 0px 3px;
+                padding: 0px $spacing-tn;
             }
             > .spend {
                 color: $pink-14;

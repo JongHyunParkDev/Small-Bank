@@ -11,15 +11,31 @@
                     @click="toggleLeftDrawer"
                 />
 
-                <QToolbarTitle> SPPD App </QToolbarTitle>
+                <QToolbarTitle
+                    class="logo-text"
+                    @click="goHome"
+                >
+                    SPPD
+                </QToolbarTitle>
 
-                <div>Quasar v{{ $q.version }}</div>
+                <div class="avatar-content">
+                    <QAvatar>
+                        <img :src="userInfo?.profileImg">
+                    </QAvatar>
+                    <div class="name">
+                        {{ userInfo?.name }}
+                    </div>
+                    <QIcon
+                        class="icon"
+                        name="logout"
+                        @click="logout"
+                    />
+                </div>
             </QToolbar>
         </QHeader>
 
         <QDrawer
             v-model="leftDrawerOpen"
-            show-if-above
             bordered
         >
             <QList>
@@ -38,13 +54,18 @@
         <QPageContainer>
             <RouterView />
         </QPageContainer>
+        <ProcessSpinner v-if="processCount > 0"/>
     </QLayout>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, Ref } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
 import RouterLink from 'components/RouterLink.vue';
+import ProcessSpinner from '@/components/ProcessSpinner.vue';
+import { useAuthStore } from '@/stores/AuthStore';
+import { process } from '@/lib/Async';
+import { UserInfo } from '@/stores/Models';
 
 const linksList = [
     {
@@ -93,14 +114,21 @@ const linksList = [
 
 export default defineComponent({
     name: 'MainLayout',
-
     components: {
         EssentialLink,
         RouterLink,
+        ProcessSpinner
     },
-
+    provide() {
+        return {
+            upProcessSpinner: this.upProcessSpinner,
+            downProcessSpinner: this.downProcessSpinner
+        }
+    },
     setup() {
         const leftDrawerOpen = ref(false);
+        const userInfo: Ref<UserInfo | undefined> = ref(undefined);
+        const processCount: Ref<number> = ref(0);
 
         return {
             essentialLinks: linksList,
@@ -108,14 +136,75 @@ export default defineComponent({
             toggleLeftDrawer() {
                 leftDrawerOpen.value = !leftDrawerOpen.value;
             },
+            userInfo,
+            processCount,
         };
+    },
+    methods: {
+        upProcessSpinner() {
+            this.processCount = 1;
+        },
+        downProcessSpinner() {
+            this.processCount = 0;
+        },
+        logout() {
+            process(this.upProcessSpinner, this.downProcessSpinner, async () => {
+                await useAuthStore().logout();
+                this.$router.push('/login');
+            });
+        },
+        goHome() {
+            this.$router.push('/');
+        }
+    },
+    mounted() {
+        if (useAuthStore().isLoggedIn) {
+            this.userInfo = useAuthStore().userInfo;
+        }
+        else {
+            process(this.upProcessSpinner, () => {
+                this.downProcessSpinner();
+                if (! useAuthStore().isLoggedIn) this.$router.push('/login');
+            }, async () => {
+                await useAuthStore().login();
+                this.userInfo = useAuthStore().userInfo;
+            });
+        }
     },
 });
 </script>
 
 <style lang="scss" scoped>
 .header {
-    background-color: white;
-    color: black;
+    background-color: $naver-bs;
+    color: white;
+
+    .logo-text:hover {
+        cursor: pointer;
+    }
+
+    .avatar-content {
+        display: flex;
+        flex-direction: row;
+
+        img {
+            border: 1px solid $grey-7;
+        }
+
+        > .name {
+            padding: $spacing-md;
+        }
+
+        > .icon {
+            font-size: 1.4em;
+            padding: $spacing-md;
+            border-radius: 100%;
+
+            &:hover {
+                cursor: pointer;
+                background-color: $naver-dk;
+            }
+        }
+    }
 }
 </style>

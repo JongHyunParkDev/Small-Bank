@@ -41,7 +41,7 @@ export default defineComponent({
             },
         ]);
         const meta = ref<Meta>({
-                totalCount: 1200,
+            totalCount: 1200,
         });
         return { todos, meta };
     },
