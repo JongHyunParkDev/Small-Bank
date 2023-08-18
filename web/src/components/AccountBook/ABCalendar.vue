@@ -213,7 +213,7 @@ export default defineComponent({
         },
         selectDay(day: AccountBookDay) {
             selectedABDay.value = day;
-            this.$emit('select-day', dateToApiDateStr(nowYear.value, nowMonth.value, day.num));
+            if (day.num) this.$emit('select-day', dateToApiDateStr(nowYear.value, nowMonth.value, day.num));
         }
     }
 });
@@ -226,12 +226,12 @@ export default defineComponent({
 
     > .heaeder {
         display: flex;
-        margin: 5px auto;
+        margin: $spacing-sm auto;
         > .abc-outer {
             max-width: 100px;
-            margin: 0px 5px;
-            border-radius: 5px;
-            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2), 0 2px 2px rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12);
+            margin: 0px $spacing-sm;
+            border-radius: $spacing-sm;
+            box-shadow: 0 1px $spacing-sm rgba(0, 0, 0, 0.2), 0 2px 2px rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12);
 
             ::v-deep .abc-input {
                 text-align: center;
@@ -241,16 +241,16 @@ export default defineComponent({
             .input-append {
                 font-weight: bold;
                 font-size: 14px;
-                padding-right: 5px;
+                padding-right: $spacing-sm;
             }
         }
 
         > .btn-right {
-            margin-left: 10px;
+            margin-left: $spacing-md;
         }
 
         > .btn-left {
-            margin-right: 10px;
+            margin-right: $spacing-md;
         }
     }
 
@@ -260,7 +260,7 @@ export default defineComponent({
         > .col-item {
             flex: 1;
             text-align: center;
-            padding: 10px 5px;
+            padding: $spacing-md $spacing-sm;
         }
 
         > .red {
@@ -279,7 +279,7 @@ export default defineComponent({
             position: relative;
             flex: 1;
             text-align: center;
-            margin: 10px 2%;
+            margin: $spacing-md 2%;
             height: 70%;
         }
     }

@@ -11,7 +11,12 @@
                     @click="toggleLeftDrawer"
                 />
 
-                <QToolbarTitle> SPPD </QToolbarTitle>
+                <QToolbarTitle
+                    class="logo-text"
+                    @click="goHome"
+                >
+                    SPPD
+                </QToolbarTitle>
 
                 <div class="avatar-content">
                     <QAvatar>
@@ -31,7 +36,6 @@
 
         <QDrawer
             v-model="leftDrawerOpen"
-            show-if-above
             bordered
         >
             <QList>
@@ -148,43 +152,57 @@ export default defineComponent({
                 await useAuthStore().logout();
                 this.$router.push('/login');
             });
+        },
+        goHome() {
+            this.$router.push('/');
         }
     },
     mounted() {
-        if (useAuthStore().isLoggedIn) return;
-        process(this.upProcessSpinner, () => {
-            this.downProcessSpinner();
-            if (! useAuthStore().isLoggedIn) this.$router.push('/login');
-        }, async () => {
-            await useAuthStore().login();
+        if (useAuthStore().isLoggedIn) {
             this.userInfo = useAuthStore().userInfo;
-
-        });
+        }
+        else {
+            process(this.upProcessSpinner, () => {
+                this.downProcessSpinner();
+                if (! useAuthStore().isLoggedIn) this.$router.push('/login');
+            }, async () => {
+                await useAuthStore().login();
+                this.userInfo = useAuthStore().userInfo;
+            });
+        }
     },
 });
 </script>
 
 <style lang="scss" scoped>
 .header {
-    background-color: white;
-    color: black;
+    background-color: $naver-bs;
+    color: white;
+
+    .logo-text:hover {
+        cursor: pointer;
+    }
 
     .avatar-content {
         display: flex;
         flex-direction: row;
 
+        img {
+            border: 1px solid $grey-7;
+        }
+
         > .name {
-            padding: 10px;
+            padding: $spacing-md;
         }
 
         > .icon {
-            font-size: 1.2em;
-            padding: 12px;
+            font-size: 1.4em;
+            padding: $spacing-md;
             border-radius: 100%;
 
             &:hover {
                 cursor: pointer;
-                background-color: green;
+                background-color: $naver-dk;
             }
         }
     }

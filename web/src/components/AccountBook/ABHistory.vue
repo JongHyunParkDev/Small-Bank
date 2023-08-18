@@ -77,11 +77,11 @@ export default defineComponent({
     overflow-y: auto;
 
     > .scroll-container {
-        padding: 10px;
+        padding: $spacing-md;
 
         > .history-row {
             display: flex;
-            margin: 5px;
+            margin: $spacing-md;
             font-size: 16px;
             font-weight: bold;
 
@@ -93,7 +93,7 @@ export default defineComponent({
                 text-align: center;
                 flex-shrink: 0; /* 기본적으로 줄어드는 비율을 0으로 설정 */
                 flex-basis: 10%; /* 기본 크기 설정을 자동으로 유지 */
-                padding: 10px;
+                padding: $spacing-md;
             }
             > .time {
                 flex-grow: 1;

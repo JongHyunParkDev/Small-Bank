@@ -35,14 +35,14 @@
                 :disable="selectedDay === undefined"
                 @click="isAddDialog = true"
             />
-            <QTooltip 
+            <QTooltip
                 v-if="selectedDay === undefined"
-                class="bg-indigo" 
+                class="bg-indigo"
             >
                 일을 선택해주세요
             </QTooltip>
         </div>
-        
+
         <QDialog
             class="abhistory-add-dialog"
             v-model="isAddDialog"
@@ -343,7 +343,7 @@ export default defineComponent({
             //TODO API 구현
             clear();
         },
-        deleteHistory() {            
+        deleteHistory() {
             const account = sortAccountArr.value[selectedIdx.value];
 
             dayAccountArr.value = dayAccountArr.value.filter(item => item !== account);
@@ -374,6 +374,7 @@ export default defineComponent({
     height: 100%;
     display: flex;
     flex-direction: column;
+    padding: $spacing-sm;
 
     > .calendar {
         position: relative;
