@@ -36,10 +36,11 @@ public class AccountController {
                 null,
                 userId,
                 DBUtil.toLocalDate(requestAddAccountDto.date),
+                requestAddAccountDto.time,
                 requestAddAccountDto.memo,
                 requestAddAccountDto.money,
-                requestAddAccountDto.type,
-                requestAddAccountDto.time
+                requestAddAccountDto.category,
+                requestAddAccountDto.type
         );
     }
 
@@ -51,10 +52,11 @@ public class AccountController {
                 requestUpdateAccountDto.id,
                 userId,
                 DBUtil.toLocalDate(requestUpdateAccountDto.date),
+                requestUpdateAccountDto.time,
                 requestUpdateAccountDto.memo,
                 requestUpdateAccountDto.money,
-                requestUpdateAccountDto.type,
-                requestUpdateAccountDto.time
+                requestUpdateAccountDto.category,
+                requestUpdateAccountDto.type
         );
     }
 
@@ -67,11 +69,13 @@ public class AccountController {
         @NotNull
         private String date;
         @NotBlank
+        private String time;
+        @NotBlank
         private String memo;
         @NotNull
         private Long money;
         @NotBlank
-        private String time;
+        private String category;
         @NotBlank
         private String type;
     }
@@ -82,11 +86,13 @@ public class AccountController {
         @NotNull
         private String date;
         @NotBlank
+        private String time;
+        @NotBlank
         private String memo;
         @NotNull
         private Long money;
         @NotBlank
-        private String time;
+        private String category;
         @NotBlank
         private String type;
     }

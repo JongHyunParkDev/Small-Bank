@@ -30,15 +30,16 @@ class WasApplicationTests {
 		String memo = "test";
 		Long money = 5000L;
 		String time = "10:00";
+		String category = "category";
 		String type = "income";
 
 		AccountDto addAccountDto = accountService.saveAccount(
-				null, "test", DBUtil.toLocalDate(date), memo, money, time, type
+				null, "test", DBUtil.toLocalDate(date), time, memo, money, category, type
 		);
 		assertNotNull(addAccountDto.getId());
 
 		AccountDto updateAccountDto = accountService.saveAccount(
-				addAccountDto.getId(), "test", DBUtil.toLocalDate(date), "change memo", money, time, type
+				addAccountDto.getId(), "test", DBUtil.toLocalDate(date), time, "change memo", money, category, type
 		);
 		assertNotNull(addAccountDto.getId());
 

@@ -17,13 +17,19 @@ public class AccountEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //기본키
-
     @Column(nullable = false)
     private String userId;
+    @Column(nullable = false)
     private LocalDate date;
-    private String memo;
-    private Long money;
+    @Column(nullable = false)
     private String time;
+    @Column(nullable = false)
+    private String memo;
+    @Column(nullable = false)
+    private Long money;
+    @Column(nullable = false)
+    private String category;
+    @Column(nullable = false)
     private String type;
 
     @CreatedDate
@@ -33,13 +39,16 @@ public class AccountEntity {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public AccountEntity(Long id, String userId, LocalDate date, String memo, Long money, String time, String type, LocalDateTime createdDate, LocalDateTime modifiedDate) {
+    public AccountEntity(Long id, String userId, LocalDate date, String time, String memo, Long money, String category, String type, LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.id = id;
         this.userId = userId;
         this.date = date;
+        this.time = time;
         this.memo = memo;
         this.money = money;
-        this.time = time;
+        this.category = category;
         this.type = type;
+        this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
     }
 }

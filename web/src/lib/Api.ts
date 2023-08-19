@@ -1,4 +1,4 @@
-import defaultAxios, { AxiosError, AxiosPromise, AxiosResponse, ResponseType } from 'axios';
+import defaultAxios, { AxiosError, AxiosPromise, AxiosResponse } from 'axios';
 import qs from 'qs';
 
 const apiPrefix = '/api/';
@@ -17,22 +17,48 @@ const axios = defaultAxios.create({
 });
 
 export const Api = {
-    get: (url: string, data: object | undefined) => {
-        return process(axios.get(apiPrefix + url, data));
+    get: (url: string, params: object | undefined, config: any) => {
+        params = params ? { params: params} : undefined;
+        return process(axios.get(apiPrefix + url, appendAxiosConfig(params, config)));
     },
 
-    post: (url: string, data: object) => {
-        return process(axios.post(apiPrefix + url, data));
+    post: (url: string, params: object) => {
+        return process(axios.post(apiPrefix + url, params));
     },
 
-    put: (url: string, data: object) => {
-        return process(axios.put(apiPrefix + url, data));
+    put: (url: string, params: object) => {
+        return process(axios.put(apiPrefix + url, params));
     },
 
-    delete: (url: string, data: object) => {
-        return process(axios.delete(apiPrefix + url, data));
+    delete: (url: string, params: object) => {
+        return process(axios.delete(apiPrefix + url, params));
     },
 };
+
+function appendAxiosConfig(axiosConfig: any | undefined, config: any)
+{
+    if (config === undefined)
+        return axiosConfig;
+    for (const key in config) if (Object.hasOwnProperty.call(config, key))
+    {
+        if (key === 'isBinary')
+            add('responseType', 'arraybuffer');
+        else if (key === 'isBlob')
+            add('responseType', 'blob');
+        else if ((key !== 'reqConvertSpec') && (key !== 'resConvertSpec'))
+            add(key, config[key]);
+    }
+
+    return axiosConfig;
+
+    function add(key: string, value: any)
+    {
+        if (axiosConfig === undefined)
+            axiosConfig = {};
+        axiosConfig[key] = value;
+    }
+}
+
 
 function process(axiosPromise: AxiosPromise) {
     return axiosPromise.
@@ -44,5 +70,5 @@ function process(axiosPromise: AxiosPromise) {
         // TODO Backend 단에서 code 와 message 를 던진 후 만든다.
         console.log(error);
         throw error;
-    }) 
+    })
 }

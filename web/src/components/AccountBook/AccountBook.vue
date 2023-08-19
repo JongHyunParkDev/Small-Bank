@@ -12,20 +12,6 @@
             :day-account-arr="sortAccountArr"
             @modify-history="showModifyDialog"
         />
-        <!-- <QFab
-            class="fab"
-            color="primary"
-            icon="keyboard_arrow_up"
-            direction="up">
-            <QFabAction
-                color="primary"
-                icon="list"
-            />
-            <QFabAction
-                color="primary"
-                icon="add"
-            />
-        </QFab> -->
         <div class="fab-area">
             <QBtn
                 class="fab"
@@ -122,7 +108,7 @@
                             padding="xs lg"
                             label="취소"
                             color="primary"
-                            @click="clear"
+                            @click="clearDialogForm"
                             v-close-popup
                         />
                         <QBtn
@@ -214,7 +200,7 @@
                             padding="xs lg"
                             label="취소"
                             color="primary"
-                            @click="clear"
+                            @click="clearDialogForm"
                             v-close-popup
                         />
                         <QBtn
@@ -238,11 +224,18 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, Ref, computed } from 'vue';
+<script setup lang="ts">
+// TODO 모든 vue 파일을 Composition 으로 변경한다.
+import { ref, Ref, computed, inject } from 'vue';
+import { compare } from '@/lib/StrUtil';
+import { process } from '@/lib/Async';
 import ABCalendar from 'components/AccountBook/ABCalendar.vue';
 import ABHistory from 'components/AccountBook/ABHistory.vue';
-import { compare } from '@/lib/StrUtil';
+import { Api } from '@/lib/Api';
+import { dateToApiDateStr } from '@/lib/DateUtil';
+
+const upProcessSpinner = inject<() => void>('upProcessSpinner');
+const downProcessSpinner = inject<() => void>('downProcessSpinner');
 
 //TODO 거래 내역은 추후에 api 로 변경해야한다.
 // id, timestamp, text, money, category, type
@@ -258,25 +251,41 @@ const selectedDay: Ref<string | undefined> = ref(undefined);
 const type = ref('spend');
 const selectedIdx = ref(0);
 
-const filterAccountArr = computed(() => {
-    return dayAccountArr.value.filter(account => account.date === selectedDay.value);
-})
-
 const sortAccountArr = computed(() => {
-    return filterAccountArr.value.sort((a, b) => compare(a.time, b.time));
+    return dayAccountArr.value.filter(account => account.date === selectedDay.value).sort((a, b) => compare(a.time, b.time));
 })
-
 
 function selectDay(day : string) {
     selectedDay.value = day;
 }
 
-function updateCalendar(obj: any) {
+function updateCalendar({ year, month }: { year: number, month: number }) {
+    const lastDay = new Date(year, month, 0).getDate();
+
     selectedDay.value = undefined;
+    const startDate = dateToApiDateStr(year, month, 1);
+    const endDate = dateToApiDateStr(year, month, lastDay);
     // TODO API getList 'YYYYmm' 으로 조회 해야함
+        console.log(startDate, endDate);
+    process(upProcessSpinner, downProcessSpinner, async () => {
+        const dayAccount = await Api.get('user/accounts', {
+            startDate: startDate,
+            endDate: endDate,
+        })
+
+        console.log(dayAccount);
+        // dayAccountArr.value.push({
+        //     date: selectedDay.value,
+        //     time: time.value,
+        //     category: category.value,
+        //     memo: memo.value,
+        //     money: +money.value,
+        //     type: type.value,
+        // });
+    });
 }
 
-function clear() {
+function clearDialogForm() {
     time.value ='00:00';
     category.value = '';
     type.value = 'spend';
@@ -297,72 +306,51 @@ function showModifyDialog(idx: number) {
     isModifyDialog.value = true;
 }
 
-updateCalendar({
-    year: new Date().getFullYear(),
-    month: new Date().getMonth() + 1,
-});
+function addHistory() {
+    isAddDialog.value = false;
 
-export default defineComponent({
-    name: 'AccountBook',
-    components: {
-        ABCalendar,
-        ABHistory
-    },
-    setup() {
-        return {
-            selectDay,
-            updateCalendar,
-            dayAccountArr,
-            sortAccountArr,
-            isAddDialog,
-            isModifyDialog,
-            selectedIdx,
+    clearDialogForm();
 
-            clear,
-            showModifyDialog,
-            selectedDay,
-            time,
-            category,
-            type,
-            money,
-            memo
-        };
-    },
-    methods: {
-        addHistory() {
-            dayAccountArr.value.push({
-                date: selectedDay.value,
-                time: time.value,
-                category: category.value,
-                memo: memo.value,
-                money: +money.value,
-                type: type.value,
-            });
+    process(upProcessSpinner, downProcessSpinner, async () => {
+        const dayAccount = await Api.post('user/add', {
+            date: selectedDay.value,
+            time: time.value,
+            category: category.value,
+            memo: memo.value,
+            money: +money.value,
+            type: type.value,
+        })
 
-            isAddDialog.value = false;
-            //TODO API 구현
-            clear();
-        },
-        deleteHistory() {
-            const account = sortAccountArr.value[selectedIdx.value];
+        console.log(dayAccount);
+        // dayAccountArr.value.push({
+        //     date: selectedDay.value,
+        //     time: time.value,
+        //     category: category.value,
+        //     memo: memo.value,
+        //     money: +money.value,
+        //     type: type.value,
+        // });
+    });
+}
 
-            dayAccountArr.value = dayAccountArr.value.filter(item => item !== account);
+function deleteHistory() {
+    const account = sortAccountArr.value[selectedIdx.value];
+    dayAccountArr.value = dayAccountArr.value.filter(item => item !== account);
 
-            clear();
-            //TODO API 구현
-        },
-        modifyHistory() {
-            const account = sortAccountArr.value[selectedIdx.value];
-            account.time = time.value;
-            account.text = memo.value;
-            account.money = +money.value;
-            account.type = type.value;
-            clear();
-            //TODO API 구현
-        }
+    clearDialogForm();
+    //TODO API 구현
+}
 
-    }
-});
+function modifyHistory() {
+    const account = sortAccountArr.value[selectedIdx.value];
+    account.time = time.value;
+    account.text = memo.value;
+    account.money = +money.value;
+    account.type = type.value;
+
+    clearDialogForm();
+    //TODO API 구현
+}
 </script>
 
 <style lang="scss" scoped>
