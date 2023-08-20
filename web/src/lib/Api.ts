@@ -17,26 +17,29 @@ const axios = defaultAxios.create({
 });
 
 export const Api = {
-    get: (url: string, params: object | undefined, config: any) => {
+    get: (url: string, params: object | undefined, config: any | undefined) => {
         params = params ? { params: params} : undefined;
         return process(axios.get(apiPrefix + url, appendAxiosConfig(params, config)));
     },
 
-    post: (url: string, params: object) => {
-        return process(axios.post(apiPrefix + url, params));
+    post: (url: string, params: object | undefined, config: any | undefined) => {
+        if (params === undefined)
+            params = {};
+        return process(axios.post(apiPrefix + url, appendAxiosConfig(params, config)));
     },
 
-    put: (url: string, params: object) => {
-        return process(axios.put(apiPrefix + url, params));
+    put: (url: string, params: object | undefined, config: any | undefined) => {
+        params = params ? { params: params} : undefined;
+        return process(axios.put(apiPrefix + url, appendAxiosConfig(params, config)));
     },
 
-    delete: (url: string, params: object) => {
-        return process(axios.delete(apiPrefix + url, params));
+    delete: (url: string, params: object | undefined, config: any | undefined) => {
+        params = params ? { params: params} : undefined;
+        return process(axios.delete(apiPrefix + url, appendAxiosConfig(params, config)));
     },
 };
 
-function appendAxiosConfig(axiosConfig: any | undefined, config: any)
-{
+function appendAxiosConfig(axiosConfig: any | undefined, config: any) {
     if (config === undefined)
         return axiosConfig;
     for (const key in config) if (Object.hasOwnProperty.call(config, key))
@@ -48,7 +51,6 @@ function appendAxiosConfig(axiosConfig: any | undefined, config: any)
         else if ((key !== 'reqConvertSpec') && (key !== 'resConvertSpec'))
             add(key, config[key]);
     }
-
     return axiosConfig;
 
     function add(key: string, value: any)

@@ -11,11 +11,13 @@
                     @click="toggleLeftDrawer"
                 />
 
-                <QToolbarTitle
-                    class="logo-text"
-                    @click="goHome"
-                >
-                    SPPD
+                <QToolbarTitle>
+                    <span
+                        class="logo-text"
+                        @click="goHome"
+                    >
+                        SPPD
+                    </span>
                 </QToolbarTitle>
 
                 <div class="avatar-content">

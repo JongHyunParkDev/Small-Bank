@@ -44,9 +44,10 @@ public class AccountService {
                 .id(id)
                 .userId(userId)
                 .date(date)
+                .time(time)
                 .memo(memo)
                 .money(money)
-                .time(time)
+                .category(category)
                 .type(type)
                 .build();
 

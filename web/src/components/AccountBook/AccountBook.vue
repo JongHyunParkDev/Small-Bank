@@ -16,14 +16,13 @@
             <QBtn
                 class="fab"
                 round
-                color="primary"
                 icon="add"
                 :disable="selectedDay === undefined"
                 @click="isAddDialog = true"
             />
             <QTooltip
                 v-if="selectedDay === undefined"
-                class="bg-indigo"
+                class="bg-green"
             >
                 일을 선택해주세요
             </QTooltip>
@@ -265,24 +264,33 @@ function updateCalendar({ year, month }: { year: number, month: number }) {
     selectedDay.value = undefined;
     const startDate = dateToApiDateStr(year, month, 1);
     const endDate = dateToApiDateStr(year, month, lastDay);
-    // TODO API getList 'YYYYmm' 으로 조회 해야함
-        console.log(startDate, endDate);
-    process(upProcessSpinner, downProcessSpinner, async () => {
-        const dayAccount = await Api.get('user/accounts', {
-            startDate: startDate,
-            endDate: endDate,
-        })
 
-        console.log(dayAccount);
-        // dayAccountArr.value.push({
-        //     date: selectedDay.value,
-        //     time: time.value,
-        //     category: category.value,
-        //     memo: memo.value,
-        //     money: +money.value,
-        //     type: type.value,
-        // });
-    });
+    // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
+    if (upProcessSpinner && downProcessSpinner) {
+        process(upProcessSpinner, downProcessSpinner, async () => {
+            const dayAccountList = await Api.get('user/accounts', {
+                startDate: startDate,
+                endDate: endDate,
+            }, undefined);
+
+            console.log(dayAccountList);
+
+            dayAccountArr.value = [];
+
+            dayAccountList.forEach(dayAccount => {
+                dayAccountArr.value.push(dayAccount);
+            })
+            // dayAccountArr.value.push({
+            //     date: selectedDay.value,
+            //     time: time.value,
+            //     category: category.value,
+            //     memo: memo.value,
+            //     money: +money.value,
+            //     type: type.value,
+            // });
+        });
+    }
+
 }
 
 function clearDialogForm() {
@@ -309,29 +317,35 @@ function showModifyDialog(idx: number) {
 function addHistory() {
     isAddDialog.value = false;
 
-    clearDialogForm();
+    // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
+    if (upProcessSpinner && downProcessSpinner) {
+        process(upProcessSpinner, downProcessSpinner, async () => {
+            const dayAccount = await Api.post('user/accounts', {
+                date: selectedDay.value,
+                time: time.value,
+                category: category.value,
+                memo: memo.value,
+                money: +money.value,
+                type: type.value,
+            }, undefined)
 
-    process(upProcessSpinner, downProcessSpinner, async () => {
-        const dayAccount = await Api.post('user/add', {
-            date: selectedDay.value,
-            time: time.value,
-            category: category.value,
-            memo: memo.value,
-            money: +money.value,
-            type: type.value,
-        })
+            console.log(dayAccount);
+            dayAccountArr.value.push({
+                id: dayAccount.id,
+                date: dayAccount.date,
+                time: dayAccount.time,
+                category: dayAccount.category,
+                memo: dayAccount.memo,
+                money: +dayAccount.money,
+                type: dayAccount.type,
+            });
 
-        console.log(dayAccount);
-        // dayAccountArr.value.push({
-        //     date: selectedDay.value,
-        //     time: time.value,
-        //     category: category.value,
-        //     memo: memo.value,
-        //     money: +money.value,
-        //     type: type.value,
-        // });
-    });
+
+            clearDialogForm();
+        });
+    }
 }
+
 
 function deleteHistory() {
     const account = sortAccountArr.value[selectedIdx.value];
@@ -382,7 +396,8 @@ function modifyHistory() {
         bottom: 20px;
         right: 20px;
         > .fab {
-
+            background-color: $naver-bs;
+            color: white;
         }
     }
 }

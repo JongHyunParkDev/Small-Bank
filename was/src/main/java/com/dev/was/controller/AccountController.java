@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/user")
+@RequiredArgsConstructor
 public class AccountController {
     private final AccountService accountService;
 
@@ -28,7 +28,7 @@ public class AccountController {
                 DBUtil.toLocalDate(startDate), DBUtil.toLocalDate(endDate));
     }
 
-    @PostMapping("/add")
+    @PostMapping("/accounts")
     public AccountDto addAccount(@RequestBody @Valid RequestAddAccountDto requestAddAccountDto) {
         String userId = AuthenticationUtil.getCurrentUserId();
 
@@ -44,7 +44,7 @@ public class AccountController {
         );
     }
 
-    @PutMapping("/update")
+    @PutMapping("/accounts")
     public AccountDto updateAccount(@RequestBody @Valid RequestUpdateAccountDto requestUpdateAccountDto) {
         String userId = AuthenticationUtil.getCurrentUserId();
 
@@ -60,46 +60,46 @@ public class AccountController {
         );
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/accounts")
     public void deleteAccount(@RequestBody @Valid RequestDeleteAccountDto requestDeleteAccountDto) {
         accountService.deleteAccount(requestDeleteAccountDto.id);
     }
 
     public static class RequestAddAccountDto {
         @NotNull
-        private String date;
+        public String date;
         @NotBlank
-        private String time;
+        public String time;
         @NotBlank
-        private String memo;
+        public String memo;
         @NotNull
-        private Long money;
+        public Long money;
         @NotBlank
-        private String category;
+        public String category;
         @NotBlank
-        private String type;
+        public String type;
     }
 
     public static class RequestUpdateAccountDto {
         @NotNull
-        private Long id;
+        public Long id;
         @NotNull
-        private String date;
+        public String date;
         @NotBlank
-        private String time;
+        public String time;
         @NotBlank
-        private String memo;
+        public String memo;
         @NotNull
-        private Long money;
+        public Long money;
         @NotBlank
-        private String category;
+        public String category;
         @NotBlank
-        private String type;
+        public String type;
     }
 
     public static class RequestDeleteAccountDto {
         @NotNull
-        private Long id;
+        public Long id;
     }
 
 }
