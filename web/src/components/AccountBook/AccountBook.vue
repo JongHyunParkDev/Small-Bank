@@ -115,7 +115,6 @@
                             type="submit"
                             label="추가"
                             color="primary"
-                            v-close-popup
                         />
                     </QCardActions>
                 </QForm>
@@ -208,14 +207,12 @@
                             label="삭제"
                             color="primary"
                             @click="deleteHistory()"
-                            v-close-popup
                         />
                         <QBtn
                             padding="xs lg"
                             type="submit"
                             label="변경"
                             color="primary"
-                            v-close-popup
                         />
                     </QCardActions>
                 </QForm>
@@ -309,6 +306,8 @@ function showModifyDialog(idx: number) {
 function addHistory() {
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
+        isAddDialog.value = false;
+
         process(upProcessSpinner, downProcessSpinner, async () => {
             const dayAccount = await Api.post('user/accounts', {
                 date: selectedDay.value,
@@ -337,6 +336,8 @@ function addHistory() {
 function deleteHistory() {
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
+        isModifyDialog.value = false;
+
         process(upProcessSpinner, downProcessSpinner, async () => {
             const account = sortAccountArr.value[selectedIdx.value];
 
@@ -354,6 +355,8 @@ function deleteHistory() {
 function modifyHistory() {
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
+        isModifyDialog.value = false;
+
         process(upProcessSpinner, downProcessSpinner, async () => {
             const account = sortAccountArr.value[selectedIdx.value];
 
