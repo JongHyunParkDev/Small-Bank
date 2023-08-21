@@ -133,7 +133,6 @@ export default defineComponent({
     computed: {
         dayAccountTypeMap() {
             const map = {};
-            console.log(this.dayAccountArr);
 
             this.dayAccountArr.forEach(dayAccount => {
                 if (map[+dayAccount.date.substring(6, 8)] === undefined)
@@ -141,7 +140,6 @@ export default defineComponent({
                 map[+dayAccount.date.substring(6, 8)][dayAccount.type] = true;
 
             })
-            console.log(map);
             return map;
         }
     },

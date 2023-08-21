@@ -33,7 +33,7 @@
                 <div class="memo item text">
                     {{ dayAccount.memo }}
                     <QTooltip
-                        class="bg-indigo"
+                        class="bg-green"
                         anchor="top middle"
                         self="center middle"
                     >
@@ -62,7 +62,6 @@ export default defineComponent({
     },
     methods: {
         modifyHistroy(idx : number) {
-            console.log(idx);
             this.$emit('modify-history', idx);
         }
     }

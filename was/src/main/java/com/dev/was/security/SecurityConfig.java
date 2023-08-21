@@ -66,11 +66,12 @@ public class SecurityConfig {
                 String userId = auth.getName();
                 // 이미 로그인 된 상황임.
 
+                String url = request.getScheme() + "://" + request.getServerName();
                 // dev 일 경우 proxy port 로 변경해서 redirect 한다.
                 if (isDev)
-                    response.sendRedirect("http://localhost:1133/");
+                    response.sendRedirect(url + ":1133");
                 else
-                    response.sendRedirect("http://localhost:1132/");
+                    response.sendRedirect(url + ":1132");
 
 
             } catch (Exception e) {

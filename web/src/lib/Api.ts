@@ -29,12 +29,13 @@ export const Api = {
     },
 
     put: (url: string, params: object | undefined, config: any | undefined) => {
-        params = params ? { params: params} : undefined;
+        if (params === undefined)
+            params = {};
         return process(axios.put(apiPrefix + url, appendAxiosConfig(params, config)));
     },
 
     delete: (url: string, params: object | undefined, config: any | undefined) => {
-        params = params ? { params: params} : undefined;
+        params = params ? { data: params} : undefined;
         return process(axios.delete(apiPrefix + url, appendAxiosConfig(params, config)));
     },
 };

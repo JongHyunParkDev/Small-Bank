@@ -115,6 +115,7 @@
                             type="submit"
                             label="추가"
                             color="primary"
+                            v-close-popup
                         />
                     </QCardActions>
                 </QForm>
@@ -228,17 +229,18 @@
 import { ref, Ref, computed, inject } from 'vue';
 import { compare } from '@/lib/StrUtil';
 import { process } from '@/lib/Async';
-import ABCalendar from 'components/AccountBook/ABCalendar.vue';
-import ABHistory from 'components/AccountBook/ABHistory.vue';
 import { Api } from '@/lib/Api';
 import { dateToApiDateStr } from '@/lib/DateUtil';
+import { DayAccount } from '@/components/AccountBook/models';
+import ABCalendar from 'components/AccountBook/ABCalendar.vue';
+import ABHistory from 'components/AccountBook/ABHistory.vue';
 
 const upProcessSpinner = inject<() => void>('upProcessSpinner');
 const downProcessSpinner = inject<() => void>('downProcessSpinner');
 
 //TODO 거래 내역은 추후에 api 로 변경해야한다.
 // id, timestamp, text, money, category, type
-const dayAccountArr: Ref<Array<any>> = ref([]);
+const dayAccountArr: Ref<Array<DayAccount>> = ref([]);
 const isAddDialog = ref(false);
 const isModifyDialog = ref(false);
 
@@ -251,7 +253,8 @@ const type = ref('spend');
 const selectedIdx = ref(0);
 
 const sortAccountArr = computed(() => {
-    return dayAccountArr.value.filter(account => account.date === selectedDay.value).sort((a, b) => compare(a.time, b.time));
+    return dayAccountArr.value.filter(account => account.date === selectedDay.value)
+        .sort((a, b) => compare(a.time, b.time));
 })
 
 function selectDay(day : string) {
@@ -268,29 +271,18 @@ function updateCalendar({ year, month }: { year: number, month: number }) {
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
         process(upProcessSpinner, downProcessSpinner, async () => {
-            const dayAccountList = await Api.get('user/accounts', {
+            const dayAccountList: Array<DayAccount> = await Api.get('user/accounts', {
                 startDate: startDate,
                 endDate: endDate,
             }, undefined);
-
-            console.log(dayAccountList);
 
             dayAccountArr.value = [];
 
             dayAccountList.forEach(dayAccount => {
                 dayAccountArr.value.push(dayAccount);
             })
-            // dayAccountArr.value.push({
-            //     date: selectedDay.value,
-            //     time: time.value,
-            //     category: category.value,
-            //     memo: memo.value,
-            //     money: +money.value,
-            //     type: type.value,
-            // });
         });
     }
-
 }
 
 function clearDialogForm() {
@@ -315,8 +307,6 @@ function showModifyDialog(idx: number) {
 }
 
 function addHistory() {
-    isAddDialog.value = false;
-
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
         process(upProcessSpinner, downProcessSpinner, async () => {
@@ -329,7 +319,6 @@ function addHistory() {
                 type: type.value,
             }, undefined)
 
-            console.log(dayAccount);
             dayAccountArr.value.push({
                 id: dayAccount.id,
                 date: dayAccount.date,
@@ -340,30 +329,53 @@ function addHistory() {
                 type: dayAccount.type,
             });
 
+            clearDialogForm();
+        });
+    }
+}
+
+function deleteHistory() {
+    // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
+    if (upProcessSpinner && downProcessSpinner) {
+        process(upProcessSpinner, downProcessSpinner, async () => {
+            const account = sortAccountArr.value[selectedIdx.value];
+
+            await Api.delete('user/accounts', {
+                id: account.id
+            }, undefined)
+
+            dayAccountArr.value = dayAccountArr.value.filter(item => item !== account);
 
             clearDialogForm();
         });
     }
 }
 
-
-function deleteHistory() {
-    const account = sortAccountArr.value[selectedIdx.value];
-    dayAccountArr.value = dayAccountArr.value.filter(item => item !== account);
-
-    clearDialogForm();
-    //TODO API 구현
-}
-
 function modifyHistory() {
-    const account = sortAccountArr.value[selectedIdx.value];
-    account.time = time.value;
-    account.text = memo.value;
-    account.money = +money.value;
-    account.type = type.value;
+    // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
+    if (upProcessSpinner && downProcessSpinner) {
+        process(upProcessSpinner, downProcessSpinner, async () => {
+            const account = sortAccountArr.value[selectedIdx.value];
 
-    clearDialogForm();
-    //TODO API 구현
+            await Api.put('user/accounts', {
+                id: account.id,
+                date: account.date,
+                time: time.value,
+                category: category.value,
+                memo: memo.value,
+                money: +money.value,
+                type: type.value,
+            }, undefined)
+
+            account.time = time.value;
+            account.category = category.value;
+            account.memo = memo.value;
+            account.money = +money.value;
+            account.type = type.value;
+
+            clearDialogForm();
+        });
+    }
 }
 </script>
 
