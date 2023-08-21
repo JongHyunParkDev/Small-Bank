@@ -12,32 +12,17 @@
             :day-account-arr="sortAccountArr"
             @modify-history="showModifyDialog"
         />
-        <!-- <QFab
-            class="fab"
-            color="primary"
-            icon="keyboard_arrow_up"
-            direction="up">
-            <QFabAction
-                color="primary"
-                icon="list"
-            />
-            <QFabAction
-                color="primary"
-                icon="add"
-            />
-        </QFab> -->
         <div class="fab-area">
             <QBtn
                 class="fab"
                 round
-                color="primary"
                 icon="add"
                 :disable="selectedDay === undefined"
                 @click="isAddDialog = true"
             />
             <QTooltip
                 v-if="selectedDay === undefined"
-                class="bg-indigo"
+                class="bg-green"
             >
                 일을 선택해주세요
             </QTooltip>
@@ -122,7 +107,7 @@
                             padding="xs lg"
                             label="취소"
                             color="primary"
-                            @click="clear"
+                            @click="clearDialogForm"
                             v-close-popup
                         />
                         <QBtn
@@ -130,6 +115,7 @@
                             type="submit"
                             label="추가"
                             color="primary"
+                            v-close-popup
                         />
                     </QCardActions>
                 </QForm>
@@ -214,7 +200,7 @@
                             padding="xs lg"
                             label="취소"
                             color="primary"
-                            @click="clear"
+                            @click="clearDialogForm"
                             v-close-popup
                         />
                         <QBtn
@@ -238,15 +224,23 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, Ref, computed } from 'vue';
+<script setup lang="ts">
+// TODO 모든 vue 파일을 Composition 으로 변경한다.
+import { ref, Ref, computed, inject } from 'vue';
+import { compare } from '@/lib/StrUtil';
+import { process } from '@/lib/Async';
+import { Api } from '@/lib/Api';
+import { dateToApiDateStr } from '@/lib/DateUtil';
+import { DayAccount } from '@/components/AccountBook/models';
 import ABCalendar from 'components/AccountBook/ABCalendar.vue';
 import ABHistory from 'components/AccountBook/ABHistory.vue';
-import { compare } from '@/lib/StrUtil';
+
+const upProcessSpinner = inject<() => void>('upProcessSpinner');
+const downProcessSpinner = inject<() => void>('downProcessSpinner');
 
 //TODO 거래 내역은 추후에 api 로 변경해야한다.
 // id, timestamp, text, money, category, type
-const dayAccountArr: Ref<Array<any>> = ref([]);
+const dayAccountArr: Ref<Array<DayAccount>> = ref([]);
 const isAddDialog = ref(false);
 const isModifyDialog = ref(false);
 
@@ -258,25 +252,40 @@ const selectedDay: Ref<string | undefined> = ref(undefined);
 const type = ref('spend');
 const selectedIdx = ref(0);
 
-const filterAccountArr = computed(() => {
-    return dayAccountArr.value.filter(account => account.date === selectedDay.value);
-})
-
 const sortAccountArr = computed(() => {
-    return filterAccountArr.value.sort((a, b) => compare(a.time, b.time));
+    return dayAccountArr.value.filter(account => account.date === selectedDay.value)
+        .sort((a, b) => compare(a.time, b.time));
 })
-
 
 function selectDay(day : string) {
     selectedDay.value = day;
 }
 
-function updateCalendar(obj: any) {
+function updateCalendar({ year, month }: { year: number, month: number }) {
+    const lastDay = new Date(year, month, 0).getDate();
+
     selectedDay.value = undefined;
-    // TODO API getList 'YYYYmm' 으로 조회 해야함
+    const startDate = dateToApiDateStr(year, month, 1);
+    const endDate = dateToApiDateStr(year, month, lastDay);
+
+    // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
+    if (upProcessSpinner && downProcessSpinner) {
+        process(upProcessSpinner, downProcessSpinner, async () => {
+            const dayAccountList: Array<DayAccount> = await Api.get('user/accounts', {
+                startDate: startDate,
+                endDate: endDate,
+            }, undefined);
+
+            dayAccountArr.value = [];
+
+            dayAccountList.forEach(dayAccount => {
+                dayAccountArr.value.push(dayAccount);
+            })
+        });
+    }
 }
 
-function clear() {
+function clearDialogForm() {
     time.value ='00:00';
     category.value = '';
     type.value = 'spend';
@@ -297,72 +306,77 @@ function showModifyDialog(idx: number) {
     isModifyDialog.value = true;
 }
 
-updateCalendar({
-    year: new Date().getFullYear(),
-    month: new Date().getMonth() + 1,
-});
-
-export default defineComponent({
-    name: 'AccountBook',
-    components: {
-        ABCalendar,
-        ABHistory
-    },
-    setup() {
-        return {
-            selectDay,
-            updateCalendar,
-            dayAccountArr,
-            sortAccountArr,
-            isAddDialog,
-            isModifyDialog,
-            selectedIdx,
-
-            clear,
-            showModifyDialog,
-            selectedDay,
-            time,
-            category,
-            type,
-            money,
-            memo
-        };
-    },
-    methods: {
-        addHistory() {
-            dayAccountArr.value.push({
+function addHistory() {
+    // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
+    if (upProcessSpinner && downProcessSpinner) {
+        process(upProcessSpinner, downProcessSpinner, async () => {
+            const dayAccount = await Api.post('user/accounts', {
                 date: selectedDay.value,
                 time: time.value,
                 category: category.value,
                 memo: memo.value,
                 money: +money.value,
                 type: type.value,
+            }, undefined)
+
+            dayAccountArr.value.push({
+                id: dayAccount.id,
+                date: dayAccount.date,
+                time: dayAccount.time,
+                category: dayAccount.category,
+                memo: dayAccount.memo,
+                money: +dayAccount.money,
+                type: dayAccount.type,
             });
 
-            isAddDialog.value = false;
-            //TODO API 구현
-            clear();
-        },
-        deleteHistory() {
+            clearDialogForm();
+        });
+    }
+}
+
+function deleteHistory() {
+    // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
+    if (upProcessSpinner && downProcessSpinner) {
+        process(upProcessSpinner, downProcessSpinner, async () => {
             const account = sortAccountArr.value[selectedIdx.value];
+
+            await Api.delete('user/accounts', {
+                id: account.id
+            }, undefined)
 
             dayAccountArr.value = dayAccountArr.value.filter(item => item !== account);
 
-            clear();
-            //TODO API 구현
-        },
-        modifyHistory() {
+            clearDialogForm();
+        });
+    }
+}
+
+function modifyHistory() {
+    // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
+    if (upProcessSpinner && downProcessSpinner) {
+        process(upProcessSpinner, downProcessSpinner, async () => {
             const account = sortAccountArr.value[selectedIdx.value];
+
+            await Api.put('user/accounts', {
+                id: account.id,
+                date: account.date,
+                time: time.value,
+                category: category.value,
+                memo: memo.value,
+                money: +money.value,
+                type: type.value,
+            }, undefined)
+
             account.time = time.value;
-            account.text = memo.value;
+            account.category = category.value;
+            account.memo = memo.value;
             account.money = +money.value;
             account.type = type.value;
-            clear();
-            //TODO API 구현
-        }
 
+            clearDialogForm();
+        });
     }
-});
+}
 </script>
 
 <style lang="scss" scoped>
@@ -394,7 +408,8 @@ export default defineComponent({
         bottom: 20px;
         right: 20px;
         > .fab {
-
+            background-color: $naver-bs;
+            color: white;
         }
     }
 }

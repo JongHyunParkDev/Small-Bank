@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/user")
+@RequiredArgsConstructor
 public class AccountController {
     private final AccountService accountService;
 
@@ -28,7 +28,7 @@ public class AccountController {
                 DBUtil.toLocalDate(startDate), DBUtil.toLocalDate(endDate));
     }
 
-    @PostMapping("/add")
+    @PostMapping("/accounts")
     public AccountDto addAccount(@RequestBody @Valid RequestAddAccountDto requestAddAccountDto) {
         String userId = AuthenticationUtil.getCurrentUserId();
 
@@ -36,14 +36,15 @@ public class AccountController {
                 null,
                 userId,
                 DBUtil.toLocalDate(requestAddAccountDto.date),
+                requestAddAccountDto.time,
                 requestAddAccountDto.memo,
                 requestAddAccountDto.money,
-                requestAddAccountDto.type,
-                requestAddAccountDto.time
+                requestAddAccountDto.category,
+                requestAddAccountDto.type
         );
     }
 
-    @PutMapping("/update")
+    @PutMapping("/accounts")
     public AccountDto updateAccount(@RequestBody @Valid RequestUpdateAccountDto requestUpdateAccountDto) {
         String userId = AuthenticationUtil.getCurrentUserId();
 
@@ -51,49 +52,54 @@ public class AccountController {
                 requestUpdateAccountDto.id,
                 userId,
                 DBUtil.toLocalDate(requestUpdateAccountDto.date),
+                requestUpdateAccountDto.time,
                 requestUpdateAccountDto.memo,
                 requestUpdateAccountDto.money,
-                requestUpdateAccountDto.type,
-                requestUpdateAccountDto.time
+                requestUpdateAccountDto.category,
+                requestUpdateAccountDto.type
         );
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/accounts")
     public void deleteAccount(@RequestBody @Valid RequestDeleteAccountDto requestDeleteAccountDto) {
         accountService.deleteAccount(requestDeleteAccountDto.id);
     }
 
     public static class RequestAddAccountDto {
         @NotNull
-        private String date;
+        public String date;
         @NotBlank
-        private String memo;
+        public String time;
+        @NotBlank
+        public String memo;
         @NotNull
-        private Long money;
+        public Long money;
         @NotBlank
-        private String time;
+        public String category;
         @NotBlank
-        private String type;
+        public String type;
     }
 
     public static class RequestUpdateAccountDto {
         @NotNull
-        private Long id;
+        public Long id;
         @NotNull
-        private String date;
+        public String date;
         @NotBlank
-        private String memo;
+        public String time;
+        @NotBlank
+        public String memo;
         @NotNull
-        private Long money;
+        public Long money;
         @NotBlank
-        private String time;
+        public String category;
         @NotBlank
-        private String type;
+        public String type;
     }
 
     public static class RequestDeleteAccountDto {
         @NotNull
-        private Long id;
+        public Long id;
     }
 
 }

@@ -34,18 +34,20 @@ public class AccountService {
             Long id,
             String userId,
             LocalDate date,
+            String time,
             String memo,
             Long money,
-            String time,
+            String category,
             String type
             ) {
         AccountEntity saveAccountEntity = AccountEntity.builder()
                 .id(id)
                 .userId(userId)
                 .date(date)
+                .time(time)
                 .memo(memo)
                 .money(money)
-                .time(time)
+                .category(category)
                 .type(type)
                 .build();
 
