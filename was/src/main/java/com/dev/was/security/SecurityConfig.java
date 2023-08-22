@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
 import java.io.IOException;
@@ -39,6 +40,7 @@ public class SecurityConfig {
                 .and()
                 .logout()
                 .logoutUrl("/api/user/logout") // URL mapping for logout
+                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
                 .invalidateHttpSession(true) // Invalidate HTTP session after logout
                 .clearAuthentication(true) // Clear authentication information after logout
                 .permitAll()
