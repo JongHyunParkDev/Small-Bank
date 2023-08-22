@@ -1,5 +1,8 @@
 package com.dev.was.util;
 
+import com.dev.was.controller.ApiException;
+import com.dev.was.controller.ExceptionCodeEnum;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -21,8 +24,7 @@ public class DBUtil {
             return ((java.sql.Timestamp)obj).toLocalDateTime();
         }
         else
-            // TODO 변경해야한다. API Exception 를 새로 만들자.
-            throw new RuntimeException("convert fail");
+            throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT, "Object convert fail");
     }
 
     public static LocalDate toLocalDate(Object obj)
@@ -37,8 +39,7 @@ public class DBUtil {
             return ((java.sql.Timestamp)obj).toLocalDateTime().toLocalDate();
         }
         else
-            // TODO 변경해야한다. API Exception 를 새로 만들자.
-            throw new RuntimeException("convert fail");
+            throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT, "Object convert fail");
     }
 
     public static LocalTime toLocalTime(Object obj) {
@@ -52,7 +53,6 @@ public class DBUtil {
             return ((java.sql.Timestamp)obj).toLocalDateTime().toLocalTime();
         }
         else
-            // TODO 변경해야한다. API Exception 를 새로 만들자.
-            throw new RuntimeException("convert fail");
+            throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT, "Object convert fail");
     }
 }

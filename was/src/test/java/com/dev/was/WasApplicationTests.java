@@ -3,9 +3,12 @@ package com.dev.was;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+import com.dev.was.controller.ApiException;
 import com.dev.was.dto.AccountDto;
 import com.dev.was.repository.AccountRepository;
+import com.dev.was.repository.UserRepository;
 import com.dev.was.service.AccountService;
+import com.dev.was.service.UserService;
 import com.dev.was.util.DBUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -18,11 +21,29 @@ import java.util.List;
 
 @SpringBootTest
 class WasApplicationTests {
+
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private UserRepository userRepository;
+
 	@Autowired
 	private AccountService accountService;
 
 	@Autowired
 	private AccountRepository accountRepository;
+
+	@Test
+	void UserTest() throws Exception {
+		assertThrows(ApiException.class, () -> {
+			userService.getUserInfo("123");
+		});
+
+		assertEquals("eomgr55@naver.com",
+			userService.getUserInfo("QgOzdZCgQ8ZaWCR8fB3G::3K4KV1mds2OY6ws4LRGi_u-gRxI4kptkTnTnNnnFNp8").getEmail()
+		);
+	}
 
 	@Test
 	void AccountTest() throws Exception {
