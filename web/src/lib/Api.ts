@@ -1,7 +1,9 @@
 import defaultAxios, { AxiosError, AxiosPromise, AxiosResponse } from 'axios';
+import { useErrorStore } from '@/stores/ErrorStore';
 import qs from 'qs';
 
 const apiPrefix = '/api/';
+const errorStore = useErrorStore();
 
 const axios = defaultAxios.create({
     // 개발 목표
@@ -72,6 +74,7 @@ function process(axiosPromise: AxiosPromise) {
     }, (error: AxiosError) => {
         // TODO Backend 단에서 code 와 message 를 던진 후 만든다.
         console.log(error);
+        errorStore.addError(error + '');
         throw error;
     })
 }

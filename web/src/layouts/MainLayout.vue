@@ -53,6 +53,19 @@
             </QList>
         </QDrawer>
 
+        <QBanner v-if="errors.length !== 0" rounded class="error-area">
+            <div 
+                v-for="(error, idx) in errors"
+                :key="idx"
+                class="error-row"
+            >
+                {{ error }}
+            </div>
+            <template v-slot:action>
+                <QBtn class="btn" size="sm" flat color="white" label="닫기" @click="hideError"/>
+            </template>
+        </QBanner>
+
         <QPageContainer>
             <RouterView />
         </QPageContainer>
@@ -66,6 +79,7 @@ import EssentialLink from 'components/EssentialLink.vue';
 import RouterLink from 'components/RouterLink.vue';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { useAuthStore } from '@/stores/AuthStore';
+import { useErrorStore } from '@/stores/ErrorStore';
 import { process } from '@/lib/Async';
 import { UserInfo } from '@/stores/Models';
 
@@ -131,6 +145,8 @@ export default defineComponent({
         const leftDrawerOpen = ref(false);
         const userInfo: Ref<UserInfo | undefined> = ref(undefined);
         const processCount: Ref<number> = ref(0);
+        const errorList: Ref<Array<string>> = ref([]);
+        const errorStore = useErrorStore();
 
         return {
             essentialLinks: linksList,
@@ -140,7 +156,15 @@ export default defineComponent({
             },
             userInfo,
             processCount,
+
+            errorList,
+            errorStore
         };
+    },
+    computed: {
+        errors() {
+            return this.errorStore.errors;
+        }
     },
     methods: {
         upProcessSpinner() {
@@ -157,6 +181,9 @@ export default defineComponent({
         },
         goHome() {
             this.$router.push('/');
+        },
+        hideError() {
+            this.errorStore.clearError();
         }
     },
     mounted() {
@@ -206,6 +233,29 @@ export default defineComponent({
                 cursor: pointer;
                 background-color: $naver-dk;
             }
+        }
+    }
+}
+
+.error-area {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    background-color: $red-9;
+    color: white;
+    border: 1px solid $red-10;
+    margin: $spacing-md;
+    padding: $spacing-sm;
+    max-width: 50%;
+    z-index: 999999;
+
+    > .action-btns {
+        text-align: end;
+        margin-left: $spacing-md;
+        margin-top: $spacing-sm;
+        > .btn {
+            border: 1px solid $grey-4;
+            width: 60px;
         }
     }
 }
