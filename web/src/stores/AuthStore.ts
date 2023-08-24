@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { Api } from '@/lib/Api';
-import { UserInfo } from '@/stores/Models';
+import { UserInfo } from '@/types/UserTypes';
 
 export const useAuthStore = defineStore({
     id: 'auth', // 스토어 식별자

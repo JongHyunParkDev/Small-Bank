@@ -228,7 +228,7 @@ import { compare } from '@/lib/StrUtil';
 import { process } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { dateToApiDateStr } from '@/lib/DateUtil';
-import { DayAccount } from '@/components/AccountBook/models';
+import { DayAccount } from '@/types/AccountTypes';
 import ABCalendar from 'components/AccountBook/ABCalendar.vue';
 import ABHistory from 'components/AccountBook/ABHistory.vue';
 

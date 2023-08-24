@@ -37,7 +37,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { AccountBookDay } from './models';
+import { AccountBookDay } from '@/types/AccountTypes';
 
 export default defineComponent({
     name: 'ABDay',

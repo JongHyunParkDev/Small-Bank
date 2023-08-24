@@ -1,13 +1,12 @@
 import defaultAxios, { AxiosError, AxiosPromise, AxiosResponse } from 'axios';
-import { useErrorStore } from '@/stores/ErrorStore';
+import { ApiError } from '@/types/ErrorTypes';
+import * as Errors from '@/lib/Errors';
 import qs from 'qs';
 
 const apiPrefix = '/api/';
-const errorStore = useErrorStore();
 
 const axios = defaultAxios.create({
     // 개발 목표
-    // 최대 30초 이상 기간이 걸리지 않도록 하자.
     timeout: 30000,
     withCredentials: false,
     // axios는 기본이 'bracket'인데, 그러면 https://...getList?names[]=a&names[]=b 처럼 request
@@ -72,9 +71,36 @@ function process(axiosPromise: AxiosPromise) {
             return undefined;
         return response.data;
     }, (error: AxiosError) => {
-        // TODO Backend 단에서 code 와 message 를 던진 후 만든다.
         console.log(error);
-        errorStore.addError(error + '');
-        throw error;
+
+        if (error.response === undefined) {
+            // ApiError 변경한다.
+            // https://inpa.tistory.com/entry/TS-%F0%9F%93%98-%ED%83%80%EC%9E%85%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%BB%A4%EC%8A%A4%ED%85%80-Error-%EC%B2%98%EB%A6%AC%ED%95%98%EA%B8%B0 로 변경 예정
+            const returnError: ApiError = new Error(error.message);
+            returnError.code = Errors.code.REQUEST_FAILED + '';
+            return Promise.reject(returnError);
+        }
+        
+        // 일단 any
+        const data: any = error.response.data;
+
+        let message = Errors.message[data.code];
+        if (message){
+            if (data.message)
+                message += ' (' + data.message + ')';
+        }
+        else{
+            message = Errors.message[Errors.code.UNKNOWN] + ' (' + data.code;
+            if (data.message)
+                message += ': ' + data.message;
+            message += ')';
+        }
+
+        // ApiError 변경한다.
+        // https://inpa.tistory.com/entry/TS-%F0%9F%93%98-%ED%83%80%EC%9E%85%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%BB%A4%EC%8A%A4%ED%85%80-Error-%EC%B2%98%EB%A6%AC%ED%95%98%EA%B8%B0 로 변경 예정   
+        const returnError: ApiError = new Error(message);
+        returnError.code = data.code ? data.code : Errors.code.UNKNOWN; 
+
+        return Promise.reject(returnError);
     })
 }

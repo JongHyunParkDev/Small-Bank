@@ -81,7 +81,7 @@ import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useErrorStore } from '@/stores/ErrorStore';
 import { process } from '@/lib/Async';
-import { UserInfo } from '@/stores/Models';
+import { UserInfo } from '@/types/UserTypes';
 
 const linksList = [
     {
