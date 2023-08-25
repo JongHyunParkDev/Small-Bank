@@ -1,6 +1,6 @@
 import defaultAxios, { AxiosError, AxiosPromise, AxiosResponse } from 'axios';
-import { ApiError } from '@/types/ErrorTypes';
-import * as Errors from '@/lib/Errors';
+import { ApiError, ApiCode, ApiMessage, BackEndError } from '@/lib/Errors';
+import { isObject } from 'lodash';
 import qs from 'qs';
 
 const apiPrefix = '/api/';
@@ -73,34 +73,34 @@ function process(axiosPromise: AxiosPromise) {
     }, (error: AxiosError) => {
         console.log(error);
 
+        // client 발생 시점
         if (error.response === undefined) {
-            // ApiError 변경한다.
-            // https://inpa.tistory.com/entry/TS-%F0%9F%93%98-%ED%83%80%EC%9E%85%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%BB%A4%EC%8A%A4%ED%85%80-Error-%EC%B2%98%EB%A6%AC%ED%95%98%EA%B8%B0 로 변경 예정
-            const returnError: ApiError = new Error(error.message);
-            returnError.code = Errors.code.REQUEST_FAILED + '';
+            const returnError = new ApiError(error.message, ApiCode.REQUEST_FAILED.toString());
             return Promise.reject(returnError);
         }
         
-        // 일단 any
-        const data: any = error.response.data;
-
-        let message = Errors.message[data.code];
-        if (message){
-            if (data.message)
-                message += ' (' + data.message + ')';
+        // server 발생 시점
+        if (isObject(error.response.data)) {
+            const data = error.response.data as BackEndError; 
+        
+            let message = ApiMessage[data.code];
+            if (message){
+                if (data.message)
+                    message += ' (' + data.message + ')';
+            }
+            else{
+                message = ApiMessage[ApiCode.UNKNOWN] + ' (' + data.code;
+                if (data.message)
+                    message += ': ' + data.message;
+                message += ')';
+            }
+    
+            const returnError = new ApiError(message, data.code ? data.code : ApiCode.UNKNOWN.toString());
+    
+            return Promise.reject(returnError);
         }
-        else{
-            message = Errors.message[Errors.code.UNKNOWN] + ' (' + data.code;
-            if (data.message)
-                message += ': ' + data.message;
-            message += ')';
+        else {
+            Promise.reject(new Error(error.message));
         }
-
-        // ApiError 변경한다.
-        // https://inpa.tistory.com/entry/TS-%F0%9F%93%98-%ED%83%80%EC%9E%85%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%BB%A4%EC%8A%A4%ED%85%80-Error-%EC%B2%98%EB%A6%AC%ED%95%98%EA%B8%B0 로 변경 예정   
-        const returnError: ApiError = new Error(message);
-        returnError.code = data.code ? data.code : Errors.code.UNKNOWN; 
-
-        return Promise.reject(returnError);
     })
 }

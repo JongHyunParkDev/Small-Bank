@@ -24,7 +24,7 @@ public class DBUtil {
             return ((java.sql.Timestamp)obj).toLocalDateTime();
         }
         else
-            throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT, "Object convert fail");
+            throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT, "Failed Invalid Argument");
     }
 
     public static LocalDate toLocalDate(Object obj)
@@ -39,7 +39,7 @@ public class DBUtil {
             return ((java.sql.Timestamp)obj).toLocalDateTime().toLocalDate();
         }
         else
-            throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT, "Object convert fail");
+            throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT, "Failed Invalid Argument");
     }
 
     public static LocalTime toLocalTime(Object obj) {
@@ -53,6 +53,6 @@ public class DBUtil {
             return ((java.sql.Timestamp)obj).toLocalDateTime().toLocalTime();
         }
         else
-            throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT, "Object convert fail");
+            throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT, "Failed Invalid Argument");
     }
 }
