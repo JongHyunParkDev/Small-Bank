@@ -1,11 +1,12 @@
 import defaultAxios, { AxiosError, AxiosPromise, AxiosResponse } from 'axios';
+import { ApiError, ApiCode, ApiMessage, BackEndError } from '@/lib/Errors';
+import { isObject } from 'lodash';
 import qs from 'qs';
 
 const apiPrefix = '/api/';
 
 const axios = defaultAxios.create({
     // 개발 목표
-    // 최대 30초 이상 기간이 걸리지 않도록 하자.
     timeout: 30000,
     withCredentials: false,
     // axios는 기본이 'bracket'인데, 그러면 https://...getList?names[]=a&names[]=b 처럼 request
@@ -70,8 +71,36 @@ function process(axiosPromise: AxiosPromise) {
             return undefined;
         return response.data;
     }, (error: AxiosError) => {
-        // TODO Backend 단에서 code 와 message 를 던진 후 만든다.
         console.log(error);
-        throw error;
+
+        // client 발생 시점
+        if (error.response === undefined) {
+            const returnError = new ApiError(error.message, ApiCode.REQUEST_FAILED.toString());
+            return Promise.reject(returnError);
+        }
+        
+        // server 발생 시점
+        if (isObject(error.response.data)) {
+            const data = error.response.data as BackEndError; 
+        
+            let message = ApiMessage[data.code];
+            if (message){
+                if (data.message)
+                    message += ' (' + data.message + ')';
+            }
+            else{
+                message = ApiMessage[ApiCode.UNKNOWN] + ' (' + data.code;
+                if (data.message)
+                    message += ': ' + data.message;
+                message += ')';
+            }
+    
+            const returnError = new ApiError(message, data.code ? data.code : ApiCode.UNKNOWN.toString());
+    
+            return Promise.reject(returnError);
+        }
+        else {
+            Promise.reject(new Error(error.message));
+        }
     })
 }

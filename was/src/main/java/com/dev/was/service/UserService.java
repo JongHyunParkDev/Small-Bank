@@ -1,5 +1,7 @@
 package com.dev.was.service;
 
+import com.dev.was.controller.ApiException;
+import com.dev.was.controller.ExceptionCodeEnum;
 import com.dev.was.dto.UserDto;
 import com.dev.was.entity.UserEntity;
 import com.dev.was.repository.UserRepository;
@@ -17,8 +19,7 @@ public class UserService {
         Optional<UserEntity> findUser = userRepository.findByUserId(userId);
 
         if (findUser.isEmpty())
-            // TODO API Exception 추가시 작업
-            throw new RuntimeException("Failed find user");
+            throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT);
         return new UserDto(findUser.get());
     }
 }

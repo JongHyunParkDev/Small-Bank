@@ -2,7 +2,7 @@
     <div class="progress-spinner">
         <QSpinnerHourglass
             class="progress-spinner-icon"
-            color="green"
+            color="grey-5"
             size="5em"
         />
     </div>

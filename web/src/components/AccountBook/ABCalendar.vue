@@ -81,7 +81,7 @@
 import { defineComponent, ref, Ref, PropType } from 'vue';
 import ABDay from '@/components/AccountBook/ABDay.vue';
 import { dateToApiDateStr } from '@/lib/DateUtil';
-import { AccountBookDay } from './models';
+import { AccountBookDay } from '@/types/AccountTypes';
 
 // Date 객체
 const now = ref(new Date());
