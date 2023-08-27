@@ -18,12 +18,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -40,7 +37,12 @@ public class SecurityConfig {
 
         http
             .authorizeHttpRequests()
-                .requestMatchers("/login")
+                .requestMatchers(
+                    "/index.html",
+                            "/favicon.ico",
+                            "/icons/**",
+                            "/assets/**"
+                        )
                     .permitAll()
                 .requestMatchers("/api/user/**")
                     .authenticated() // user 시작하는 uri는 로그인 필수
@@ -56,6 +58,7 @@ public class SecurityConfig {
                 .invalidateHttpSession(true) // Invalidate HTTP session after logout
                 .clearAuthentication(true) // Clear authentication information after logout
                 .permitAll();
+
         http
             .oauth2Login()
                 .userInfoEndpoint()//로그인 완료 후 회원 정보 받기
@@ -112,29 +115,18 @@ public class SecurityConfig {
         @Override
         public void commence(HttpServletRequest request, HttpServletResponse response,
                              AuthenticationException authException) throws IOException {
-            String uri = request.getRequestURI();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
-            if (UseUrlList.contains(uri)) {
-                // 브라우저로 직접 navigate하는 URL은 로그인 쪽으로 redirect.
-                response.sendRedirect("/login");
-            } else {
-                // 그외 모든 요청은 JSON 형태의 error response를 직접 만들어서 전달한다.
-                response.setContentType("application/json");
-                response.setCharacterEncoding("utf-8");
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            String data = "{\"code\": " + ExceptionCodeEnum.LOGIN_NEED.getCode() + "}";
 
-                String data = "{\"code\": " + ExceptionCodeEnum.LOGIN_NEED.getCode() + "}";
-
-                PrintWriter out = response.getWriter();
-                out.print(data);
-                out.flush();
-                out.close();
-            }
+            PrintWriter out = response.getWriter();
+            out.print(data);
+            out.flush();
+            out.close();
         }
     }
-
-    // 인증이 필요한 url 
-    private static final List<String> UseUrlList = List.of("/", "/AccountBook");
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 }
