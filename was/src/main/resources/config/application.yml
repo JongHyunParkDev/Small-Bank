@@ -32,5 +32,12 @@ spring:
 
 sppd:
   dev: true
+  homeDir: ${user.dir}
+  logDir: ${sppd.homeDir}/log
+  logFileName: SppdWas
+
+logging:
+  config: classpath:logback-spring.xml
+
 server:
   port: 1132
