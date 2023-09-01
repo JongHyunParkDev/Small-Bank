@@ -1,6 +1,6 @@
 package com.dev.was.security;
 
-import jakarta.servlet.ServletException;
+import com.dev.was.controller.ExceptionCodeEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -13,12 +13,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
-import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @Configuration
 @RequiredArgsConstructor
@@ -27,30 +29,48 @@ public class SecurityConfig {
     private final OAuth2MemberService oAuth2MemberService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .httpBasic().disable()
-                .csrf().disable()
-                .cors().and()
-                .authorizeHttpRequests()
-                .requestMatchers("/login").permitAll()
-                .requestMatchers("/api/user/**").authenticated() // user 시작하는 uri는 로그인 필수
-                .requestMatchers("/api/admin/**").hasRole("ADMIN") // admin 시작하는 uri는 관리자 계정만 접근 가능
-                .anyRequest().authenticated() //나머지 uri는 모든 접근 허용
-                .and()
-                .logout()
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.httpBasic().disable();
+
+        http.csrf().disable()
+            .cors().disable();
+
+        http
+            .authorizeHttpRequests()
+                .requestMatchers(
+                    "/index.html",
+                            "/favicon.ico",
+                            "/icons/**",
+                            "/assets/**"
+                        )
+                    .permitAll()
+                .requestMatchers("/api/user/**")
+                    .authenticated() // user 시작하는 uri는 로그인 필수
+                .requestMatchers("/api/admin/**")
+                    .hasRole("ADMIN") // admin 시작하는 uri는 관리자 계정만 접근 가능
+                .anyRequest()
+                    .authenticated(); //나머지 uri는 모든 접근 허용
+
+        http
+            .logout()
                 .logoutUrl("/api/user/logout") // URL mapping for logout
                 .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
                 .invalidateHttpSession(true) // Invalidate HTTP session after logout
                 .clearAuthentication(true) // Clear authentication information after logout
-                .permitAll()
-                .and()
-                .oauth2Login()
+                .permitAll();
+
+        http
+            .oauth2Login()
                 .userInfoEndpoint()//로그인 완료 후 회원 정보 받기
                 .userService(oAuth2MemberService)
                 .and()
-                .successHandler(loginSuccessHandler()) //OAuth 로그인이 성공하면 이동할 uri 설정
-                .and().build();
+                    .successHandler(loginSuccessHandler()); //OAuth 로그인이 성공하면 이동할 uri 설정
+
+        http
+            .exceptionHandling()
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+
+        return http.build();
     }
 
     @Bean
@@ -83,6 +103,29 @@ public class SecurityConfig {
         }
         @Value("${sppd.dev}")
         private boolean isDev;
+    }
+
+    @Bean
+    public AuthenticationEntryPoint CustomAuthenticationEntryPoint() {
+        return new CustomAuthenticationEntryPoint();
+    }
+
+    // 인증되지 않은 사용자가 보호된 리소스에 접근하려고 할 때 발생하는 예외를 처리하기 위한 인터페이스
+    public static class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+        @Override
+        public void commence(HttpServletRequest request, HttpServletResponse response,
+                             AuthenticationException authException) throws IOException {
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+            String data = "{\"code\": " + ExceptionCodeEnum.LOGIN_NEED.getCode() + "}";
+
+            PrintWriter out = response.getWriter();
+            out.print(data);
+            out.flush();
+            out.close();
+        }
     }
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
