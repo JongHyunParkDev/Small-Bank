@@ -33,14 +33,29 @@ spring:
     hibernate:
       ddl-auto: validate #create
 
-sppd:
-  dev: true
-  homeDir: ${user.dir}
-  logDir: ${sppd.homeDir}/log
-  logFileName: SppdWas
-
 logging:
   config: classpath:logback-spring.xml
 
 server:
   port: 1132
+
+sppd:
+  dev: true
+  homeDir: ${user.dir}
+  logDir: ${sppd.homeDir}/log
+  logFileName: SppdWas
+  data:
+    weather:
+      # 성남동
+      nx: 63
+      ny: 124
+    bus:
+      # 종합 운동장 사거리
+      stationId: 205000136
+
+# 종합 운동장 사거리 bus mapping {routedId: busNum}
+data:
+  routedBus:
+    204000020: 33
+    204000076: 382
+    241221002: 8

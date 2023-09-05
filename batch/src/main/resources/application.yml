@@ -6,9 +6,9 @@ spring:
     name: SPPD-SERVICE
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/ecc
-    username: ecc
-    password: ecc1234!
+    url: jdbc:postgresql://localhost:5432/sppd
+    username: sppd
+    password: sppd1234!
   jpa:
     database: PostgreSQL
     hibernate:
