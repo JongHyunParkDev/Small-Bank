@@ -8,6 +8,7 @@ import com.dev.was.dto.AccountDto;
 import com.dev.was.repository.AccountRepository;
 import com.dev.was.repository.UserRepository;
 import com.dev.was.service.AccountService;
+import com.dev.was.service.SerialService;
 import com.dev.was.service.UserService;
 import com.dev.was.util.DBUtil;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,14 @@ class WasApplicationTests {
 
 	@Autowired
 	private AccountRepository accountRepository;
+
+	@Autowired
+	private SerialService service;
+
+	@Test
+	void SerialTest() throws Exception {
+		service.sendSerialMsg("HI TEST @");
+	}
 
 	@Test
 	void UserTest() throws Exception {
