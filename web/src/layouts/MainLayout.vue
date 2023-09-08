@@ -54,7 +54,7 @@
         </QDrawer>
 
         <QBanner v-if="errors.length !== 0" rounded class="error-area">
-            <div 
+            <div
                 v-for="(error, idx) in errors"
                 :key="idx"
                 class="error-row"
@@ -187,13 +187,13 @@ export default defineComponent({
         }
     },
     mounted() {
-        if (useAuthStore().isLoggedIn) {
+        if (useAuthStore().isAuth) {
             this.userInfo = useAuthStore().userInfo;
         }
         else {
             process(this.upProcessSpinner, () => {
                 this.downProcessSpinner();
-                if (! useAuthStore().isLoggedIn) this.$router.push('/login');
+                if (! useAuthStore().isAuth) this.$router.push('/login');
             }, async () => {
                 await useAuthStore().login();
                 this.userInfo = useAuthStore().userInfo;

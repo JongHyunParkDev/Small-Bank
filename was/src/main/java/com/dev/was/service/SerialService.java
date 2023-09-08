@@ -32,7 +32,7 @@ public class SerialService {
         }
     }
 
-    public void sendSerialMsg(String sendMsg) throws InterruptedException {
+    public synchronized void sendSerialMsg(String sendMsg) throws InterruptedException {
         // 마지막 String 짤림
         sendMsg = sendMsg.toUpperCase() + " ";
         if (serialPort.openPort()) {
