@@ -19,32 +19,35 @@
     </QItem>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { Route } from './models';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/AuthStore';
+import { Route } from '@/types/LinkTypes';
 
-export default defineComponent({
-    name: 'RouterLink',
-    setup () {
-        const routeList = ref<Route[]>([
-            {
-                title: '가계부',
-                caption: '간단한 가계부 서비스 (일)',
-                icon: 'calendar_today',
-                to: '/AccountBook'
-            },
-            {
-                title: '가계부 통계',
-                caption: '간단한 가계부 서비스 (달)',
-                icon: 'list',
-                to: '/AccountBookDetail'
-            },
-        ]);
+const isAdmin = useAuthStore().isAdmin;
+const routeList = ref<Route[]>([
+    {
+        title: '가계부',
+        caption: '간단한 가계부 서비스 (일)',
+        icon: 'calendar_today',
+        to: '/AccountBook'
+    },
+    {
+        title: '가계부 통계',
+        caption: '간단한 가계부 서비스 (달)',
+        icon: 'list',
+        to: '/AccountBookDetail'
+    },
+]);
 
-
-        return {
-            routeList,
-        };
+onMounted(() => {
+    if (isAdmin) {
+        routeList.value.push({
+            title: 'Toy',
+            caption: 'Arduino Toy',
+            icon: 'developer_board',
+            to: '/Arduino'
+        })
     }
-});
+})
 </script>

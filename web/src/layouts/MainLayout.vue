@@ -42,7 +42,7 @@
         >
             <QList>
                 <QItemLabel header> Menu </QItemLabel>
-                <RouterLink> </RouterLink>
+                <RouterLink v-if="isDone"> </RouterLink>
 
                 <QItemLabel header> Essential Links </QItemLabel>
                 <EssentialLink
@@ -145,6 +145,7 @@ export default defineComponent({
         const leftDrawerOpen = ref(false);
         const userInfo: Ref<UserInfo | undefined> = ref(undefined);
         const processCount: Ref<number> = ref(0);
+        const isDone: Ref<boolean> = ref(false);
         const errorList: Ref<Array<string>> = ref([]);
         const errorStore = useErrorStore();
 
@@ -156,7 +157,7 @@ export default defineComponent({
             },
             userInfo,
             processCount,
-
+            isDone,
             errorList,
             errorStore
         };
@@ -192,6 +193,7 @@ export default defineComponent({
         }
         else {
             process(this.upProcessSpinner, () => {
+                this.isDone = true;
                 this.downProcessSpinner();
                 if (! useAuthStore().isAuth) this.$router.push('/login');
             }, async () => {

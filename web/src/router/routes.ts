@@ -17,9 +17,9 @@ const routes: RouteRecordRaw[] = [
         meta: { isAuth: true }
     },
     {
-        path: '/MyCom',
+        path: '/Arduino',
         component: () => import('layouts/MainLayout.vue'),
-        children: [{ path: '', component: () => import('pages/AccountBookPage.vue') }],
+        children: [{ path: '', component: () => import('pages/ArduinoPage.vue') }],
         meta: { isAuth: true, isAdmin: true }
     },
 

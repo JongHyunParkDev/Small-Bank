@@ -235,8 +235,6 @@ import ABHistory from 'components/AccountBook/ABHistory.vue';
 const upProcessSpinner = inject<() => void>('upProcessSpinner');
 const downProcessSpinner = inject<() => void>('downProcessSpinner');
 
-//TODO 거래 내역은 추후에 api 로 변경해야한다.
-// id, timestamp, text, money, category, type
 const dayAccountArr: Ref<Array<DayAccount>> = ref([]);
 const isAddDialog = ref(false);
 const isModifyDialog = ref(false);

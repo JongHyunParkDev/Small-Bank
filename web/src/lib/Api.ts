@@ -71,7 +71,7 @@ function process(axiosPromise: AxiosPromise) {
             return undefined;
         return response.data;
     }, (error: AxiosError) => {
-        console.log(error);
+        console.error(error);
 
         // client 발생 시점
         if (error.response === undefined) {

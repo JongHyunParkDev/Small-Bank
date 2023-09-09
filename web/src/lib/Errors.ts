@@ -7,7 +7,7 @@ export class ApiError extends Error {
     }
 };
 
-export interface  BackEndError {
+export interface BackEndError {
     code: string;
     message: string;
 }
