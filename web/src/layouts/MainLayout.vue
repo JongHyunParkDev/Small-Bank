@@ -73,8 +73,8 @@
     </QLayout>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, Ref } from 'vue';
+<script setup lang="ts">
+import { ref, Ref, computed, provide } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
 import RouterLink from 'components/RouterLink.vue';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
@@ -82,6 +82,7 @@ import { useAuthStore } from '@/stores/AuthStore';
 import { useErrorStore } from '@/stores/ErrorStore';
 import { process } from '@/lib/Async';
 import { UserInfo } from '@/types/UserTypes';
+import { useRouter } from 'vue-router';
 
 const linksList = [
     {
@@ -128,81 +129,62 @@ const linksList = [
     },
 ];
 
-export default defineComponent({
-    name: 'MainLayout',
-    components: {
-        EssentialLink,
-        RouterLink,
-        ProcessSpinner
-    },
-    provide() {
-        return {
-            upProcessSpinner: this.upProcessSpinner,
-            downProcessSpinner: this.downProcessSpinner
-        }
-    },
-    setup() {
-        const leftDrawerOpen = ref(false);
-        const userInfo: Ref<UserInfo | undefined> = ref(undefined);
-        const processCount: Ref<number> = ref(0);
-        const isDone: Ref<boolean> = ref(false);
-        const errorList: Ref<Array<string>> = ref([]);
-        const errorStore = useErrorStore();
+const router = useRouter();
+const leftDrawerOpen: Ref<boolean> = ref(false);
+const authStore = useAuthStore();
+const userInfo: Ref<UserInfo | undefined> = ref(authStore.userInfo);
+const processCount: Ref<number> = ref(0);
+const isDone: Ref<boolean> = ref(false);
+const errorStore = useErrorStore();
 
-        return {
-            essentialLinks: linksList,
-            leftDrawerOpen,
-            toggleLeftDrawer() {
-                leftDrawerOpen.value = !leftDrawerOpen.value;
-            },
-            userInfo,
-            processCount,
-            isDone,
-            errorList,
-            errorStore
-        };
-    },
-    computed: {
-        errors() {
-            return this.errorStore.errors;
-        }
-    },
-    methods: {
-        upProcessSpinner() {
-            this.processCount = 1;
-        },
-        downProcessSpinner() {
-            this.processCount = 0;
-        },
-        logout() {
-            process(this.upProcessSpinner, this.downProcessSpinner, async () => {
-                await useAuthStore().logout();
-                this.$router.push('/login');
-            });
-        },
-        goHome() {
-            this.$router.push('/');
-        },
-        hideError() {
-            this.errorStore.clearError();
-        }
-    },
-    mounted() {
-        if (useAuthStore().isAuth) {
-            this.userInfo = useAuthStore().userInfo;
-        }
-        else {
-            process(this.upProcessSpinner, () => {
-                this.isDone = true;
-                this.downProcessSpinner();
-                if (! useAuthStore().isAuth) this.$router.push('/login');
-            }, async () => {
-                await useAuthStore().login();
-                this.userInfo = useAuthStore().userInfo;
-            });
-        }
-    },
-});
+const essentialLinks = linksList;
+
+const toggleLeftDrawer = () => {
+    leftDrawerOpen.value = !leftDrawerOpen.value;
+};
+
+const upProcessSpinner = () => {
+    processCount.value = 1;
+};
+
+const downProcessSpinner = () => {
+    processCount.value = 0;
+};
+
+const logout = async () => {
+    process(upProcessSpinner, downProcessSpinner, async () => {
+        await authStore.logout();
+        router.push('/login');
+    });
+};
+
+const goHome = () => {
+    router.push('/');
+};
+
+const hideError = () => {
+    errorStore.clearError();
+};
+
+if (authStore.isAuth) {
+    isDone.value = true;
+    userInfo.value = authStore.userInfo;
+} else {
+    process(upProcessSpinner, () => {
+        isDone.value = true;
+        downProcessSpinner();
+    if (!authStore.isAuth) router.push('/login');
+    }, async () => {
+        await authStore.login();
+        userInfo.value = authStore.userInfo;
+    });
+}
+
+const errors = computed(() => errorStore.errors);
+
+provide('upProcessSpinner', upProcessSpinner);
+provide('downProcessSpinner', downProcessSpinner);
+// router 이동하면 mounted 타지 않는다.
 </script>
 
 <style lang="scss" scoped>
