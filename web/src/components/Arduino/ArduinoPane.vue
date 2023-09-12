@@ -1,7 +1,22 @@
 <template>
     <div class="arduino">
         <div class="header">
-            사용가능한
+            <fieldset class="state-pane">
+                <legend>Toy 상태</legend>
+                <div class="row">
+                    사용 가능 상태
+                    <span class="state">
+
+                    </span>
+                    <span class="refresh">
+                        <QIcon name="refresh" size="1.5em"/>
+                    </span>
+
+                    <span class="date">
+                        업데이트 날짜:
+                    </span>
+                </div>
+            </fieldset>
         </div>
         <div class="content">
             <QSplitter
@@ -56,7 +71,7 @@
 <script setup lang="ts">
 import { ref, Ref } from 'vue';
 
-const splitter = 20;
+const splitter = 30;
 const tab: Ref<string> = ref('mails');
 
 </script>
@@ -74,10 +89,34 @@ const tab: Ref<string> = ref('mails');
 
     > .header {
         padding: $spacing-sm;
+        width: auto;
+        font-size: 1.2em;
+
+        > .state-pane {
+            border-color: $naver-bs;
+
+            > .row {
+                > .refresh {
+                    color: $naver-dk;
+                    margin-left: auto;
+
+                    &:hover {
+                        cursor: pointer;
+                        color: $green-10;
+                    }
+                }
+
+                > .date {
+                    margin-left: $spacing-md;
+                }
+
+            }
+        }
     }
     > .content {
         flex: 1;
-
+        margin: 0px $spacing-sm;
+        border: 2px solid $naver-dk;
         .tabs {
             color: $naver-dk;
         }
