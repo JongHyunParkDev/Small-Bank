@@ -53,9 +53,40 @@
                         transition-next="jump-up"
                     >
                         <QTabPanel name="message">
-                            <div class="text-h4 q-mb-md">Mails</div>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
+                            <div class="content">
+                                <QInput
+                                    class="input"
+                                    name="message"
+                                    outlined
+                                    stack-label
+                                    label="Message"
+                                    type="text"
+                                    autogrow
+                                    v-model="message"
+                                    :rules="messageRule"
+                                />
+                                <QBtn
+                                    class="btn"
+                                    text-color="black"
+                                    icon="send"
+                                />
+                            </div>
+                            <div>
+                                <QExpansionItem
+                                    v-model="isMessageTip"
+                                    icon="help"
+                                    header-class="text-green"
+                                    label="Account settings"
+                                >
+                                    <QCard>
+                                        <QCardSection>
+                                            <p>- Mattrix 에 한 글자씩 1 초 씩 보여지며, 두 번 반복합니다.</p>
+                                            <p>- 영어 대문자, 숫자, '/', ' ' 그리고 지정 특수 문자만 가능합니다.</p>
+                                            <p>- '!' (고양이), '@' (하트), '#' (해골), '$' (돼지), '%' (해), '^' (비)</p>
+                                        </QCardSection>
+                                    </QCard>
+                                </QExpansionItem>
+                            </div>
                         </QTabPanel>
 
                         <QTabPanel name="weather">
@@ -97,8 +128,17 @@ let splitter = 30;
 const $q = useQuasar();
 if ($q.platform.is.desktop) splitter = 10;
 
-const tab: Ref<string> = ref('message');
 const isState: Ref<boolean> = ref(false);
+const tab: Ref<string> = ref('message');
+
+const message: Ref<string> = ref('');
+const isMessageTip: Ref<boolean> = ref(false);
+const messageRegex = /^[A-Z0-9/ !@#$%^]+$/;
+const messageRule = [
+    (msg: string) => {
+        return messageRegex.test(msg) || '영어 대문자, 숫자, 특수문자만 가능합니다.';
+    } 
+];
 
 </script>
 
@@ -154,6 +194,20 @@ const isState: Ref<boolean> = ref(false);
             .tab-panels {
                 position: absolute;
                 height: 100%;
+                width: 100%;
+
+                .content {
+                    display: flex;
+                    > .input {
+                        flex: 1;
+                    }
+
+                    > .btn {
+                        margin: $spacing-tn 0px;
+                        margin-left: $spacing-sm;
+                        height: 49px;
+                    }
+                }
             }
 
             .tabs {
