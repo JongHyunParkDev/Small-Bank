@@ -18,7 +18,7 @@ public class SerialService {
     SerialPort serialPort = null;
 
     @PostConstruct
-    public void init () {
+    public void init() {
         if (ports.length == 0) {
             logger.info("No serial ports available. Exiting.");
             return;
@@ -28,11 +28,13 @@ public class SerialService {
             String portName = ports[i].getSystemPortName();
             if (portName.equals(ARDUINO_PORT_STR)) {
                 serialPort = ports[i];
+                isState = true;
             }
         }
     }
 
     public synchronized void sendSerialMsg(String sendMsg) throws InterruptedException {
+        isMsgState = false;
         // 마지막 String 짤림
         sendMsg = sendMsg.toUpperCase() + " ";
         if (serialPort.openPort()) {
@@ -74,9 +76,14 @@ public class SerialService {
         } else {
             logger.info("Failed to open serial port.");
         }
+        isMsgState = true;
     }
 
+    public static boolean isState = false;
+    public static boolean isMsgState = true;
+
     private final long sleepTimeSec = 3000;
+
     private static final String ARDUINO_PORT_STR = "COM6";
     private static final Logger logger = LoggerFactory.getLogger(SerialService.class);
 }

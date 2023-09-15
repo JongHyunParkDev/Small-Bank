@@ -2,14 +2,15 @@ package com.dev.was.controller.admin;
 
 import com.dev.was.controller.ApiException;
 import com.dev.was.controller.ExceptionCodeEnum;
+import com.dev.was.dto.SerialDto;
 import com.dev.was.service.SerialService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/serial")
@@ -25,6 +26,15 @@ public class AdminSerialController {
         catch (InterruptedException e) {
             throw new ApiException(ExceptionCodeEnum.GENERIC, e.getMessage());
         }
+    }
+
+    @GetMapping("/getState")
+    public SerialDto getState() {
+        return SerialDto
+                .builder()
+                .isState(SerialService.isState)
+                .isMsgState(SerialService.isMsgState)
+                .build();
     }
 
     public static class RequestSerialSendDto {
