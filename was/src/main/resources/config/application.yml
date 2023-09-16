@@ -52,6 +52,7 @@ sppd:
     bus:
       # 종합 운동장 사거리
       stationId: 205000136
+    serviceKey: 9G4mXvJnJcvcO5RL3kH8WZhCiyCDl00AeqxkvWBoZydbNBK4K%2FBWd1iZcmoI3AYdCu%2B%2BbMpkdrNr%2F5LG8SdPhA%3D%3D
 
 # 종합 운동장 사거리 bus mapping {routedId: busNum}
 data:
