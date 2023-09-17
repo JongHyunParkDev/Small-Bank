@@ -3,6 +3,7 @@ package com.dev.was.controller.admin;
 import com.dev.was.controller.ApiException;
 import com.dev.was.controller.ExceptionCodeEnum;
 import com.dev.was.dto.SerialDto;
+import com.dev.was.service.DataGoService;
 import com.dev.was.service.SerialService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -17,6 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AdminSerialController {
     private final SerialService serialService;
+    private final DataGoService dataGoService;
 
     @PostMapping("/send")
     public void send(@RequestBody @Valid RequestSerialSendDto requestSerialSendDto) {
@@ -28,12 +30,21 @@ public class AdminSerialController {
         }
     }
 
-    @GetMapping("/getState")
-    public SerialDto getState() {
+    @GetMapping("/getSerialDto")
+    public SerialDto getSerialDto() {
+        return createSerialDto();
+    }
+
+    private SerialDto createSerialDto() {
+        // bus
+        dataGoService.RefreshBusListByStation(null);
+        // weather
+
         return SerialDto
                 .builder()
                 .isState(SerialService.isState)
                 .isMsgState(SerialService.isMsgState)
+                .busList(DataGoService.BusList)
                 .build();
     }
 

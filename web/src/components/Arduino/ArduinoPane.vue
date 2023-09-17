@@ -15,12 +15,15 @@
                             color="green"
                         />
                     </span>
-                    <span class="refresh label">
+                    <span
+                        class="refresh label"
+                        @click="getSerialDto"
+                    >
                         <QIcon name="refresh" size="1.5em"/>
                     </span>
 
                     <span class="date label">
-                        업데이트 날짜:
+                        업데이트 날짜: {{ displayUpdateDatetime }}
                     </span>
                 </div>
             </fieldset>
@@ -69,6 +72,8 @@
                                     class="btn"
                                     text-color="black"
                                     icon="send"
+                                    :disable="! isMsgState"
+                                    @click="sendMsg"
                                 />
                             </div>
                             <div>
@@ -122,23 +127,68 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import { ref, Ref } from 'vue';
+import { ref, Ref, computed, inject } from 'vue';
+import { process } from '@/lib/Async';
+import { Api } from '@/lib/Api';
+import { dateToDatetimeStr } from '@/lib/DateUtil';
+
+const upProcessSpinner = inject<() => void>('upProcessSpinner');
+const downProcessSpinner = inject<() => void>('downProcessSpinner');
 
 let splitter = 30;
 const $q = useQuasar();
 if ($q.platform.is.desktop) splitter = 10;
 
 const isState: Ref<boolean> = ref(false);
+
+const updateDatetime: Ref<Date> = ref(new Date());
 const tab: Ref<string> = ref('message');
 
+const isMsgState: Ref<boolean> = ref(false);
 const message: Ref<string> = ref('');
 const isMessageTip: Ref<boolean> = ref(false);
 const messageRegex = /^[A-Z0-9/ !@#$%^]+$/;
 const messageRule = [
     (msg: string) => {
         return messageRegex.test(msg) || '영어 대문자, 숫자, 특수문자만 가능합니다.';
-    } 
+    }
 ];
+
+const displayUpdateDatetime = computed(() => {
+    return dateToDatetimeStr(updateDatetime.value);
+})
+
+function getSerialDto() {
+    // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
+    if (upProcessSpinner && downProcessSpinner) {
+        process(upProcessSpinner, downProcessSpinner, async () => {
+            const data = await Api.get('admin/serial/getSerialDto', undefined, undefined);
+
+            updateDatetime.value = new Date();
+            isState.value = data.state;
+            isMsgState.value = data.msgState;
+        });
+    }
+}
+
+function sendMsg() {
+    // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
+    if (upProcessSpinner && downProcessSpinner) {
+        process(upProcessSpinner, downProcessSpinner, async () => {
+            const data = await Api.post('admin/serial/send', {
+                msg: message.value
+            }, undefined);
+
+            updateDatetime.value = new Date();
+            isState.value = data.state;
+            isMsgState.value = data.msgState;
+
+            getSerialDto();
+        });
+    }
+}
+
+getSerialDto();
 
 </script>
 
