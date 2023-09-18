@@ -37,7 +37,7 @@ public class AdminSerialController {
 
     private SerialDto createSerialDto() {
         // bus
-        dataGoService.RefreshBusListByStation(null);
+        dataGoService.refreshBusListByStation(null);
         // weather
 
         return SerialDto
@@ -45,6 +45,7 @@ public class AdminSerialController {
                 .isState(SerialService.isState)
                 .isMsgState(SerialService.isMsgState)
                 .busList(DataGoService.BusList)
+                .weatherList(DataGoService.WeatherList)
                 .build();
     }
 

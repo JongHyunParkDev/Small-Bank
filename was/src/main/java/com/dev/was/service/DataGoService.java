@@ -1,6 +1,8 @@
 package com.dev.was.service;
 
 import com.dev.was.config.DataConfig;
+import com.dev.was.util.CommonUtil;
+import com.dev.was.vo.WeatherDataVo;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -9,8 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -22,10 +24,42 @@ public class DataGoService {
     @PostConstruct
     public void init(){
         busMap = busConfig.getRoutedBus();
+        refreshWeatherListByStation(LocalDate.now().minusDays(1).format(CommonUtil.LOCAL_DATE_FORMATTER), "2300", null, null);
+    }
+
+    public void refreshWeatherListByStation(String baseDate, String baseTime, String nx, String ny) {
+        if (nx == null) nx = this.nx;
+        if (ny == null) ny = this.ny;
+        if (baseDate.equals(lastDateStr) && baseTime.equals(lastTimeStr)) return;
+
+        List<Map<String, String>> list = new ArrayList<>();
+
+        String urlStr = String.format("https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=%s&&pageNo=1&numOfRows=1000&dataType=JSON&base_date=%s&base_time=%s&nx=%s&ny=%s",
+                serviceKey, baseDate, baseTime, nx, ny); /*URL*/
+
+        RestTemplate restTemplate = new RestTemplate();
+        URI url = URI.create(urlStr);
+
+        ResponseEntity<WeatherDataVo> responseEntity = restTemplate.getForEntity(url, WeatherDataVo.class);
+
+        logger.info("Weather Response Code {}", responseEntity.getStatusCode().value());
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            List<WeatherDataVo.Item> rows = responseEntity.getBody().getResponse().getBody().getItems().getItem();
+            for (WeatherDataVo.Item row : rows) {
+                if (row.getCategory().equals("POP")) {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("date", row.getFcstDate());
+                    map.put("time", row.getFcstTime());
+                    map.put("value", row.getFcstValue());
+                    list.add(map);
+                }
+            }
+        }
+        WeatherList = list;
     }
 
     // 일단 특정 StationId 를 지정하게 한다.
-    public void RefreshBusListByStation(String stationId) {
+    public void refreshBusListByStation(String stationId) {
         if (stationId == null) stationId = this.stationId;
 
         List<Map<String, String>> list = Collections.emptyList();
@@ -38,7 +72,7 @@ public class DataGoService {
 
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
 
-        logger.info("Response Code {}", responseEntity.getStatusCode().value());
+        logger.info("Bus Response Code {}", responseEntity.getStatusCode().value());
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             list = getBodyBusList(responseEntity.getBody());
         }
@@ -81,6 +115,13 @@ public class DataGoService {
 
     // DB 에 넣지 않고 메모리에 보관한다. (실시간 성 데이터를 보여주기만 하면 되기 때문)
     public static List<Map<String, String>> BusList = new ArrayList<>();
+
+    public static List<Map<String, String>> WeatherList = new ArrayList<>();
+
+    // cache 용도로 갖고 있는다.
+    public static String lastDateStr;
+
+    public static String lastTimeStr;
 
     @Value("${sppd.data.weather.nx}")
     private String nx;
