@@ -32,6 +32,7 @@
             <QSplitter
                 class="splitter"
                 v-model="splitter"
+                :limits="[10, 30]"
             >
                 <template v-slot:before>
                     <QTabs
@@ -57,66 +58,87 @@
                     >
                         <QTabPanel name="message">
                             <div class="content">
-                                <QInput
-                                    class="input"
-                                    name="message"
-                                    outlined
-                                    stack-label
-                                    label="Message"
-                                    type="text"
-                                    autogrow
-                                    v-model="message"
-                                    :rules="messageRule"
-                                />
-                                <QBtn
-                                    class="btn"
-                                    text-color="black"
-                                    icon="send"
-                                    :disable="! isMsgState"
-                                    @click="sendMsg"
-                                />
+                                <div class="row">
+                                    <QInput
+                                        class="input"
+                                        name="message"
+                                        outlined
+                                        stack-label
+                                        label="Message"
+                                        type="text"
+                                        autogrow
+                                        v-model="message"
+                                        :rules="messageRule"
+                                    />
+                                    <QBtn
+                                        class="btn"
+                                        text-color="black"
+                                        icon="send"
+                                        :disable="! isMsgState"
+                                        @click="sendMsg"
+                                    />
+                                </div>
+                                <div class="row">
+                                    <QExpansionItem
+                                        class="expanstion-item"
+                                        v-model="isMessageTip"
+                                        icon="help"
+                                        header-class="text-green"
+                                        label="Account settings"
+                                    >
+                                        <QCard>
+                                            <QCardSection>
+                                                <p>- Mattrix 에 한 글자씩 1 초 씩 보여지며, 두 번 반복합니다.</p>
+                                                <p>- 영어 대문자, 숫자, '/', ' ' 그리고 지정 특수 문자만 가능합니다.</p>
+                                                <p>- '!' (고양이), '@' (하트), '#' (해골), '$' (돼지), '%' (해), '^' (비)</p>
+                                            </QCardSection>
+                                        </QCard>
+                                    </QExpansionItem>
+                                </div>
                             </div>
-                            <div>
-                                <QExpansionItem
-                                    v-model="isMessageTip"
-                                    icon="help"
-                                    header-class="text-green"
-                                    label="Account settings"
-                                >
-                                    <QCard>
-                                        <QCardSection>
-                                            <p>- Mattrix 에 한 글자씩 1 초 씩 보여지며, 두 번 반복합니다.</p>
-                                            <p>- 영어 대문자, 숫자, '/', ' ' 그리고 지정 특수 문자만 가능합니다.</p>
-                                            <p>- '!' (고양이), '@' (하트), '#' (해골), '$' (돼지), '%' (해), '^' (비)</p>
-                                        </QCardSection>
-                                    </QCard>
-                                </QExpansionItem>
-                            </div>
+
                         </QTabPanel>
 
                         <QTabPanel name="weather">
-                            <div class="text-h4 q-mb-md">Alarms</div>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
+                            <div class="content">
+                                <div
+                                    v-for="(weather, idx) in weatherInfoList"
+                                    :key="idx"
+                                    class="row weather-row"
+                                >
+                                    <div class="icon label">
+                                        <QIcon
+                                            :class="+weather.value > 60 ? 'rainy' : 'sunny'"
+                                            :name="+weather.value > 60 ? 'rainy' : 'sunny'" />
+                                    </div>
+                                    <div class="label">
+                                        {{ weather.date }} {{ weather.time }}
+                                    </div>
+                                    <div class="label">
+                                        {{ weather.value }}
+                                    </div>
+                                </div>
+                            </div>
                         </QTabPanel>
 
                         <QTabPanel name="bus">
-                            <div class="text-h4 q-mb-md">Movies</div>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
+                            <div class="content">
+                                <div
+                                    v-for="(bus, idx) in busInfoList"
+                                    :key="idx"
+                                    class="row bus-row"
+                                >
+                                    <div class="icon label">
+                                        <QIcon name="directions_bus" />
+                                    </div>
+                                    <div class="label">
+                                        {{ bus.routeId }} 번
+                                    </div>
+                                    <div class="label">
+                                        {{ bus.predictTime1 }} 분 {{ bus.predictTime2 }} {{ bus.predictTime2 ? '분' : '' }}
+                                    </div>
+                                </div>
+                            </div>
                         </QTabPanel>
                     </QTabPanels>
                 </template>
@@ -131,6 +153,7 @@ import { ref, Ref, computed, inject } from 'vue';
 import { process } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { dateToDatetimeStr } from '@/lib/DateUtil';
+import { BusInfo, WeatherInfo } from '@/types/ArduinoTypes';
 
 const upProcessSpinner = inject<() => void>('upProcessSpinner');
 const downProcessSpinner = inject<() => void>('downProcessSpinner');
@@ -154,6 +177,9 @@ const messageRule = [
     }
 ];
 
+const busInfoList: Ref<Array<BusInfo>> = ref([]);
+const weatherInfoList: Ref<Array<WeatherInfo>> = ref([]);
+
 const displayUpdateDatetime = computed(() => {
     return dateToDatetimeStr(updateDatetime.value);
 })
@@ -167,6 +193,9 @@ function getSerialDto() {
             updateDatetime.value = new Date();
             isState.value = data.state;
             isMsgState.value = data.msgState;
+
+            busInfoList.value = data.busList;
+            weatherInfoList.value = data.weatherList;
         });
     }
 }
@@ -229,7 +258,6 @@ getSerialDto();
                 > .label {
                     padding: $spacing-sm;
                 }
-
             }
         }
     }
@@ -248,15 +276,69 @@ getSerialDto();
 
                 .content {
                     display: flex;
-                    > .input {
-                        flex: 1;
+                    flex-direction: column;
+
+                    > .row {
+                        display: flex;
+
+                        > .input {
+                            flex: 1;
+                        }
+
+                        > .btn {
+                            margin: $spacing-tn 0px;
+                            margin-left: $spacing-sm;
+                            height: 49px;
+                        }
+                        > .expanstion-item {
+                            width: 100%;
+                        }
                     }
 
-                    > .btn {
-                        margin: $spacing-tn 0px;
-                        margin-left: $spacing-sm;
-                        height: 49px;
+                    > .bus-row {
+                        border-bottom: 1px solid $grey-6;
+                        margin-bottom: $spacing-md;
+
+                        > .label {
+                            flex: 1;
+                            font-size: 1.2em;
+                            text-align: center;
+                        }
+
+                        > .icon {
+                            color: $naver-bs;
+                            font-size: 1.5em;
+                        }
                     }
+
+                    > .weather-row {
+                        border-bottom: 1px solid $grey-6;
+                        margin-bottom: $spacing-sm;
+
+                        > .label {
+                            flex: 1;
+                            font-size: 1em;
+                            text-align: center;
+                            white-space: pre;
+                        }
+
+                        > .icon {
+                            color: $naver-bs;
+                            font-size: 1.2em;
+
+                            .rainy {
+                                color: $blue-grey-9;
+                            }
+
+                            .sunny {
+                                color: $orange-9;
+                            }
+                        }
+                    }
+                }
+
+                .info {
+
                 }
             }
 
