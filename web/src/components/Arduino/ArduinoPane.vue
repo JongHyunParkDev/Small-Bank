@@ -74,7 +74,7 @@
                                         class="btn"
                                         text-color="black"
                                         icon="send"
-                                        :disable="! isMsgState"
+                                        :disable="! isMsgState || ! isState"
                                         @click="sendMsg"
                                     />
                                 </div>
