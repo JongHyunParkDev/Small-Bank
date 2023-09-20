@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +33,6 @@ public class DataGoService {
         if (ny == null) ny = this.ny;
         if (baseDate.equals(lastDateStr) && baseTime.equals(lastTimeStr)) return;
 
-        List<Map<String, String>> list = new ArrayList<>();
-
         String urlStr = String.format("https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=%s&&pageNo=1&numOfRows=1000&dataType=JSON&base_date=%s&base_time=%s&nx=%s&ny=%s",
                 serviceKey, baseDate, baseTime, nx, ny); /*URL*/
 
@@ -45,17 +44,75 @@ public class DataGoService {
         logger.info("Weather Response Code {}", responseEntity.getStatusCode().value());
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             List<WeatherDataVo.Item> rows = responseEntity.getBody().getResponse().getBody().getItems().getItem();
-            for (WeatherDataVo.Item row : rows) {
-                if (row.getCategory().equals("POP")) {
-                    Map<String, String> map = new HashMap<>();
-                    map.put("date", row.getFcstDate());
-                    map.put("time", row.getFcstTime());
-                    map.put("value", row.getFcstValue());
-                    list.add(map);
-                }
-            }
+
+            WeatherList = createAggregateList(rows);
         }
-        WeatherList = list;
+    }
+
+    private List<Map<String, Object>> createAggregateList(List<WeatherDataVo.Item> list) {
+        List<Map<String, Object>> resultList = new ArrayList<>();
+
+        Map<String, Map<String, List<Double>>> result = list.stream()
+                .filter(row -> categoryList.contains(row.getCategory()))
+                .collect(Collectors.groupingBy(
+                        WeatherDataVo.Item::getFcstDate,
+                        Collectors.groupingBy(
+                                WeatherDataVo.Item::getCategory,
+                                Collectors.mapping(
+                                        item -> Double.parseDouble(item.getFcstValue()),
+                                        Collectors.toList()
+                                )
+                        )
+                ));
+
+        // 결과 출력
+        for (Map.Entry<String, Map<String, List<Double>>> dateEntry : result.entrySet()) {
+            Map<String, Object> map = new HashMap<>();
+
+            String date = dateEntry.getKey();
+            Map<String, List<Double>> categoryData = dateEntry.getValue();
+
+            double tmpMin = categoryData.getOrDefault("TMP", Collections.emptyList())
+                    .stream()
+                    .mapToDouble(Double::doubleValue)
+                    .min()
+                    .orElse(0.0);
+
+            double tmpMax = categoryData.getOrDefault("TMP", Collections.emptyList())
+                    .stream()
+                    .mapToDouble(Double::doubleValue)
+                    .max()
+                    .orElse(0.0);
+
+            double snow = categoryData.getOrDefault("SNO", Collections.emptyList())
+                    .stream()
+                    .mapToDouble(Double::doubleValue)
+                    .max()
+                    .orElse(0.0);
+
+            double rain = categoryData.getOrDefault("PCP", Collections.emptyList())
+                    .stream()
+                    .mapToDouble(Double::doubleValue)
+                    .max()
+                    .orElse(0.0);
+
+            double sky = categoryData.getOrDefault("SKY", Collections.emptyList())
+                    .stream()
+                    .mapToDouble(Double::doubleValue)
+                    .average()
+                    .orElse(0.0);
+
+            map.put("date", date);
+            map.put("tmpMax", tmpMax);
+            map.put("tmpMin", tmpMin);
+            map.put("rain", rain);
+            map.put("snow", snow);
+            map.put("sky", sky);
+
+            resultList.add(map);
+        }
+
+        return resultList;
     }
 
     // 일단 특정 StationId 를 지정하게 한다.
@@ -116,12 +173,15 @@ public class DataGoService {
     // DB 에 넣지 않고 메모리에 보관한다. (실시간 성 데이터를 보여주기만 하면 되기 때문)
     public static List<Map<String, String>> BusList = new ArrayList<>();
 
-    public static List<Map<String, String>> WeatherList = new ArrayList<>();
+    public static List<Map<String, Object>> WeatherList = new ArrayList<>();
 
     // cache 용도로 갖고 있는다.
     public static String lastDateStr;
 
     public static String lastTimeStr;
+
+    private final List<String> categoryList = List.of("TMP", "PCP", "SNO", "SKY");
+
 
     @Value("${sppd.data.weather.nx}")
     private String nx;

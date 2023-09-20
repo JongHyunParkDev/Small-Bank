@@ -1,6 +1,7 @@
 package com.dev.was.vo;
 
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class WeatherDataVo {
         private List<Item> item = new ArrayList<>();
     }
 
-    @Data
+    @Getter
     public static class Item {
         private String baseDate;
         private String baseTime;
@@ -46,5 +47,38 @@ public class WeatherDataVo {
         private String fcstValue;
         private String nx;
         private String ny;
+
+        public void setBaseDate(String baseDate) {
+            this.baseDate = baseDate;
+        }
+
+        public void setBaseTime(String baseTime) {
+            this.baseTime = baseTime;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+        public void setFcstDate(String fcstDate) {
+            this.fcstDate = fcstDate;
+        }
+
+        public void setFcstTime(String fcstTime) {
+            this.fcstTime = fcstTime;
+        }
+
+        public void setFcstValue(String fcstValue) {
+            if (fcstValue.equals("적설없음") || fcstValue.equals("강수없음")) this.fcstValue = "0";
+            else this.fcstValue = fcstValue.split("mm")[0];
+        }
+
+        public void setNx(String nx) {
+            this.nx = nx;
+        }
+
+        public void setNy(String ny) {
+            this.ny = ny;
+        }
     }
 }
