@@ -100,22 +100,21 @@
                         </QTabPanel>
 
                         <QTabPanel name="weather">
-                            <div class="content">
+                            <div class="weather-content">
                                 <div
                                     v-for="(weather, idx) in weatherInfoList"
                                     :key="idx"
-                                    class="row weather-row"
+                                    class="weather-row"
                                 >
-                                    <div class="icon label">
-                                        <QIcon
-                                            :class="+weather.value > 60 ? 'rainy' : 'sunny'"
-                                            :name="+weather.value > 60 ? 'rainy' : 'sunny'" />
+                                    <div class="header">
+                                        {{ getApiDateToDateStr(weather.date) }}
+                                    </div>
+                                    <img class="img" :src="weather.iconSrc">
+                                    <div class="label">
+                                        최고 {{ weather.tmpMax }} °C
                                     </div>
                                     <div class="label">
-                                        {{ weather.date }} {{ weather.time }}
-                                    </div>
-                                    <div class="label">
-                                        {{ weather.value }}
+                                        최저 {{ weather.tmpMin }} °C
                                     </div>
                                 </div>
                             </div>
@@ -152,8 +151,17 @@ import { useQuasar } from 'quasar'
 import { ref, Ref, computed, inject } from 'vue';
 import { process } from '@/lib/Async';
 import { Api } from '@/lib/Api';
-import { dateToDatetimeStr } from '@/lib/DateUtil';
+import { dateToDatetimeStr, apiDateToDateStr } from '@/lib/DateUtil';
 import { BusInfo, WeatherInfo } from '@/types/ArduinoTypes';
+import { compare } from '@/lib/StrUtil';
+
+import ClearDayIcon from '@/assets/icons/clear-day.svg';
+import CloudyIcon from '@/assets/icons/cloudy.svg';
+import PcdIcon from '@/assets/icons/partly-cloudy-day.svg';
+import PcdrIcon from '@/assets/icons/partly-cloudy-day-rain.svg';
+import PcdsIcon from '@/assets/icons/partly-cloudy-day-snow.svg';
+import RainIcon from '@/assets/icons/rain.svg';
+import SnowIcon from '@/assets/icons/snow.svg';
 
 const upProcessSpinner = inject<() => void>('upProcessSpinner');
 const downProcessSpinner = inject<() => void>('downProcessSpinner');
@@ -184,6 +192,10 @@ const displayUpdateDatetime = computed(() => {
     return dateToDatetimeStr(updateDatetime.value);
 })
 
+function getApiDateToDateStr(date: string) {
+    return apiDateToDateStr(date);
+}
+
 function getSerialDto() {
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
@@ -195,7 +207,29 @@ function getSerialDto() {
             isMsgState.value = data.msgState;
 
             busInfoList.value = data.busList;
+
+            data.weatherList.forEach(weather => {
+                let target = ClearDayIcon;
+
+                if (weather.sky < 1.5) target = ClearDayIcon;
+                else if (weather.sky < 3) target = PcdIcon;
+                else target = CloudyIcon;
+
+                if (weather.snow > 0 && weather.rain == 0) {
+                    if (weather.sky >= 3) target = SnowIcon;
+                    else target = PcdsIcon;
+                }
+
+                if (weather.rain > 0) {
+                    if (weather.sky >= 3) target = RainIcon;
+                    else target = PcdrIcon;
+                }
+
+                weather.iconSrc = target;
+            });
+            data.weatherList.sort((a, b) => compare(a.date, b.date));
             weatherInfoList.value = data.weatherList;
+            
         });
     }
 }
@@ -310,30 +344,44 @@ getSerialDto();
                             font-size: 1.5em;
                         }
                     }
+                }
 
+                .weather-content {
+                    display: grid;
+                    height: 100%;
+                    width: 100%;
+                    grid-template-rows: 1fr 1fr;
+                    grid-template-columns: 1fr 1fr;
                     > .weather-row {
-                        border-bottom: 1px solid $grey-6;
-                        margin-bottom: $spacing-sm;
+                        overflow: hidden;
+                        border: 2px solid $grey-6;
+                        border-radius: $spacing-lg;
+                        margin: $spacing-tn;
+                        box-shadow: 3px 3px 3px $grey-5;
+                        
+                        > .header {
+                            width: 100%;
+                            background-color: $naver-bs;
+                            color: white;
+                            font-size: 1.2em;
+                            padding: $spacing-sm;
+                            text-align: center;
+                            font-weight: bold;
+                            border-bottom: 2px solid $grey-6;
+                        }
+
+                        > .img {
+                            margin: 0 auto;
+                            width: 100%;
+                            height: 70%;
+                        }
 
                         > .label {
-                            flex: 1;
-                            font-size: 1em;
+                            width: 100%;
                             text-align: center;
-                            white-space: pre;
+                            margin-bottom: $spacing-sm;
                         }
-
-                        > .icon {
-                            color: $naver-bs;
-                            font-size: 1.2em;
-
-                            .rainy {
-                                color: $blue-grey-9;
-                            }
-
-                            .sunny {
-                                color: $orange-9;
-                            }
-                        }
+        
                     }
                 }
 
