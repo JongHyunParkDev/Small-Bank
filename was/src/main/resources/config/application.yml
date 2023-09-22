@@ -40,6 +40,8 @@ server:
   port: 1132
 
 sppd:
+  schedule:
+    weather: '0 3 2/3 * * ?'
   dev: true
   homeDir: ${user.dir}
   logDir: ${sppd.homeDir}/log

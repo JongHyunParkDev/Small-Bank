@@ -40,6 +40,9 @@ public class CommonUtil {
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public static final DateTimeFormatter LOCAL_DATE_FORMATTER =
             DateTimeFormatter.ofPattern("yyyyMMdd");
+
+    public static final DateTimeFormatter LOCAL_TIME_FORMATTER2 =
+            DateTimeFormatter.ofPattern("HHmm");
     public static final DateTimeFormatter LOCAL_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("HHmmss");
 }
