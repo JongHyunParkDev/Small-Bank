@@ -137,6 +137,11 @@
                                         {{ bus.predictTime1 }} 분 {{ bus.predictTime2 }} {{ bus.predictTime2 ? '분' : '' }}
                                     </div>
                                 </div>
+                                <div class="row bus-row" v-if="busInfoList.length === 0">
+                                     <div class="label">
+                                        운영중인 버스가 없습니다.
+                                     </div>
+                                </div>
                             </div>
                         </QTabPanel>
                     </QTabPanels>
@@ -206,6 +211,7 @@ function getSerialDto() {
             isState.value = data.state;
             isMsgState.value = data.msgState;
 
+            data.busList.sort((a, b) => compare(a.routedId, b.routedId));
             busInfoList.value = data.busList;
 
             data.weatherList.forEach(weather => {
@@ -331,17 +337,17 @@ getSerialDto();
 
                     > .bus-row {
                         border-bottom: 1px solid $grey-6;
-                        margin-bottom: $spacing-md;
+                        margin-bottom: $spacing-lg;
 
                         > .label {
                             flex: 1;
-                            font-size: 1.2em;
+                            font-size: 1.5em;
                             text-align: center;
                         }
 
                         > .icon {
                             color: $naver-bs;
-                            font-size: 1.5em;
+                            font-size: 2em;
                         }
                     }
                 }
