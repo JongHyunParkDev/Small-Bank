@@ -41,7 +41,7 @@ server:
 
 sppd:
   schedule:
-    weather: '0 3 2/3 * * ?'
+    weather: '0 30 2/3 * * ?'
   dev: true
   homeDir: ${user.dir}
   logDir: ${sppd.homeDir}/log
