@@ -19,7 +19,7 @@ public class DataGoScheduleTask {
 
     @Scheduled(cron = "${sppd.schedule.weather}")
     public void weatherSchedule() {
-        String date = LocalDate.now().minusDays(1).format(CommonUtil.LOCAL_DATE_FORMATTER);
+        String date = LocalDate.now().format(CommonUtil.LOCAL_DATE_FORMATTER);
         String time = LocalTime.now().withMinute(0).format(CommonUtil.LOCAL_TIME_FORMATTER2);
 
         logger.info("start weatherSchedule {} - {}", date, time);

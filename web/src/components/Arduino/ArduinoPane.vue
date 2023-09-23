@@ -109,7 +109,10 @@
                                     <div class="header">
                                         {{ getApiDateToDateStr(weather.date) }}
                                     </div>
-                                    <img class="img" :src="weather.iconSrc">
+                                    <img
+                                        class="img"
+                                        :src="weather.iconSrc"
+                                    >
                                     <div class="label">
                                         최고 {{ weather.tmpMax }} °C
                                     </div>
@@ -134,7 +137,7 @@
                                         {{ bus.routeId }} 번
                                     </div>
                                     <div class="label">
-                                        {{ bus.predictTime1 }} 분 {{ bus.predictTime2 }} {{ bus.predictTime2 ? '분' : '' }}
+                                        {{ bus.predictTime1 }}분{{ bus.predictTime2 ? '/' : '' }}{{ bus.predictTime2 }}{{ bus.predictTime2 ? '분' : '' }}
                                     </div>
                                 </div>
                                 <div class="row bus-row" v-if="busInfoList.length === 0">
@@ -157,7 +160,7 @@ import { ref, Ref, computed, inject } from 'vue';
 import { process } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { dateToDatetimeStr, apiDateToDateStr } from '@/lib/DateUtil';
-import { BusInfo, WeatherInfo } from '@/types/ArduinoTypes';
+import { SerialInfo, BusInfo, WeatherInfo } from '@/types/ArduinoTypes';
 import { compare } from '@/lib/StrUtil';
 
 import ClearDayIcon from '@/assets/icons/clear-day.svg';
@@ -173,7 +176,9 @@ const downProcessSpinner = inject<() => void>('downProcessSpinner');
 
 let splitter = 30;
 const $q = useQuasar();
-if ($q.platform.is.desktop) splitter = 10;
+if ($q.platform.is.desktop) {
+    splitter = 10;
+}
 
 const isState: Ref<boolean> = ref(false);
 
@@ -205,13 +210,13 @@ function getSerialDto() {
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
         process(upProcessSpinner, downProcessSpinner, async () => {
-            const data = await Api.get('admin/serial/getSerialDto', undefined, undefined);
+            const data: SerialInfo = await Api.get('admin/serial/getSerialDto', undefined, undefined);
 
             updateDatetime.value = new Date();
             isState.value = data.state;
             isMsgState.value = data.msgState;
 
-            data.busList.sort((a, b) => compare(a.routedId, b.routedId));
+            data.busList.sort((a, b) => compare(a.routeId, b.routeId));
             busInfoList.value = data.busList;
 
             data.weatherList.forEach(weather => {
@@ -235,7 +240,6 @@ function getSerialDto() {
             });
             data.weatherList.sort((a, b) => compare(a.date, b.date));
             weatherInfoList.value = data.weatherList;
-            
         });
     }
 }
@@ -341,7 +345,8 @@ getSerialDto();
 
                         > .label {
                             flex: 1;
-                            font-size: 1.5em;
+                            font-size: 1.2em;
+                            line-height: 24px;
                             text-align: center;
                         }
 
@@ -356,30 +361,30 @@ getSerialDto();
                     display: grid;
                     height: 100%;
                     width: 100%;
-                    grid-template-rows: 1fr 1fr;
                     grid-template-columns: 1fr 1fr;
+                    gap: $spacing-sm;
                     > .weather-row {
-                        overflow: hidden;
+                        display: flex;
+                        flex-direction: column;
                         border: 2px solid $grey-6;
                         border-radius: $spacing-lg;
-                        margin: $spacing-tn;
                         box-shadow: 3px 3px 3px $grey-5;
-                        
+
                         > .header {
                             width: 100%;
                             background-color: $naver-bs;
                             color: white;
-                            font-size: 1.2em;
                             padding: $spacing-sm;
                             text-align: center;
                             font-weight: bold;
+                            border-radius: $spacing-ml $spacing-ml 0px 0px;
                             border-bottom: 2px solid $grey-6;
                         }
 
                         > .img {
+                            flex: 1;
                             margin: 0 auto;
                             width: 100%;
-                            height: 70%;
                         }
 
                         > .label {
@@ -387,7 +392,7 @@ getSerialDto();
                             text-align: center;
                             margin-bottom: $spacing-sm;
                         }
-        
+
                     }
                 }
 
