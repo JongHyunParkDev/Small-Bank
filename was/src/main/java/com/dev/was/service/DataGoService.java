@@ -21,10 +21,12 @@ import java.util.stream.Collectors;
 public class DataGoService {
     private final DataConfig busConfig;
     private Map<String, String> busMap;
+    private Map<String, String> stationMap;
 
     @PostConstruct
     public void init(){
-        busMap = busConfig.getRoutedBus();
+        busMap = busConfig.getRoutedBusMap();
+        stationMap = busConfig.getStationIdMap();
         refreshWeatherListByStation(LocalDate.now().minusDays(1).format(CommonUtil.LOCAL_DATE_FORMATTER), "2300", null, null);
     }
 
@@ -42,7 +44,7 @@ public class DataGoService {
         ResponseEntity<WeatherDataVo> responseEntity = restTemplate.getForEntity(url, WeatherDataVo.class);
 
         logger.info("Weather Response Code {}", responseEntity.getStatusCode().value());
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+        if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody().getResponse().getHeader().getResultCode().equals("00")) {
             List<WeatherDataVo.Item> rows = responseEntity.getBody().getResponse().getBody().getItems().getItem();
 
             WeatherList = createAggregateList(rows);
@@ -116,29 +118,31 @@ public class DataGoService {
     }
 
     // 일단 특정 StationId 를 지정하게 한다.
-    public void refreshBusListByStation(String stationId) {
-        if (stationId == null) stationId = this.stationId;
+    public void refreshBusListByStation(String [] stationIds) {
+        if (stationIds == null) stationIds = this.stationIds;
 
-        List<Map<String, String>> list = Collections.emptyList();
+        List<Map<String, String>> list = new ArrayList<>();
 
-        String urlStr = String.format("https://apis.data.go.kr/6410000/busarrivalservice/getBusArrivalList?serviceKey=%s&stationId=%s",
-                serviceKey, stationId); /*URL*/
+        for (String stationId : stationIds) {
+            String urlStr = String.format("https://apis.data.go.kr/6410000/busarrivalservice/getBusArrivalList?serviceKey=%s&stationId=%s",
+                    serviceKey, stationId); /*URL*/
 
-        RestTemplate restTemplate = new RestTemplate();
-        URI url = URI.create(urlStr);
+            RestTemplate restTemplate = new RestTemplate();
+            URI url = URI.create(urlStr);
 
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+            ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
 
-        logger.info("Bus Response Code {}", responseEntity.getStatusCode().value());
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            list = getBodyBusList(responseEntity.getBody());
+            logger.info("Bus Response Code {}", responseEntity.getStatusCode().value());
+            if (responseEntity.getStatusCode() == HttpStatus.OK) {
+                list.addAll(getBodyBusList(responseEntity.getBody(), stationId));
+            }
         }
 
         BusList = list;
     }
 
     // TODO 나중에 또 이런 Data go API 를 쓴다면 여러곳에서 쓸 수 있게 변경한다.
-    private List<Map<String, String>> getBodyBusList(String body) throws RuntimeException {
+    private List<Map<String, String>> getBodyBusList(String body, String stationId) throws RuntimeException {
         List<Map<String, String>> list = new ArrayList<>();
         // 필요한 것은 몇 번 버스가 해당 정류장에 몇 분 후 에 오는지가 궁금함으로 time, routeId 만 가져온다.
         List<String> findColList = List.of("predictTime1", "predictTime2", "routeId");
@@ -162,6 +166,8 @@ public class DataGoService {
 
                     if (! findStr.equals("")) map.put(col, findStr);
                 });
+
+                map.put("stationName", stationMap.get(stationId));
 
                 list.add(map);
             }
@@ -189,8 +195,8 @@ public class DataGoService {
     @Value("${sppd.data.weather.ny}")
     private String ny;
 
-    @Value("${sppd.data.bus.stationId}")
-    private String stationId;
+    @Value("${sppd.data.bus.stationIds}")
+    private String[] stationIds;
 
     @Value("${sppd.data.serviceKey}")
     private String serviceKey;

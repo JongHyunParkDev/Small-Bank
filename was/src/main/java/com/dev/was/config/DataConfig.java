@@ -14,5 +14,6 @@ import java.util.Map;
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix = "data")
 public class DataConfig {
-    private Map<String, String> routedBus;
+    private Map<String, String> routedBusMap;
+    private Map<String, String> stationIdMap;
 }

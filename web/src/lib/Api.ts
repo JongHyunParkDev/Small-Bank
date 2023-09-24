@@ -6,8 +6,7 @@ import qs from 'qs';
 const apiPrefix = '/api/';
 
 const axios = defaultAxios.create({
-    // 개발 목표
-    timeout: 30000,
+    timeout: 60000,
     withCredentials: false,
     // axios는 기본이 'bracket'인데, 그러면 https://...getList?names[]=a&names[]=b 처럼 request
     // url이 만들어지고, Spring Boot에서는 '['에 대해 다음과 같은 오류를 낸다.
@@ -78,11 +77,11 @@ function process(axiosPromise: AxiosPromise) {
             const returnError = new ApiError(error.message, ApiCode.REQUEST_FAILED.toString());
             return Promise.reject(returnError);
         }
-        
+
         // server 발생 시점
         if (isObject(error.response.data)) {
-            const data = error.response.data as BackEndError; 
-        
+            const data = error.response.data as BackEndError;
+
             let message = ApiMessage[data.code];
             if (message){
                 if (data.message)
@@ -94,9 +93,9 @@ function process(axiosPromise: AxiosPromise) {
                     message += ': ' + data.message;
                 message += ')';
             }
-    
+
             const returnError = new ApiError(message, data.code ? data.code : ApiCode.UNKNOWN.toString());
-    
+
             return Promise.reject(returnError);
         }
         else {
