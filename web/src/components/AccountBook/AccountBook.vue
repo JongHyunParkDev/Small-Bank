@@ -314,7 +314,7 @@ function addHistory() {
                 memo: memo.value,
                 money: +money.value,
                 type: type.value,
-            }, undefined)
+            })
 
             dayAccountArr.value.push({
                 id: dayAccount.id,
@@ -341,7 +341,7 @@ function deleteHistory() {
 
             await Api.delete('user/accounts', {
                 id: account.id
-            }, undefined)
+            })
 
             dayAccountArr.value = dayAccountArr.value.filter(item => item !== account);
 
@@ -366,7 +366,7 @@ function modifyHistory() {
                 memo: memo.value,
                 money: +money.value,
                 type: type.value,
-            }, undefined)
+            })
 
             account.time = time.value;
             account.category = category.value;

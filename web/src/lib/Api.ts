@@ -1,9 +1,19 @@
-import defaultAxios, { AxiosError, AxiosPromise, AxiosResponse } from 'axios';
+import defaultAxios, { AxiosError, AxiosPromise, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { ApiError, ApiCode, ApiMessage, BackEndError } from '@/lib/Errors';
 import { isObject } from 'lodash';
 import qs from 'qs';
 
 const apiPrefix = '/api/';
+
+interface CustomAxiosRequestConfig extends AxiosRequestConfig {
+    isBinary?: boolean;
+    isBlob?: boolean;
+    [key: string]: any;
+}
+
+interface CustomObejct {
+    [key: string]: any;
+}
 
 const axios = defaultAxios.create({
     timeout: 60000,
@@ -17,51 +27,46 @@ const axios = defaultAxios.create({
 });
 
 export const Api = {
-    get: (url: string, params: object | undefined, config: any | undefined) => {
+    get: (url: string, params?: CustomObejct, config?: CustomAxiosRequestConfig) => {
         params = params ? { params: params} : undefined;
         return process(axios.get(apiPrefix + url, appendAxiosConfig(params, config)));
     },
 
-    post: (url: string, params: object | undefined, config: any | undefined) => {
+    post: (url: string, params?: CustomObejct, config?: CustomAxiosRequestConfig) => {
         if (params === undefined)
             params = {};
         return process(axios.post(apiPrefix + url, appendAxiosConfig(params, config)));
     },
 
-    put: (url: string, params: object | undefined, config: any | undefined) => {
+    put: (url: string, params?: CustomObejct, config?: CustomAxiosRequestConfig) => {
         if (params === undefined)
             params = {};
         return process(axios.put(apiPrefix + url, appendAxiosConfig(params, config)));
     },
 
-    delete: (url: string, params: object | undefined, config: any | undefined) => {
+    delete: (url: string, params?: CustomObejct, config?: CustomAxiosRequestConfig) => {
         params = params ? { data: params} : undefined;
         return process(axios.delete(apiPrefix + url, appendAxiosConfig(params, config)));
     },
 };
 
-function appendAxiosConfig(axiosConfig: any | undefined, config: any) {
-    if (config === undefined)
-        return axiosConfig;
+function appendAxiosConfig(axiosConfig?: CustomObejct, config?: CustomAxiosRequestConfig) {
     for (const key in config) if (Object.hasOwnProperty.call(config, key))
     {
         if (key === 'isBinary')
             add('responseType', 'arraybuffer');
         else if (key === 'isBlob')
             add('responseType', 'blob');
-        else if ((key !== 'reqConvertSpec') && (key !== 'resConvertSpec'))
-            add(key, config[key]);
     }
     return axiosConfig;
 
-    function add(key: string, value: any)
+    function add(key: string, value: string)
     {
         if (axiosConfig === undefined)
             axiosConfig = {};
         axiosConfig[key] = value;
     }
 }
-
 
 function process(axiosPromise: AxiosPromise) {
     return axiosPromise.

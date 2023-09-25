@@ -16,6 +16,7 @@ export type WeatherInfo = {
 };
 
 export type BusInfo = {
+    stationName: string,
     routeId: string;
     predictTime1: string;
     predictTime2?: string;

@@ -17,13 +17,13 @@ export const useAuthStore = defineStore({
     },
     actions: {
         async login() {
-            const userInfo: UserInfo = await Api.get('user/userinfo', undefined, undefined);
+            const userInfo: UserInfo = await Api.get('user/userinfo');
             if (userInfo) {
                 this.userInfo = userInfo;
             }
         },
         async logout() {
-            await Api.get('user/logout', undefined, undefined);
+            await Api.get('user/logout');
             this.userInfo = undefined;
         }
     }

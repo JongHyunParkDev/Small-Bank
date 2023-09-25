@@ -210,7 +210,7 @@ function getSerialDto() {
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
         process(upProcessSpinner, downProcessSpinner, async () => {
-            const data: SerialInfo = await Api.get('admin/serial/getSerialDto', undefined, undefined);
+            const data: SerialInfo = await Api.get('admin/serial/getSerialDto');
 
             updateDatetime.value = new Date();
             isState.value = data.state;
@@ -250,7 +250,7 @@ function sendMsg() {
         process(upProcessSpinner, downProcessSpinner, async () => {
             const data = await Api.post('admin/serial/send', {
                 msg: message.value
-            }, undefined);
+            });
 
             updateDatetime.value = new Date();
             isState.value = data.state;
