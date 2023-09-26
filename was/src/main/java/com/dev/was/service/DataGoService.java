@@ -121,7 +121,7 @@ public class DataGoService {
     public void refreshBusListByStation(String [] stationIds) {
         if (stationIds == null) stationIds = this.stationIds;
 
-        List<Map<String, String>> list = new ArrayList<>();
+        Map<String, List<Map<String, String>>> map = new HashMap();
 
         for (String stationId : stationIds) {
             String urlStr = String.format("https://apis.data.go.kr/6410000/busarrivalservice/getBusArrivalList?serviceKey=%s&stationId=%s",
@@ -134,15 +134,15 @@ public class DataGoService {
 
             logger.info("Bus Response Code {}", responseEntity.getStatusCode().value());
             if (responseEntity.getStatusCode() == HttpStatus.OK) {
-                list.addAll(getBodyBusList(responseEntity.getBody(), stationId));
+                map.put(stationMap.get(stationId), getBodyBusList(responseEntity.getBody()));
             }
         }
 
-        BusList = list;
+        BusMap = map;
     }
 
     // TODO 나중에 또 이런 Data go API 를 쓴다면 여러곳에서 쓸 수 있게 변경한다.
-    private List<Map<String, String>> getBodyBusList(String body, String stationId) throws RuntimeException {
+    private List<Map<String, String>> getBodyBusList(String body) throws RuntimeException {
         List<Map<String, String>> list = new ArrayList<>();
         // 필요한 것은 몇 번 버스가 해당 정류장에 몇 분 후 에 오는지가 궁금함으로 time, routeId 만 가져온다.
         List<String> findColList = List.of("predictTime1", "predictTime2", "routeId");
@@ -167,8 +167,6 @@ public class DataGoService {
                     if (! findStr.equals("")) map.put(col, findStr);
                 });
 
-                map.put("stationName", stationMap.get(stationId));
-
                 list.add(map);
             }
         }
@@ -177,7 +175,7 @@ public class DataGoService {
     }
 
     // DB 에 넣지 않고 메모리에 보관한다. (실시간 성 데이터를 보여주기만 하면 되기 때문)
-    public static List<Map<String, String>> BusList = new ArrayList<>();
+    public static Map<String, List<Map<String, String>>> BusMap = new HashMap();
 
     public static List<Map<String, Object>> WeatherList = new ArrayList<>();
 

@@ -1,5 +1,5 @@
 export type SerialInfo = {
-    busList: Array<BusInfo>;
+    busMap: BusMap;
     weatherList: Array<WeatherInfo>;
     msgState: boolean;
     state: boolean;
@@ -15,8 +15,11 @@ export type WeatherInfo = {
     iconSrc?: string;
 };
 
+export type BusMap = {
+    [stationName: string] : Array<BusInfo>;
+}
+
 export type BusInfo = {
-    stationName: string,
     routeId: string;
     predictTime1: string;
     predictTime2?: string;

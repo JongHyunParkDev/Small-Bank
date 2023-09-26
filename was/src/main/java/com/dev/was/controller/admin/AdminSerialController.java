@@ -44,7 +44,7 @@ public class AdminSerialController {
                 .builder()
                 .isState(SerialService.isState)
                 .isMsgState(SerialService.isMsgState)
-                .busList(DataGoService.BusList)
+                .busMap(DataGoService.BusMap)
                 .weatherList(DataGoService.WeatherList)
                 .build();
     }

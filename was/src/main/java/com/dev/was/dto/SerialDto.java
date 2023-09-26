@@ -10,14 +10,14 @@ import java.util.Map;
 public class SerialDto {
     private boolean isState;
     private boolean isMsgState;
-    private List<Map<String, String>> busList;
+    private Map<String, List<Map<String, String>>> busMap;
     private List<Map<String, Object>> weatherList;
 
     @Builder
-    public SerialDto(boolean isState, boolean isMsgState, List<Map<String, String>> busList, List<Map<String, Object>> weatherList) {
+    public SerialDto(boolean isState, boolean isMsgState, Map<String, List<Map<String, String>>> busMap, List<Map<String, Object>> weatherList) {
         this.isState = isState;
         this.isMsgState = isMsgState;
-        this.busList = busList;
+        this.busMap = busMap;
         this.weatherList = weatherList;
     }
 }

@@ -125,26 +125,35 @@
 
                         <QTabPanel name="bus">
                             <div class="content">
-                                <div
-                                    v-for="(bus, idx) in busInfoList"
-                                    :key="idx"
-                                    class="row bus-row"
+                                <QExpansionItem
+                                    expand-separator
+                                    v-for="(busInfoList, key) in busMap"
+                                    :key="key"
+                                    header-class="bus-map"
+                                    default-opened
+                                    :label="key + ''"
                                 >
-                                    <div class="icon label">
-                                        <QIcon name="directions_bus" />
+                                    <div
+                                        v-for="(bus, idx2) in busInfoList"
+                                        :key="idx2"
+                                        class="row bus-row"
+                                    >
+                                        <div class="icon label">
+                                                <QIcon name="directions_bus" />
+                                            </div>
+                                            <div class="label">
+                                                {{ bus.routeId }} 번
+                                            </div>
+                                            <div class="label">
+                                                {{ bus.predictTime1 }}분{{ bus.predictTime2 ? '/' : '' }}{{ bus.predictTime2 }}{{ bus.predictTime2 ? '분' : '' }}
+                                            </div>
+                                        <div class="row bus-row" v-if="busInfoList.length === 0">
+                                            <div class="label">
+                                                운영중인 버스가 없습니다.
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="label">
-                                        {{ bus.routeId }} 번
-                                    </div>
-                                    <div class="label">
-                                        {{ bus.predictTime1 }}분{{ bus.predictTime2 ? '/' : '' }}{{ bus.predictTime2 }}{{ bus.predictTime2 ? '분' : '' }}
-                                    </div>
-                                </div>
-                                <div class="row bus-row" v-if="busInfoList.length === 0">
-                                     <div class="label">
-                                        운영중인 버스가 없습니다.
-                                     </div>
-                                </div>
+                                </QExpansionItem>
                             </div>
                         </QTabPanel>
                     </QTabPanels>
@@ -160,7 +169,7 @@ import { ref, Ref, computed, inject } from 'vue';
 import { process } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { dateToDatetimeStr, apiDateToDateStr } from '@/lib/DateUtil';
-import { SerialInfo, BusInfo, WeatherInfo } from '@/types/ArduinoTypes';
+import { SerialInfo, BusMap, WeatherInfo } from '@/types/ArduinoTypes';
 import { compare } from '@/lib/StrUtil';
 
 import ClearDayIcon from '@/assets/icons/clear-day.svg';
@@ -195,7 +204,7 @@ const messageRule = [
     }
 ];
 
-const busInfoList: Ref<Array<BusInfo>> = ref([]);
+const busMap: Ref<BusMap> = ref({});
 const weatherInfoList: Ref<Array<WeatherInfo>> = ref([]);
 
 const displayUpdateDatetime = computed(() => {
@@ -216,8 +225,11 @@ function getSerialDto() {
             isState.value = data.state;
             isMsgState.value = data.msgState;
 
-            data.busList.sort((a, b) => compare(a.routeId, b.routeId));
-            busInfoList.value = data.busList;
+            for (const key in data.busMap) {
+                data.busMap[key].sort((a, b) => compare(a.routeId, b.routeId));
+            }
+
+            busMap.value = data.busMap;
 
             data.weatherList.forEach(weather => {
                 let target = ClearDayIcon;
@@ -339,13 +351,23 @@ getSerialDto();
                         }
                     }
 
-                    > .bus-row {
+                    ::v-deep .bus-map {
+                        display: flex;
+                        flex-direction: column;
+                        background-color: $naver-dk;
+                        color: white;
+                        border: 2px solid $grey-6;
+                        border-radius: $spacing-lg;
+                        box-shadow: 3px 3px 3px $grey-5;
+                    }
+
+                    ::v-deep .bus-row {
                         border-bottom: 1px solid $grey-6;
-                        margin-bottom: $spacing-lg;
+                        margin: $spacing-sm 0px;
 
                         > .label {
                             flex: 1;
-                            font-size: 1.2em;
+                            font-size: 1em;
                             line-height: 24px;
                             text-align: center;
                         }
