@@ -31,7 +31,7 @@
         <div class="content">
             <QSplitter
                 class="splitter"
-                v-model="splitter"
+                v-model="styleOption.splitter"
                 :limits="[10, 30]"
             >
                 <template v-slot:before>
@@ -111,6 +111,7 @@
                                     </div>
                                     <img
                                         class="img"
+                                        :style="{ width : styleOption.weatherSize + '%'}"
                                         :src="weather.iconSrc"
                                     >
                                     <div class="label">
@@ -126,7 +127,6 @@
                         <QTabPanel name="bus">
                             <div class="content">
                                 <QExpansionItem
-                                    expand-separator
                                     v-for="(busInfoList, key) in busMap"
                                     :key="key"
                                     header-class="bus-map"
@@ -183,10 +183,15 @@ import SnowIcon from '@/assets/icons/snow.svg';
 const upProcessSpinner = inject<() => void>('upProcessSpinner');
 const downProcessSpinner = inject<() => void>('downProcessSpinner');
 
-let splitter = 30;
+// base Mobile
+const styleOption = {
+    splitter: 30,
+    weatherSize: 100
+}
 const $q = useQuasar();
 if ($q.platform.is.desktop) {
-    splitter = 10;
+    styleOption.splitter = 10;
+    styleOption.weatherSize = 30;
 }
 
 const isState: Ref<boolean> = ref(false);
@@ -352,9 +357,7 @@ getSerialDto();
                     }
 
                     ::v-deep .bus-map {
-                        display: flex;
-                        flex-direction: column;
-                        background-color: $naver-dk;
+                        background-color: $naver-bs;
                         color: white;
                         border: 2px solid $grey-6;
                         border-radius: $spacing-lg;
@@ -393,6 +396,7 @@ getSerialDto();
                         box-shadow: 3px 3px 3px $grey-5;
 
                         > .header {
+                            font-size: 1.2em;
                             width: 100%;
                             background-color: $naver-bs;
                             color: white;
@@ -406,10 +410,10 @@ getSerialDto();
                         > .img {
                             flex: 1;
                             margin: 0 auto;
-                            width: 100%;
                         }
 
                         > .label {
+                            font-size: 1.2em;
                             width: 100%;
                             text-align: center;
                             margin-bottom: $spacing-sm;

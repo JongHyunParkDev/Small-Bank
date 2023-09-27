@@ -25,6 +25,8 @@ export const ApiCode = {
     INVALID_ARGUMENT: '1101',
     MISSING_REQUIRED_FIELD: '1102',
 
+    CALL_DATA_GO_API_ERROR: '1300',
+
     LOGIN_NEED: '1900',
     PERMISSION_DENIED: '1901',
 }
@@ -37,6 +39,8 @@ export const ApiMessage = {
     // server
     [ApiCode.GENERIC]: '에러가 발생하였습니다.',
     [ApiCode.NOT_FOUND]: '내용(파일)을 찾을 수 없습니다.',
+
+    [ApiCode.CALL_DATA_GO_API_ERROR]: '데이터를 불러오는데 에러가 발생했습니다.',
 
     [ApiCode.LOGIN_NEED]: '세션이 만료되었거나 로그인이 필요합니다.',
     [ApiCode.PERMISSION_DENIED]: '권한이 없습니다.',

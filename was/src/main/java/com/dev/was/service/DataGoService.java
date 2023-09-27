@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.*;
@@ -118,7 +120,7 @@ public class DataGoService {
     }
 
     // 일단 특정 StationId 를 지정하게 한다.
-    public void refreshBusListByStation(String [] stationIds) {
+    public void refreshBusListByStation(String [] stationIds) throws IOException {
         if (stationIds == null) stationIds = this.stationIds;
 
         Map<String, List<Map<String, String>>> map = new HashMap();

@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,13 +33,16 @@ public class AdminSerialController {
 
     @GetMapping("/getSerialDto")
     public SerialDto getSerialDto() {
-        return createSerialDto();
+        try {
+            return createSerialDto();
+        }
+        catch (IOException e) {
+            throw new ApiException(ExceptionCodeEnum.CALL_DATA_ERROR, e.getMessage());
+        }
     }
 
-    private SerialDto createSerialDto() {
-        // bus
+    private SerialDto createSerialDto() throws  IOException{
         dataGoService.refreshBusListByStation(null);
-        // weather
 
         return SerialDto
                 .builder()
