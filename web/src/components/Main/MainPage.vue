@@ -5,16 +5,17 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, PropType, computed, ref, toRef, Ref, onMounted } from 'vue';
+import { defineComponent, PropType, computed, ref, toRef, Ref, onMounted, onUnmounted } from 'vue';
 import * as THREE from 'three';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 
 const threeDiv = ref<HTMLInputElement | null>(null);
 
-let mixer, renderer;
-
+let mixer, renderer, animationId = -1;
+let scene = new THREE.Scene();
 const clock = new THREE.Clock();
-const scene = new THREE.Scene();
+console.log(clock);
+console.log(scene);
 scene.background = new THREE.Color( 0xffffff );
 scene.fog = new THREE.Fog( 0xa0a0a0, 200, 500);
 
@@ -26,10 +27,8 @@ const ambLight = new THREE.AmbientLight( 0xffffff, 15);
 ambLight.position.set( 300, 300, 300 );
 scene.add( ambLight );
 
-let cnt = 0;
-
 function animate() {
-    requestAnimationFrame( animate );
+    animationId = requestAnimationFrame( animate );
 
     const delta = clock.getDelta();
 
@@ -39,7 +38,6 @@ function animate() {
 }
 
 onMounted(() => {
-    console.log('mounted');
     const loader = new FBXLoader();
     loader.load( 'src/assets/three/pig_walk.fbx', function ( object ) {
         mixer = new THREE.AnimationMixer( object );
@@ -61,13 +59,19 @@ onMounted(() => {
     });
 
     renderer = new THREE.WebGLRenderer( { antialias: true } );
-    renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( threeDiv.value?.clientWidth, threeDiv.value?.clientHeight );
-    renderer.shadowMap.enabled = true;
     threeDiv.value?.appendChild( renderer.domElement );
 
     animate();
 })
+
+onUnmounted(() => {
+    mixer = null;
+    renderer = null;
+    scene = null;
+    if (animationId !== -1) cancelAnimationFrame(animationId);
+    clock.stop();
+}) 
 </script>
 
 <style lang="scss">
