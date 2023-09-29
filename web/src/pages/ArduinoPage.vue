@@ -1,6 +1,6 @@
 <template>
     <QPage class="row">
-        <ArduinoPane active />
+        <ArduinoPane />
     </QPage>
 </template>
 

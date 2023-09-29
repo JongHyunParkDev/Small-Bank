@@ -43,13 +43,6 @@
             <QList>
                 <QItemLabel header> Menu </QItemLabel>
                 <RouterLink v-if="isDone"> </RouterLink>
-
-                <QItemLabel header> Essential Links </QItemLabel>
-                <EssentialLink
-                    v-for="link in essentialLinks"
-                    :key="link.title"
-                    v-bind="link"
-                />
             </QList>
         </QDrawer>
 
@@ -75,7 +68,6 @@
 
 <script setup lang="ts">
 import { ref, Ref, computed, provide } from 'vue';
-import EssentialLink from 'components/EssentialLink.vue';
 import RouterLink from 'components/RouterLink.vue';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { useAuthStore } from '@/stores/AuthStore';
@@ -84,51 +76,6 @@ import { process } from '@/lib/Async';
 import { UserInfo } from '@/types/UserTypes';
 import { useRouter } from 'vue-router';
 
-const linksList = [
-    {
-        title: 'Docs',
-        caption: 'quasar.dev',
-        icon: 'school',
-        link: 'https://quasar.dev',
-    },
-    {
-        title: 'Github',
-        caption: 'github.com/quasarframework',
-        icon: 'code',
-        link: 'https://github.com/quasarframework',
-    },
-    {
-        title: 'Discord Chat Channel',
-        caption: 'chat.quasar.dev',
-        icon: 'chat',
-        link: 'https://chat.quasar.dev',
-    },
-    {
-        title: 'Forum',
-        caption: 'forum.quasar.dev',
-        icon: 'record_voice_over',
-        link: 'https://forum.quasar.dev',
-    },
-    {
-        title: 'Twitter',
-        caption: '@quasarframework',
-        icon: 'rss_feed',
-        link: 'https://twitter.quasar.dev',
-    },
-    {
-        title: 'Facebook',
-        caption: '@QuasarFramework',
-        icon: 'public',
-        link: 'https://facebook.quasar.dev',
-    },
-    {
-        title: 'Quasar Awesome',
-        caption: 'Community Quasar projects',
-        icon: 'favorite',
-        link: 'https://awesome.quasar.dev',
-    },
-];
-
 const router = useRouter();
 const leftDrawerOpen: Ref<boolean> = ref(false);
 const authStore = useAuthStore();
@@ -136,8 +83,6 @@ const userInfo: Ref<UserInfo | undefined> = ref(authStore.userInfo);
 const processCount: Ref<number> = ref(0);
 const isDone: Ref<boolean> = ref(false);
 const errorStore = useErrorStore();
-
-const essentialLinks = linksList;
 
 const toggleLeftDrawer = () => {
     leftDrawerOpen.value = !leftDrawerOpen.value;
