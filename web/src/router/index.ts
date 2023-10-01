@@ -1,4 +1,5 @@
 import { route } from 'quasar/wrappers';
+import { useAuthStore } from '@/stores/AuthStore';
 import {
     createMemoryHistory,
     createRouter,
@@ -34,6 +35,31 @@ export default route(function (/* { store, ssrContext } */) {
         // quasar.conf.js -> build -> vueRouterMode
         // quasar.conf.js -> build -> publicPath
         history: createHistory(process.env.VUE_ROUTER_BASE),
+    });
+
+    Router.beforeEach((to, from, next) => {
+        const authStore = useAuthStore();
+
+        if (to.matched.some(record => record.meta.isAdmin)) {
+            if (authStore.isAdmin) {
+                next();
+            }
+            else if (authStore.isAuth) {
+                next({ path: '/' });
+            }
+            else {
+                next({ path: '/login' });
+            }
+        }
+        else if (to.matched.some(record => record.meta.isAuth)) {
+            if (authStore.isAuth) {
+                next();
+            } else {
+                next({ path: '/login' });
+            }
+        } else {
+            next();
+        }
     });
 
     return Router;

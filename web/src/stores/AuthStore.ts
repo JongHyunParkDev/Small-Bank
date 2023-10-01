@@ -5,21 +5,26 @@ import { UserInfo } from '@/types/UserTypes';
 export const useAuthStore = defineStore({
     id: 'auth', // 스토어 식별자
     state: () => ({
-        isLoggedIn: false,
-        userInfo: undefined as UserInfo | undefined
+        userInfo: undefined as UserInfo | undefined,
     }),
+    getters: {
+        isAuth: (state) => {
+            return state.userInfo !== undefined;
+        },
+        isAdmin: (state) => {
+            return state.userInfo?.role === 'ROLE_ADMIN';
+        },
+    },
     actions: {
         async login() {
-            const userInfo: UserInfo = await Api.get('user/userinfo', undefined, undefined);
+            const userInfo: UserInfo = await Api.get('user/userinfo');
             if (userInfo) {
                 this.userInfo = userInfo;
-                this.isLoggedIn = true;
             }
         },
         async logout() {
-            await Api.get('user/logout', undefined, undefined);
+            await Api.get('user/logout');
             this.userInfo = undefined;
-            this.isLoggedIn = false;
         }
     }
 });

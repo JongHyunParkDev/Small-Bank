@@ -1,4 +1,4 @@
-package com.dev.was.controller;
+package com.dev.was.controller.user;
 
 import com.dev.was.dto.AccountDto;
 import com.dev.was.security.AuthenticationUtil;

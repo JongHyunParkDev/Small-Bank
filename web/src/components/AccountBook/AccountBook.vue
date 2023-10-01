@@ -235,8 +235,6 @@ import ABHistory from 'components/AccountBook/ABHistory.vue';
 const upProcessSpinner = inject<() => void>('upProcessSpinner');
 const downProcessSpinner = inject<() => void>('downProcessSpinner');
 
-//TODO 거래 내역은 추후에 api 로 변경해야한다.
-// id, timestamp, text, money, category, type
 const dayAccountArr: Ref<Array<DayAccount>> = ref([]);
 const isAddDialog = ref(false);
 const isModifyDialog = ref(false);
@@ -316,7 +314,7 @@ function addHistory() {
                 memo: memo.value,
                 money: +money.value,
                 type: type.value,
-            }, undefined)
+            })
 
             dayAccountArr.value.push({
                 id: dayAccount.id,
@@ -343,7 +341,7 @@ function deleteHistory() {
 
             await Api.delete('user/accounts', {
                 id: account.id
-            }, undefined)
+            })
 
             dayAccountArr.value = dayAccountArr.value.filter(item => item !== account);
 
@@ -368,7 +366,7 @@ function modifyHistory() {
                 memo: memo.value,
                 money: +money.value,
                 type: type.value,
-            }, undefined)
+            })
 
             account.time = time.value;
             account.category = category.value;
