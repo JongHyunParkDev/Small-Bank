@@ -1,5 +1,5 @@
 <template>
-    <QLayout view="lHh Lpr lFf">
+    <QLayout view="hHh lpR fFf">
         <QHeader elevated class="header">
             <QToolbar>
                 <QBtn
@@ -39,6 +39,7 @@
         <QDrawer
             v-model="leftDrawerOpen"
             bordered
+            overlay
         >
             <QList>
                 <QItemLabel header> Menu </QItemLabel>

@@ -5,35 +5,66 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, PropType, computed, ref, toRef, Ref, onMounted  } from 'vue';
+import { defineComponent, PropType, computed, ref, toRef, Ref, onMounted } from 'vue';
 import * as THREE from 'three';
+import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+
 const threeDiv = ref<HTMLInputElement | null>(null);
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+let mixer, renderer;
 
-const renderer = new THREE.WebGLRenderer();
+const clock = new THREE.Clock();
+const scene = new THREE.Scene();
+scene.background = new THREE.Color( 0xffffff );
+scene.fog = new THREE.Fog( 0xa0a0a0, 200, 500);
+
+const camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 5,  2000 );
+camera.position.set( 75, 50, 75 );
+camera.lookAt( 0, 0, 0 );
+
+const ambLight = new THREE.AmbientLight( 0xffffff, 15);
+ambLight.position.set( 300, 300, 300 );
+scene.add( ambLight );
+
+let cnt = 0;
 
 function animate() {
     requestAnimationFrame( animate );
+
+    const delta = clock.getDelta();
+
+    if ( mixer ) mixer.update( delta );
+
     renderer.render( scene, camera );
 }
 
 onMounted(() => {
-    console.log(threeDiv.value);
-    renderer.setSize( threeDiv.value?.width, threeDiv.value?.height );
+    console.log('mounted');
+    const loader = new FBXLoader();
+    loader.load( 'src/assets/three/pig_walk.fbx', function ( object ) {
+        mixer = new THREE.AnimationMixer( object );
 
+        const action = mixer.clipAction( object.animations[ 0 ] );
+
+        action.setDuration(action.getClip().duration * 0.75);
+
+        action.play();
+
+        object.traverse( function ( child ) {
+            // console.log(child);
+            // if ( child.isMesh ) {
+            //     child.castShadow = true;
+            //     child.receiveShadow = true;
+            // }
+        } );
+        scene.add( object );
+    });
+
+    renderer = new THREE.WebGLRenderer( { antialias: true } );
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( threeDiv.value?.clientWidth, threeDiv.value?.clientHeight );
+    renderer.shadowMap.enabled = true;
     threeDiv.value?.appendChild( renderer.domElement );
-
-    console.log(threeDiv.value);
-
-    const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-    const cube = new THREE.Mesh( geometry, material );
-    scene.add( cube );
-
-    camera.position.z = 5;
-
 
     animate();
 })

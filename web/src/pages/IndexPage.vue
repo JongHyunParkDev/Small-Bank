@@ -1,6 +1,6 @@
 <template>
     <QPage class="row items-center justify-evenly">
-        <MainPage />
+        <MainPage/>
     </QPage>
 </template>
 
