@@ -1,9 +1,15 @@
 <template>
     <div class="three-container" ref="threeDiv">
-        <div class="box-area">
-            <div class="box" @click="updateActionCoin">
-
-            </div>
+        <div class="fab-area">
+            <QBtn
+                round
+                :disable="isCoinState"
+                @click="updateActionCoin"
+            >
+                <QAvatar size="42px">
+                    <img :src=CoinSrc>
+                </QAvatar>
+            </QBtn>
         </div>
     </div>
 </template>
@@ -12,6 +18,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import * as THREE from 'three';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+import CoinSrc from '@/assets/images/coin.png';
 
 const threeDiv = ref<HTMLInputElement | null>(null);
 
@@ -32,54 +39,55 @@ const ambLight = new THREE.AmbientLight( 0xffffff, 15);
 ambLight.position.set( 300, 300, 300 );
 scene.add( ambLight );
 
+let pigWalkObject: any, pigCoinObject: any;
+
+async function loadObjects() {
+    const loader = new FBXLoader();
+    pigWalkObject = await loader.loadAsync('three/pig_walk.fbx');
+    pigCoinObject = await loader.loadAsync('three/pig_coin.fbx');
+}
+
 function updateActionWalk() {
     isCoinState = false;
 
-    const loader = new FBXLoader();
-    loader.load( 'src/assets/three/pig_walk.fbx', function ( object: any ) {
-        if (lastObject !== undefined) scene.remove( lastObject );
-        if (mixer !== undefined) mixer.stopAllAction();
+    if (lastObject !== undefined) scene.remove( lastObject );
+    if (mixer !== undefined) mixer.stopAllAction();
 
-        mixer = new THREE.AnimationMixer( object );
+    mixer = new THREE.AnimationMixer( pigWalkObject );
 
-        const action = mixer.clipAction( object.animations[ 0 ] );
+    const action = mixer.clipAction( pigWalkObject.animations[ 0 ] );
 
-        action.setDuration(action.getClip().duration * 0.75);
+    action.setDuration(action.getClip().duration * 0.75);
 
-        action.play();
+    action.play();
 
-        scene.add( object );
-        lastObject = object;
-    });
-
+    scene.add( pigWalkObject );
+    lastObject = pigWalkObject;
 }
 
 function updateActionCoin() {
     if (isCoinState) return;
     isCoinState = true;
 
-    const loader = new FBXLoader();
-    loader.load('src/assets/three/pig_coin.fbx', function (object: any) {
-        scene.remove( lastObject );
-        mixer.stopAllAction();
+    mixer.stopAllAction();
+    scene.remove( lastObject );
 
-        mixer = new THREE.AnimationMixer( object );
-        const action = mixer.clipAction(object.animations[0]);
+    mixer = new THREE.AnimationMixer( pigCoinObject );
+    const action = mixer.clipAction(pigCoinObject.animations[0]);
 
-        action.setDuration(action.getClip().duration * 0.75);
-        action.play();
+    action.setDuration(action.getClip().duration * 0.75);
+    action.play();
 
-        // 기존 애니메이션의 종료 이벤트 리스너 추가
-        action.clampWhenFinished = true;
-        action.loop = THREE.LoopOnce; // 한 번만 재생
-        mixer.addEventListener('finished', () => {
-            // 애니메이션 종료 시 다른 애니메이션으로 전환
-            updateActionWalk();
-        });
-
-        scene.add( object );
-        lastObject = object;
+    // 기존 애니메이션의 종료 이벤트 리스너 추가
+    action.clampWhenFinished = true;
+    action.loop = THREE.LoopOnce; // 한 번만 재생
+    mixer.addEventListener('finished', () => {
+        // 애니메이션 종료 시 다른 애니메이션으로 전환
+        updateActionWalk();
     });
+
+    scene.add( pigCoinObject );
+    lastObject = pigCoinObject;
 }
 
 function animate() {
@@ -92,9 +100,9 @@ function animate() {
     renderer.render( scene, camera );
 }
 
-onMounted(() => {
+onMounted(async () => {
+    await loadObjects();
     updateActionWalk();
-
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setSize( threeDiv.value?.clientWidth, threeDiv.value?.clientHeight );
     threeDiv.value?.appendChild( renderer.domElement );
@@ -121,24 +129,11 @@ onUnmounted(() => {
     height: 100%;
     width: 100%;
 
-    > .box-area {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        > .box {
-            width: 280px;
-            height: 25%;
-
-            &:hover {
-                cursor: pointer;
-            }
-        }
+    > .fab-area {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        text-align: center;
     }
 }
 </style>
