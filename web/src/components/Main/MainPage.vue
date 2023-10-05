@@ -25,6 +25,7 @@ const threeDiv = ref<HTMLInputElement | null>(null);
 let isCoinState = false;
 // three js 에서 typescript 모두 지원하지 않음으로 대부분을 any 로 둔다.
 let mixer: any, renderer: any, lastObject: any, animationId = -1;
+let x = 90, y = 0, z = - 90;
 let scene = new THREE.Scene();
 const clock = new THREE.Clock();
 
@@ -35,8 +36,20 @@ const camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.inner
 camera.position.set( 75, 50, 75 );
 camera.lookAt( 0, 0, 0 );
 
-const ambLight = new THREE.AmbientLight( 0xffffff, 15);
-ambLight.position.set( 300, 300, 300 );
+const baseGeometry = new THREE.BoxGeometry( 5, 5, 5 );
+const baseLight = new THREE.PointLight( 0xffffff, 1, 500, 2 );
+
+const baseMat = new THREE.MeshStandardMaterial( {
+    emissive: 0xf22400,
+    emissiveIntensity: 100,
+    color: 0x000000
+} );
+baseLight.add( new THREE.Mesh( baseGeometry, baseMat ) );
+baseLight.castShadow = true;
+baseLight.power = 1000000;
+scene.add( baseLight );
+
+const ambLight = new THREE.AmbientLight( 0xffffff, 3);
 scene.add( ambLight );
 
 let pigWalkObject: any, pigCoinObject: any;
@@ -82,7 +95,6 @@ function updateActionCoin() {
     action.clampWhenFinished = true;
     action.loop = THREE.LoopOnce; // 한 번만 재생
     mixer.addEventListener('finished', () => {
-        // 애니메이션 종료 시 다른 애니메이션으로 전환
         updateActionWalk();
     });
 
@@ -96,6 +108,19 @@ function animate() {
     const delta = clock.getDelta();
 
     if ( mixer ) mixer.update( delta );
+
+    const num = 0.2;
+    x -= num;
+    y += num;
+    z += num;
+
+    if (x < -90) {
+        x = 90;
+        y = 0;
+        z = -90;
+    }
+
+    baseLight.position.set(x, Math.sin( Math.PI * y / 180 ) * 50 + 30, z);
 
     renderer.render( scene, camera );
 }
