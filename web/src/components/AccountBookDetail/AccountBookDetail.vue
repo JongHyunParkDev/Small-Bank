@@ -250,6 +250,7 @@ function getAccounts() {
 onMounted(() => {
     if (chartContainer.value) {
         chart.value = Highcharts.chart(chartContainer.value, chartOptions);
+        getAccounts();
     }
 })
 </script>
