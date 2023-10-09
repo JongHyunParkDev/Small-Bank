@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, inject, onMounted } from 'vue';
+import { ref, inject, onMounted } from 'vue';
 import { process } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { dateToApiDateStr } from '@/lib/DateUtil';
@@ -62,15 +62,20 @@ import { DayAccount } from '@/types/AccountTypes';
 import Highcharts from 'highcharts';
 import accessibility from 'highcharts/modules/accessibility';
 import drilldown from 'highcharts/modules/drilldown';
+import { ChartData, DrilldownChartData, IndexMap } from '@/types/ChartTypes';
 
 accessibility(Highcharts);
 drilldown(Highcharts);
 
 const chartContainer = ref<HTMLInputElement | null>(null);
 const chart = ref(null);
-const chartOptions = {
+
+let chartOptions = {
     chart: {
         type: 'pie'
+    },
+    credits: {
+        enabled: false
     },
     title: {
         text: '가계부 통계',
@@ -101,240 +106,13 @@ const chartOptions = {
 
     series: [
         {
-            name: 'Browsers',
+            name: 'Accounts',
             colorByPoint: true,
-            data: [
-                {
-                    name: 'Chrome',
-                    y: 61.04,
-                    drilldown: 'Chrome'
-                },
-                {
-                    name: 'Safari',
-                    y: 9.47,
-                    drilldown: 'Safari'
-                },
-                {
-                    name: 'Edge',
-                    y: 9.32,
-                    drilldown: 'Edge'
-                },
-                {
-                    name: 'Firefox',
-                    y: 8.15,
-                    drilldown: 'Firefox'
-                },
-                {
-                    name: 'Other',
-                    y: 11.02,
-                    drilldown: null
-                }
-            ]
+            data: []
         }
     ],
     drilldown: {
-        series: [
-            {
-                name: 'Chrome',
-                id: 'Chrome',
-                data: [
-                    [
-                        'v97.0',
-                        36.89
-                    ],
-                    [
-                        'v96.0',
-                        18.16
-                    ],
-                    [
-                        'v95.0',
-                        0.54
-                    ],
-                    [
-                        'v94.0',
-                        0.7
-                    ],
-                    [
-                        'v93.0',
-                        0.8
-                    ],
-                    [
-                        'v92.0',
-                        0.41
-                    ],
-                    [
-                        'v91.0',
-                        0.31
-                    ],
-                    [
-                        'v90.0',
-                        0.13
-                    ],
-                    [
-                        'v89.0',
-                        0.14
-                    ],
-                    [
-                        'v88.0',
-                        0.1
-                    ],
-                    [
-                        'v87.0',
-                        0.35
-                    ],
-                    [
-                        'v86.0',
-                        0.17
-                    ],
-                    [
-                        'v85.0',
-                        0.18
-                    ],
-                    [
-                        'v84.0',
-                        0.17
-                    ],
-                    [
-                        'v83.0',
-                        0.21
-                    ],
-                    [
-                        'v81.0',
-                        0.1
-                    ],
-                    [
-                        'v80.0',
-                        0.16
-                    ],
-                    [
-                        'v79.0',
-                        0.43
-                    ],
-                    [
-                        'v78.0',
-                        0.11
-                    ],
-                    [
-                        'v76.0',
-                        0.16
-                    ],
-                    [
-                        'v75.0',
-                        0.15
-                    ],
-                    [
-                        'v72.0',
-                        0.14
-                    ],
-                    [
-                        'v70.0',
-                        0.11
-                    ],
-                    [
-                        'v69.0',
-                        0.13
-                    ],
-                    [
-                        'v56.0',
-                        0.12
-                    ],
-                    [
-                        'v49.0',
-                        0.17
-                    ]
-                ]
-            },
-            {
-                name: 'Safari',
-                id: 'Safari',
-                data: [
-                    [
-                        'v15.3',
-                        0.1
-                    ],
-                    [
-                        'v15.2',
-                        2.01
-                    ],
-                    [
-                        'v15.1',
-                        2.29
-                    ],
-                    [
-                        'v15.0',
-                        0.49
-                    ],
-                    [
-                        'v14.1',
-                        2.48
-                    ],
-                    [
-                        'v14.0',
-                        0.64
-                    ],
-                    [
-                        'v13.1',
-                        1.17
-                    ],
-                    [
-                        'v13.0',
-                        0.13
-                    ],
-                    [
-                        'v12.1',
-                        0.16
-                    ]
-                ]
-            },
-            {
-                name: 'Edge',
-                id: 'Edge',
-                data: [
-                    [
-                        'v97',
-                        6.62
-                    ],
-                    [
-                        'v96',
-                        2.55
-                    ],
-                    [
-                        'v95',
-                        0.15
-                    ]
-                ]
-            },
-            {
-                name: 'Firefox',
-                id: 'Firefox',
-                data: [
-                    [
-                        'v96.0',
-                        4.17
-                    ],
-                    [
-                        'v95.0',
-                        3.33
-                    ],
-                    [
-                        'v94.0',
-                        0.11
-                    ],
-                    [
-                        'v91.0',
-                        0.23
-                    ],
-                    [
-                        'v78.0',
-                        0.16
-                    ],
-                    [
-                        'v52.0',
-                        0.15
-                    ]
-                ]
-            }
-        ]
+        series: []
     }
 };
 
@@ -393,7 +171,78 @@ function getAccounts() {
                 endDate: endDate,
             });
 
-            console.log(dayAccountList);
+            const serialDataArray: Array<ChartData> = [];
+            const drilldownSerialDataArray: Array<DrilldownChartData> = [];
+            const indexMap: IndexMap = {};
+            dayAccountList.forEach((account, idx) => {
+                if (indexMap[account.category] === undefined) {
+                    indexMap[account.category] = idx;
+                    serialDataArray.push({
+                        name: account.category,
+                        y: account.money,
+                        drilldown: account.category
+                    })
+                    drilldownSerialDataArray.push({
+                        name: account.category, 
+                        id: account.category,
+                        data: [[`${account.date}-${account.memo}`, account.money]]
+                    });
+                }
+                else {
+                    serialDataArray[indexMap[account.category]].y += account.money;
+                    drilldownSerialDataArray[indexMap[account.category]].data.push(
+                        [`${account.date}-${account.memo}`, account.money]
+                    );
+                }
+            });
+            
+            chartOptions = {
+                chart: {
+                    type: 'pie'
+                },
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: '가계부 통계',
+                    align: 'center'
+                },
+                accessibility: {
+                    announceNewData: {
+                        enabled: true
+                    },
+                    point: {
+                        valueSuffix: '%'
+                    }
+                },
+                plotOptions: {
+                    series: {
+                        borderRadius: 5,
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.name}: {point.y:.1f}%'
+                        }
+                    }
+                },
+
+                tooltip: {
+                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                    pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+                },
+
+                series: [
+                    {
+                        name: 'Accounts',
+                        colorByPoint: true,
+                        data: serialDataArray
+                    }
+                ],
+                drilldown: {
+                    series: drilldownSerialDataArray
+                }
+            };
+
+            if (chart.value) chart.value.update(chartOptions);
         });
     }
 }
