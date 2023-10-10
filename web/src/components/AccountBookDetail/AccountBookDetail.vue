@@ -57,7 +57,7 @@
 import { ref, inject, onMounted } from 'vue';
 import { process } from '@/lib/Async';
 import { Api } from '@/lib/Api';
-import { dateToApiDateStr } from '@/lib/DateUtil';
+import { dateToApiDateStr, apiDateToDateStr } from '@/lib/DateUtil';
 import { DayAccount } from '@/types/AccountTypes';
 import Highcharts from 'highcharts';
 import accessibility from 'highcharts/modules/accessibility';
@@ -78,32 +78,9 @@ let chartOptions = {
         enabled: false
     },
     title: {
-        text: '가계부 통계',
+        text: '가계부 지출 통계',
         align: 'center'
     },
-    accessibility: {
-        announceNewData: {
-            enabled: true
-        },
-        point: {
-            valueSuffix: '%'
-        }
-    },
-    plotOptions: {
-        series: {
-            borderRadius: 5,
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}: {point.y:.1f}%'
-            }
-        }
-    },
-
-    tooltip: {
-        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
-    },
-
     series: [
         {
             name: 'Accounts',
@@ -111,9 +88,6 @@ let chartOptions = {
             data: []
         }
     ],
-    drilldown: {
-        series: []
-    }
 };
 
 const upProcessSpinner = inject<() => void>('upProcessSpinner');
@@ -174,9 +148,11 @@ function getAccounts() {
             const serialDataArray: Array<ChartData> = [];
             const drilldownSerialDataArray: Array<DrilldownChartData> = [];
             const indexMap: IndexMap = {};
-            dayAccountList.forEach((account, idx) => {
+            let idx = 0;
+            dayAccountList.forEach((account) => {
+                if (account.type === 'income') return;
                 if (indexMap[account.category] === undefined) {
-                    indexMap[account.category] = idx;
+                    indexMap[account.category] = idx++;
                     serialDataArray.push({
                         name: account.category,
                         y: account.money,
@@ -185,13 +161,13 @@ function getAccounts() {
                     drilldownSerialDataArray.push({
                         name: account.category, 
                         id: account.category,
-                        data: [[`${account.date}-${account.memo}`, account.money]]
+                        data: [[`${apiDateToDateStr(account.date)} (${account.memo})`, account.money]]
                     });
                 }
                 else {
                     serialDataArray[indexMap[account.category]].y += account.money;
                     drilldownSerialDataArray[indexMap[account.category]].data.push(
-                        [`${account.date}-${account.memo}`, account.money]
+                        [`${apiDateToDateStr(account.date)} (${account.memo})`, account.money]
                     );
                 }
             });
@@ -204,7 +180,7 @@ function getAccounts() {
                     enabled: false
                 },
                 title: {
-                    text: '가계부 통계',
+                    text: '가계부 지출 통계',
                     align: 'center'
                 },
                 accessibility: {
@@ -212,7 +188,7 @@ function getAccounts() {
                         enabled: true
                     },
                     point: {
-                        valueSuffix: '%'
+                        valueSuffix: '원'
                     }
                 },
                 plotOptions: {
@@ -220,16 +196,24 @@ function getAccounts() {
                         borderRadius: 5,
                         dataLabels: {
                             enabled: true,
-                            format: '{point.name}: {point.y:.1f}%'
+                            formatter: function () {
+                                return `<span style="color:${this.color}; text-decoration:'none'">` +
+                                    `Category: ${this.key} <br>` +
+                                    `Value: ${this.y.toLocaleString()}원 <br>` +   
+                                    `Percent: ${this.percentage.toFixed(2)}% <br>` +   
+                                    `</span>`;
+                            }
                         }
                     }
                 },
-
                 tooltip: {
-                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-                    pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+                    headerFormat: '<span>{series.name}</span><br>',
+                    formatter: function () {
+                        return `Category: <span style="color:${this.color}">${this.key}</span><br/>` +
+                            `Value: <b>${this.y.toLocaleString()}원</b><br />` +
+                            `Total: <b>${this.total.toLocaleString()}원</b>`
+                    }
                 },
-
                 series: [
                     {
                         name: 'Accounts',
@@ -238,6 +222,9 @@ function getAccounts() {
                     }
                 ],
                 drilldown: {
+                    activeDataLabelStyle: {
+                        textDecoration: 'none',
+                    },
                     series: drilldownSerialDataArray
                 }
             };
