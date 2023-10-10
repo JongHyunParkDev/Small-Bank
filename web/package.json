@@ -15,6 +15,7 @@
   "dependencies": {
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
+    "highcharts": "^11.1.0",
     "lodash": "4.17.21",
     "lodash-es": "4.17.21",
     "pinia": "^2.0.11",

@@ -1,6 +1,6 @@
 <template>
     <div class="abcalendar">
-        <div class="heaeder">
+        <div class="header">
             <QBtn
                 class="btn-left"
                 color="white"
@@ -226,7 +226,7 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
 
-    > .heaeder {
+    > .header {
         display: flex;
         margin: $spacing-sm auto;
         > .abc-outer {
