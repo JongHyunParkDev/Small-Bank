@@ -205,7 +205,7 @@
                         <QBtn
                             padding="xs lg"
                             label="삭제"
-                            color="primary"
+                            color="negative"
                             @click="deleteHistory()"
                         />
                         <QBtn
@@ -269,7 +269,7 @@ function updateCalendar({ year, month }: { year: number, month: number }) {
             const dayAccountList: Array<DayAccount> = await Api.get('user/accounts', {
                 startDate: startDate,
                 endDate: endDate,
-            }, undefined);
+            });
 
             dayAccountArr.value = [];
 
