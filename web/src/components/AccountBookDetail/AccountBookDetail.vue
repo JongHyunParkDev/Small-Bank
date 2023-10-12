@@ -54,6 +54,7 @@
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar'
 import { ref, inject, onMounted } from 'vue';
 import { process } from '@/lib/Async';
 import { Api } from '@/lib/Api';
@@ -63,6 +64,15 @@ import Highcharts from 'highcharts';
 import accessibility from 'highcharts/modules/accessibility';
 import drilldown from 'highcharts/modules/drilldown';
 import { ChartData, DrilldownChartData, IndexMap } from '@/types/ChartTypes';
+
+// base Mobile
+const styleOption = {
+    distance: '-40%',
+}
+const $q = useQuasar();
+if ($q.platform.is.desktop) {
+    styleOption.distance = '30';
+}
 
 accessibility(Highcharts);
 drilldown(Highcharts);
@@ -196,6 +206,12 @@ function getAccounts() {
                         borderRadius: 5,
                         dataLabels: {
                             enabled: true,
+                            distance: styleOption.distance,
+                            filter: {
+                                property: 'percentage',
+                                operator: '>',
+                                value: 5
+                            },
                             formatter: function () {
                                 return `<span style="color:${this.color}; text-decoration:'none'">` +
                                     `Category: ${this.key} <br>` +
