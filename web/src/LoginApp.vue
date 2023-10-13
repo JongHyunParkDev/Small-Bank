@@ -58,8 +58,8 @@ import { ref, Ref } from 'vue';
 import LogoSvgSrc from '@/assets/logo/logo.svg';
 import NaverLoginBtnSrc from '@/assets/images/naver_login_btn.png';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
-// import { useAuthStore } from '@/stores/AuthStore';
-// import { process } from '@/lib/Async';
+import { process } from '@/lib/Async';
+import { Api } from '@/lib/Api';
 
 const processCount: Ref<number> = ref(0);
 const id: Ref<string> = ref('');
@@ -73,8 +73,8 @@ const password: Ref<string> = ref('');
 //     processCount.value = 0;
 // }555
 
-function submit() {
-    console.log('sub');
+async function submit() {
+    await Api.get('anon/login');
 }
 
 </script>
