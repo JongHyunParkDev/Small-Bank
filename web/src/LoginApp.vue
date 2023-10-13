@@ -5,45 +5,46 @@
             :src="LogoSvgSrc"
             alt="logo"
         />
-        <QForm
-            :autofocus="true"
-            class="login-form"
-            @submit.stop="submit"
-        >
-            <div class="input-area">
-                <QInput
-                    class="input"
-                    outlined
-                    stack-label
-                    label="ID"
-                    v-model="id"
-                    type="text"
-                />
-                <QInput
-                    outlined
-                    stack-label
-                    label="Password"
-                    v-model="password"
-                    type="password"
-                />
-            </div>
-            <QBtn
-                class="submit"
-                label="Login"
-                type="submit"
-            />
-
-    </QForm>
-        <div class="login-btns">
-            <a
-                class="login-btn"
-                href="/oauth2/authorization/naver"
+        <div class="login-area">
+            <QForm
+                :autofocus="true"
+                class="login-form"
+                @submit.stop="submit"
             >
-                <img
-                    :src="NaverLoginBtnSrc"
-                    alt="Naver Login"
+                <div class="input-area">
+                    <QInput
+                        class="input"
+                        outlined
+                        stack-label
+                        label="ID"
+                        v-model="id"
+                        type="text"
+                    />
+                    <QInput
+                        outlined
+                        stack-label
+                        label="Password"
+                        v-model="password"
+                        type="password"
+                    />
+                </div>
+                <QBtn
+                    class="submit"
+                    label="Login"
+                    type="submit"
                 />
-            </a>
+            </QForm>
+            <div class="login-btns">
+                <a
+                    class="login-btn"
+                    href="/oauth2/authorization/naver"
+                >
+                    <img
+                        :src="NaverLoginBtnSrc"
+                        alt="Naver Login"
+                    />
+                </a>
+            </div>
         </div>
         <div class="footer">
             JongHyunParkDev
@@ -86,45 +87,50 @@ function submit() {
     left: 0;
     right: 0;
     margin: auto;
-    width: 400px;
-    height: 400px;
+    width: 350px;
+    height: 300px;
     text-align: center;
 
     > .logo {
         filter: drop-shadow(0 0 3px	#4ec525);
-        width: 300px;
-        margin: 50px 0px;
+        width: 100%;
+        margin-bottom: 50px;
     }
 
-    > .login-form {
-        display: flex;
-        margin-bottom: $spacing-md;
+    > .login-area {
+        max-width: 300px;
+        margin: 0px 25px;
+        > .login-form {
+            display: flex;
+            margin-bottom: $spacing-md;
+          
 
-        > .input-area {
-            flex: 1;
-            margin-right: $spacing-tn;
+            > .input-area {
+                flex: 1;
+                margin-right: $spacing-tn;
 
-            > .input {
-                margin-bottom: $spacing-tn;
+                > .input {
+                    margin-bottom: $spacing-tn;
+                }
+            }
+            > .submit {
+                background-color: $naver-bs;
+                color: white;
             }
         }
-        > .submit {
-            background-color: $naver-bs;
-            color: white;
-        }
-    }
 
-    > .login-btns {
+        > .login-btns {
+            display: flex;
+            > .login-btn {
+                width: 150px;
 
-        > .login-btn {
-            width: 200px;
+                img {
+                    width: 150px;
+                }
 
-            img {
-                width: 200px;
-            }
-
-            &:hover {
-                cursor: pointer;
+                &:hover {
+                    cursor: pointer;
+                }
             }
         }
     }

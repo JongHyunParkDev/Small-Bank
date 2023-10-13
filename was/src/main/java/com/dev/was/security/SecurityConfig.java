@@ -39,6 +39,7 @@ public class SecurityConfig {
             .authorizeHttpRequests()
                 .requestMatchers(
                         "/",
+                            "/api/anon/**",
                             "/index.html",
                             "/favicon.ico",
                             "/icons/**",
