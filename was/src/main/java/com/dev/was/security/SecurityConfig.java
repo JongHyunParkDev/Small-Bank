@@ -62,6 +62,15 @@ public class SecurityConfig {
                 .permitAll();
 
         http
+            .formLogin()
+                .loginPage("/login")
+                .usernameParameter("id")
+                .passwordParameter("pw")
+                .loginProcessingUrl("/api/anon/login")
+                .defaultSuccessUrl("/")
+                .failureUrl("/login");
+
+        http
             .oauth2Login()
                 .userInfoEndpoint()//로그인 완료 후 회원 정보 받기
                 .userService(oAuth2MemberService)

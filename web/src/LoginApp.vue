@@ -74,7 +74,10 @@ const password: Ref<string> = ref('');
 // }555
 
 async function submit() {
-    await Api.get('anon/login');
+    await Api.post('anon/login', {
+        id: id.value,
+        pw: password.value
+    });
 }
 
 </script>
@@ -103,7 +106,7 @@ async function submit() {
         > .login-form {
             display: flex;
             margin-bottom: $spacing-md;
-          
+
 
             > .input-area {
                 flex: 1;
