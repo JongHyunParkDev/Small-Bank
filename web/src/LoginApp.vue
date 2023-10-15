@@ -16,9 +16,10 @@
                         class="input"
                         outlined
                         stack-label
-                        label="ID"
-                        v-model="id"
-                        type="text"
+                        label="Email"
+                        v-model="email"
+                        name="email"
+                        type="email"
                     />
                     <QInput
                         outlined
@@ -26,6 +27,7 @@
                         label="Password"
                         v-model="password"
                         type="password"
+                        name="pw"
                     />
                 </div>
                 <QBtn
@@ -60,26 +62,33 @@ import NaverLoginBtnSrc from '@/assets/images/naver_login_btn.png';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { process } from '@/lib/Async';
 import { Api } from '@/lib/Api';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const processCount: Ref<number> = ref(0);
-const id: Ref<string> = ref('');
+const email: Ref<string> = ref('');
 const password: Ref<string> = ref('');
 
 
-// function upProcessSpinner() {
-//         processCount.value = 1;
-// }
-// function downProcessSpinner() {
-//     processCount.value = 0;
-// }555
-
-async function submit() {
-    await Api.post('anon/login', {
-        id: id.value,
-        pw: password.value
-    });
+function upProcessSpinner() {
+        processCount.value = 1;
+}
+function downProcessSpinner() {
+    processCount.value = 0;
 }
 
+function submit() {
+    process(upProcessSpinner, downProcessSpinner, async () => {
+        const formData = new FormData();
+        formData.append("email", email.value);
+        formData.append("pw", password.value);
+
+        await Api.post('anon/login', formData);
+
+        router.push('/');
+    });
+}
 </script>
 
 <style lang="scss" scoped>

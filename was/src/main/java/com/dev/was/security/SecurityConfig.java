@@ -63,12 +63,10 @@ public class SecurityConfig {
 
         http
             .formLogin()
-                .loginPage("/login")
-                .usernameParameter("id")
+                .usernameParameter("email")
                 .passwordParameter("pw")
                 .loginProcessingUrl("/api/anon/login")
-                .defaultSuccessUrl("/")
-                .failureUrl("/login");
+                .successHandler(loginSuccessHandler());
 
         http
             .oauth2Login()
