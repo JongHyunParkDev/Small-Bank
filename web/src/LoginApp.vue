@@ -58,13 +58,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref } from 'vue';
+import { ref, Ref, watch } from 'vue';
 import LogoSvgSrc from '@/assets/logo/logo.svg';
 import NaverLoginBtnSrc from '@/assets/images/naver_login_btn.png';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { process } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { useRouter } from 'vue-router';
+import { useErrorStore } from '@/stores/ErrorStore';
+import { useQuasar } from 'quasar'
+
+const $q = useQuasar();
+const errorStore = useErrorStore();
 
 const router = useRouter();
 
@@ -91,6 +96,13 @@ function submit() {
         router.push('/');
     });
 }
+
+watch(errorStore.errors, async (newError, oldError) => {
+    $q.notify({
+        type: 'negative',
+        message: newError[0]
+    });
+});
 </script>
 
 <style lang="scss" scoped>

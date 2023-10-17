@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 
-const maxNumError = 5;
+const maxNumError = 1;
 
 export const useErrorStore = defineStore({
     id: 'error',

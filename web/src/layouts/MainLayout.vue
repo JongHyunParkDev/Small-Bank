@@ -46,20 +46,6 @@
                 <RouterLink v-if="isDone"> </RouterLink>
             </QList>
         </QDrawer>
-
-        <QBanner v-if="errors.length !== 0" rounded class="error-area">
-            <div
-                v-for="(error, idx) in errors"
-                :key="idx"
-                class="error-row"
-            >
-                {{ error }}
-            </div>
-            <template v-slot:action>
-                <QBtn class="btn" size="sm" flat color="white" label="닫기" @click="hideError"/>
-            </template>
-        </QBanner>
-
         <QPageContainer>
             <RouterView />
         </QPageContainer>
@@ -68,14 +54,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, computed, provide } from 'vue';
+import { ref, Ref, watch, provide } from 'vue';
 import RouterLink from 'components/RouterLink.vue';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useErrorStore } from '@/stores/ErrorStore';
+import { useQuasar } from 'quasar'
 import { process } from '@/lib/Async';
 import { UserInfo } from '@/types/UserTypes';
 import { useRouter } from 'vue-router';
+
+const $q = useQuasar();
+const errorStore = useErrorStore();
 
 const router = useRouter();
 const leftDrawerOpen: Ref<boolean> = ref(false);
@@ -83,7 +73,6 @@ const authStore = useAuthStore();
 const userInfo: Ref<UserInfo | undefined> = ref(authStore.userInfo);
 const processCount: Ref<number> = ref(0);
 const isDone: Ref<boolean> = ref(false);
-const errorStore = useErrorStore();
 
 const toggleLeftDrawer = () => {
     leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -108,10 +97,6 @@ const goHome = () => {
     router.push('/');
 };
 
-const hideError = () => {
-    errorStore.clearError();
-};
-
 if (authStore.isAuth) {
     isDone.value = true;
     userInfo.value = authStore.userInfo;
@@ -126,7 +111,12 @@ if (authStore.isAuth) {
     });
 }
 
-const errors = computed(() => errorStore.errors);
+watch(errorStore.errors, async (newError, oldError) => {
+    $q.notify({
+        type: 'negative',
+        message: newError[0]
+    });
+});
 
 provide('upProcessSpinner', upProcessSpinner);
 provide('downProcessSpinner', downProcessSpinner);
