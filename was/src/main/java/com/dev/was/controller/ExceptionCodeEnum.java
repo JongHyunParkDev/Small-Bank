@@ -17,7 +17,11 @@ public enum ExceptionCodeEnum {
     CALL_DATA_ERROR(1300, "CALL_DATA_GO_API_ERROR"),
 
     LOGIN_NEED(1900, "LOGIN_NEED"),
-    PERMISSION_DENIED(1901, "PERMISSION_DENIED");
+    PERMISSION_DENIED(1901, "PERMISSION_DENIED"),
+
+    ID_PW_INVALID(1990, "ID OR PW IS NOT VAILD"),
+    FOUNT_NOT_ID(1991, "FOUND NOT ID"),
+    LOGIN_ERROR(1999, "LOGIN ERROR");
 
     private final int code;
     private final String message;

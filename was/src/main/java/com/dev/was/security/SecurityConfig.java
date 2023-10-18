@@ -1,6 +1,7 @@
 package com.dev.was.security;
 
 import com.dev.was.controller.ExceptionCodeEnum;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -10,12 +11,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
@@ -66,7 +71,9 @@ public class SecurityConfig {
                 .usernameParameter("email")
                 .passwordParameter("pw")
                 .loginProcessingUrl("/api/anon/login")
+                .failureHandler(loginFailHandler())
                 .successHandler(loginSuccessHandler());
+
 
         http
             .oauth2Login()
@@ -80,6 +87,37 @@ public class SecurityConfig {
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
 
         return http.build();
+    }
+
+    @Bean
+    public LoginFailHandler loginFailHandler() {
+        return new LoginFailHandler();
+    }
+    public static class LoginFailHandler extends SimpleUrlAuthenticationFailureHandler {
+        @Override
+        public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+            logger.error("login fail handler");
+
+            if (exception instanceof BadCredentialsException || exception instanceof InternalAuthenticationServiceException)
+                exception.initCause(new CustomAuthenticationException(ExceptionCodeEnum.ID_PW_INVALID));
+            else if (exception instanceof UsernameNotFoundException)
+                exception.initCause(new CustomAuthenticationException(ExceptionCodeEnum.FOUNT_NOT_ID));
+            else
+                exception.initCause(new CustomAuthenticationException(ExceptionCodeEnum.LOGIN_ERROR));
+
+//            if (exception instanceof BadCredentialsException || exception instanceof InternalAuthenticationServiceException)
+//                throw new CustomAuthenticationException(ExceptionCodeEnum.ID_PW_INVALID);
+//            else if (exception instanceof UsernameNotFoundException)
+//                throw new CustomAuthenticationException(ExceptionCodeEnum.FOUNT_NOT_ID);
+//            else {
+//                logger.error(exception.getMessage());
+//                throw new CustomAuthenticationException(ExceptionCodeEnum.LOGIN_ERROR);
+//            }
+            super.onAuthenticationFailure(request, response, exception);
+        }
+
+        @Value("${sppd.dev}")
+        private boolean isDev;
     }
 
     @Bean
