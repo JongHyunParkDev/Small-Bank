@@ -32,10 +32,9 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         String email = map.get("email");
         String profileImg = map.get("profile_image");
         String role = "ROLE_USER"; //일반 유저
-        Optional<UserEntity> findUser = userRepository.findByUserId(userId);
-        UserEntity userEntity = null;
+        UserEntity userEntity = userRepository.findByUserId(userId);
 
-        if (findUser.isEmpty()) { //찾지 못했다면
+        if (userEntity == null) { //찾지 못했다면
             userEntity = UserEntity.builder()
                     .userId(userId)
                     .name(name)
@@ -47,8 +46,6 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
                     .role(role)
                     .build();
             userRepository.save(userEntity);
-        } else {
-            userEntity = findUser.get();
         }
         return new PrincipalDetails(userEntity, oAuth2User.getAttributes());
     }

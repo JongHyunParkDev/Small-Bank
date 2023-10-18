@@ -16,10 +16,10 @@ public class UserService {
     private final UserRepository userRepository;
 
     public UserDto getUserInfo(String userId) {
-        Optional<UserEntity> findUser = userRepository.findByUserId(userId);
+        UserEntity userEntity = userRepository.findByUserId(userId);
 
-        if (findUser.isEmpty())
+        if (userEntity == null)
             throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT);
-        return new UserDto(findUser.get());
+        return new UserDto(userEntity);
     }
 }
