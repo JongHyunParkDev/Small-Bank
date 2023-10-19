@@ -1,8 +1,7 @@
 package com.dev.was.security;
 
 import com.dev.was.controller.ExceptionCodeEnum;
-
-import javax.naming.AuthenticationException;
+import org.springframework.security.core.AuthenticationException;
 
 public class CustomAuthenticationException extends AuthenticationException
 {

@@ -16,7 +16,7 @@ export const ApiCode = {
     // client
     UNKNOWN: '2000',
     REQUEST_FAILED: '2001',
-   
+
     // server
     GENERIC: '1000',
     NOT_FOUND: '1001',
@@ -29,6 +29,10 @@ export const ApiCode = {
 
     LOGIN_NEED: '1900',
     PERMISSION_DENIED: '1901',
+
+    ID_PW_INVALID: '1990',
+    FOUNT_NOT_ID: '1991',
+    LOGIN_ERROR: '1999',
 }
 
 export const ApiMessage = {
@@ -44,5 +48,10 @@ export const ApiMessage = {
 
     [ApiCode.LOGIN_NEED]: '세션이 만료되었거나 로그인이 필요합니다.',
     [ApiCode.PERMISSION_DENIED]: '권한이 없습니다.',
+
+
+    [ApiCode.ID_PW_INVALID]: 'PW 를 확인해주세요.',
+    [ApiCode.FOUNT_NOT_ID]: 'ID 를 찾을 수 없습니다.',
+    [ApiCode.LOGIN_ERROR]: '로그인 에러 발생하였습니다.',
 }
 

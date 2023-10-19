@@ -20,6 +20,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
@@ -74,7 +75,6 @@ public class SecurityConfig {
                 .failureHandler(loginFailHandler())
                 .successHandler(loginSuccessHandler());
 
-
         http
             .oauth2Login()
                 .userInfoEndpoint()//로그인 완료 후 회원 정보 받기
@@ -93,27 +93,23 @@ public class SecurityConfig {
     public LoginFailHandler loginFailHandler() {
         return new LoginFailHandler();
     }
-    public static class LoginFailHandler extends SimpleUrlAuthenticationFailureHandler {
+    public static class LoginFailHandler implements AuthenticationFailureHandler {
         @Override
         public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
             logger.error("login fail handler");
 
-            if (exception instanceof BadCredentialsException || exception instanceof InternalAuthenticationServiceException)
-                exception.initCause(new CustomAuthenticationException(ExceptionCodeEnum.ID_PW_INVALID));
-            else if (exception instanceof UsernameNotFoundException)
-                exception.initCause(new CustomAuthenticationException(ExceptionCodeEnum.FOUNT_NOT_ID));
-            else
-                exception.initCause(new CustomAuthenticationException(ExceptionCodeEnum.LOGIN_ERROR));
+            CustomAuthenticationException ce = ((CustomAuthenticationException) exception);
 
-//            if (exception instanceof BadCredentialsException || exception instanceof InternalAuthenticationServiceException)
-//                throw new CustomAuthenticationException(ExceptionCodeEnum.ID_PW_INVALID);
-//            else if (exception instanceof UsernameNotFoundException)
-//                throw new CustomAuthenticationException(ExceptionCodeEnum.FOUNT_NOT_ID);
-//            else {
-//                logger.error(exception.getMessage());
-//                throw new CustomAuthenticationException(ExceptionCodeEnum.LOGIN_ERROR);
-//            }
-            super.onAuthenticationFailure(request, response, exception);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+            String data = "{\"code\":" + ce.getCode() + ",\"message\":\"" + ce.getMessage()  + "\"}";
+
+            PrintWriter out = response.getWriter();
+            out.print(data);
+            out.flush();
+            out.close();
         }
 
         @Value("${sppd.dev}")
