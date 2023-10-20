@@ -73,14 +73,14 @@ public class SecurityConfig {
                 .passwordParameter("pw")
                 .loginProcessingUrl("/api/anon/login")
                 .failureHandler(loginFailHandler())
-                .successHandler(loginSuccessHandler());
+                .successHandler(formLoginSuccessHandler());
 
         http
             .oauth2Login()
                 .userInfoEndpoint()//로그인 완료 후 회원 정보 받기
                 .userService(oAuth2MemberService)
                 .and()
-                    .successHandler(loginSuccessHandler()); //OAuth 로그인이 성공하면 이동할 uri 설정
+                    .successHandler(oauthLoginSuccessHandler()); //OAuth 로그인이 성공하면 이동할 uri 설정
 
         http
             .exceptionHandling()
@@ -111,20 +111,39 @@ public class SecurityConfig {
             out.flush();
             out.close();
         }
-
-        @Value("${sppd.dev}")
-        private boolean isDev;
     }
 
     @Bean
-    public LoginSuccessHandler loginSuccessHandler() {
-        return new LoginSuccessHandler();
+    public FormLoginSuccessHandler formLoginSuccessHandler() {
+        return new FormLoginSuccessHandler();
     }
 
-    public static class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+    public static class FormLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         @Override
         public void onAuthenticationSuccess(
                 HttpServletRequest request, HttpServletResponse response, Authentication auth) {
+            // form success login 시 redirect 를 막기 위한 핸들러
+            try {
+                HttpSession session = request.getSession();
+
+
+            } catch (Exception e) {
+                // 여기까지 왔으면 이미 로그인은 성공된 경우임.
+                logger.error("handle login success error.", e);
+            }
+        }
+    }
+
+    @Bean
+    public OauthLoginSuccessHandler oauthLoginSuccessHandler() {
+        return new OauthLoginSuccessHandler();
+    }
+
+    public static class OauthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+        @Override
+        public void onAuthenticationSuccess(
+                HttpServletRequest request, HttpServletResponse response, Authentication auth) {
+            // oauth 는 login 시 외부에서 redirect 를 해줌으로 필요.
             try {
                 HttpSession session = request.getSession();
                 String sessionId = session.getId();
