@@ -37,6 +37,22 @@
                         type="submit"
                     />
                 </QForm>
+                <div class="login-find-area">
+                    <a 
+                        class="find-label"
+                        @click="showJoinForm"
+                    >
+                        회원 가입
+                    </a>
+                </div>
+
+                <div class="login-hr-area">
+                    <div class="login-hr" />
+                    <div class="login-label">
+                        OR
+                    </div>
+                    <div class="login-hr" />
+                </div>
                 <div class="login-btns">
                     <a
                         class="login-btn"
@@ -50,10 +66,79 @@
                 </div>
             </div>
             <div class="footer">
-                JongHyunParkDev
             </div>
         </div>
         <ProcessSpinner v-if="processCount > 0"/>
+        <QDialog
+            class="join-form-dialog"
+            v-model="isVisibleJoinFormDialog"
+            persistent
+        >
+            <QCard class="join-form-card">
+                <QForm @submit="joinSubmit">
+                    <QCardSection class="row items-center">
+                        <QToolbar>
+                            <QToolbarTitle>
+                                회원 가입
+                            </QToolbarTitle>
+                        </QToolbar>
+                        <div class="dialog-content">
+                            <QInput
+                                name="category"
+                                outlined
+                                stack-label
+                                label="이메일"
+                                v-model="joinEmailInput"
+                                :rules="[(val) => validateEmail(val) || '유효한 email 이 아닙니다.']"
+                            />
+                            <QInput
+                                name="password"
+                                type="password"
+                                outlined
+                                stack-label
+                                label="패스워드"
+                                v-model="joinPasswordInput"
+                                :rules="[(val) => isPasswordValid(val) || '영문자, 숫자 필수이며, 6 ~ 12글자로 사용가능합니다.']"
+                            />
+                            <QInput
+                                name="name"
+                                outlined
+                                stack-label
+                                label="이름"
+                                v-model="joinNameInput"
+                                :rules="[(val) => val.length >= 2 && val.length <= 6 || '이름은 2 ~ 6글자 사용가능합니다.']"
+                            />
+                            <QInput
+                                name="phone"
+                                outlined
+                                stack-label
+                                label="전화번호"
+                                v-model="joinPhoneInput"
+                                :rules="[(val) => validatePhone(val) || '010-0000-0000 형식으로 작성해주세요.']"
+                            />
+                        </div>
+                    </QCardSection>
+                    <QCardActions
+                        align="right"
+                    >
+                        <QBtn
+                            flat
+                            padding="xs lg"
+                            label="취소"
+                            color="primary"
+                            @click="clearDialogForm"
+                            v-close-popup
+                        />
+                        <QBtn
+                            padding="xs lg"
+                            type="submit"
+                            label="회원 가입"
+                            color="primary"
+                        />
+                    </QCardActions>
+                </QForm>
+            </QCard>
+        </QDialog>
     </div>
 </template>
 
@@ -70,16 +155,20 @@ import { useQuasar } from 'quasar'
 
 const $q = useQuasar();
 const errorStore = useErrorStore();
-
 const router = useRouter();
 
 const processCount: Ref<number> = ref(0);
 const email: Ref<string> = ref('');
 const password: Ref<string> = ref('');
 
+const isVisibleJoinFormDialog = ref(false);
+const joinEmailInput: Ref<string> = ref('');
+const joinPasswordInput: Ref<string> = ref('');
+const joinNameInput: Ref<string> = ref('');
+const joinPhoneInput: Ref<string> = ref('');
 
 function upProcessSpinner() {
-        processCount.value = 1;
+    processCount.value = 1;
 }
 function downProcessSpinner() {
     processCount.value = 0;
@@ -95,6 +184,53 @@ function submit() {
 
         router.push('/');
     });
+}
+
+function joinSubmit() {
+    process(upProcessSpinner, downProcessSpinner, async () => {
+        await Api.post('anon/join', {
+            email: joinEmailInput.value,
+            password: joinPasswordInput.value,
+            name: joinNameInput.value,
+            phone: joinPhoneInput.value,
+        });
+
+        isVisibleJoinFormDialog.value = false;
+        clearDialogForm();
+        // 성공시 dialog
+    });
+}
+
+function clearDialogForm() {
+    joinEmailInput.value = '';
+    joinPasswordInput.value = '';
+    joinNameInput.value = '';
+    joinPhoneInput.value = '';
+}
+
+function validateEmail(email: string): boolean {
+  return /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/.test(email);
+}
+
+function isPasswordValid(password: string): boolean {
+    if (password.length < 6 || password.length > 12) {
+        return false;
+    }
+    
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    
+    return hasLetter && hasNumber;
+}
+
+function validatePhone(phone: string): boolean {
+    const checkPhone = /^\d{2,3}-\d{3,4}-\d{4}$/.test(phone);
+
+    return checkPhone;
+}
+
+function showJoinForm() {
+    isVisibleJoinFormDialog.value = true;
 }
 
 watch(errorStore.errors, async (newError, oldError) => {
@@ -132,8 +268,6 @@ watch(errorStore.errors, async (newError, oldError) => {
             margin: 0px 25px;
             > .login-form {
                 display: flex;
-                margin-bottom: $spacing-md;
-
 
                 > .input-area {
                     flex: 1;
@@ -149,13 +283,41 @@ watch(errorStore.errors, async (newError, oldError) => {
                 }
             }
 
+            > .login-find-area {
+                display: flex;
+                justify-content: space-around;
+                margin: $spacing-md 0px;
+
+                > .find-label {
+                    color: $grey-7;
+
+                    &:hover {
+                        cursor: pointer;
+                    }
+                }
+            }
+
+            > .login-hr-area {
+                display: flex;
+
+                > .login-label {
+                    padding: 0px $spacing-sm;
+                }
+                > .login-hr {
+                    flex: 1;
+                    height: 0px;
+                    margin: auto;
+                    border: 1px inset $grey-5;
+                } 
+            }
+
             > .login-btns {
                 display: flex;
                 > .login-btn {
-                    width: 150px;
+                    width: 40px;
 
                     img {
-                        width: 150px;
+                        width: 40px;
                     }
 
                     &:hover {
@@ -168,7 +330,14 @@ watch(errorStore.errors, async (newError, oldError) => {
         > .footer {
             margin: 50px 0px;
         }
+    }
+}
 
+.join-form-dialog {
+    .dialog-content {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
     }
 }
 
