@@ -12,11 +12,12 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //기본키
-    @Column(nullable = false)
     private String userId;
     private String name; //유저 이름
     private String password; //유저 비밀번호
+    @Column(nullable = false, unique = true)
     private String email; //유저 이메일
+    @Column(nullable = false, unique = true)
     private String phone;
     private String birthday;
     private String profileImg;
