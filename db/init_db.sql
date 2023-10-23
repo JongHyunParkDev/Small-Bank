@@ -17,3 +17,16 @@ create database sppd
     owner = sppd
     encoding = 'UTF8'
     tablespace = sppd;
+
+CREATE TABLE tm_user (
+	id bigserial NOT NULL,
+	birthday varchar(255) NULL,
+	email varchar(255) NULL,
+	"name" varchar(255) NULL,
+	"password" varchar(255) NULL,
+	phone varchar(255) NULL,
+	profile_img varchar(255) NULL default 'https://ssl.pstatic.net/static/pwe/address/img_profile.png',
+	"role" varchar(255) NULL,
+	user_id varchar(255) NOT NULL,
+	CONSTRAINT tm_user_pkey PRIMARY KEY (id)
+);

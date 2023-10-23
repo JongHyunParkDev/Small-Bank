@@ -32,6 +32,10 @@ export const ApiCode = {
 
     ID_PW_INVALID: '1990',
     FOUNT_NOT_ID: '1991',
+
+    DUPLICATE_EMAIL: '1997',
+    DUPLICATE_PHONE: '1998',
+
     LOGIN_ERROR: '1999',
 }
 
@@ -52,6 +56,8 @@ export const ApiMessage = {
 
     [ApiCode.ID_PW_INVALID]: 'PW 를 확인해주세요.',
     [ApiCode.FOUNT_NOT_ID]: 'ID 를 찾을 수 없습니다.',
+    [ApiCode.DUPLICATE_EMAIL]: '가입된 EMAIL 이 존재합니다.',
+    [ApiCode.DUPLICATE_PHONE]: '가입된 Phone Num 이 존재합니다.',
     [ApiCode.LOGIN_ERROR]: '로그인 에러 발생하였습니다.',
 }
 

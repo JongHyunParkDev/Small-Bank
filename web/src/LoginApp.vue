@@ -38,7 +38,7 @@
                     />
                 </QForm>
                 <div class="login-find-area">
-                    <a 
+                    <a
                         class="find-label"
                         @click="showJoinForm"
                     >
@@ -84,7 +84,7 @@
                         </QToolbar>
                         <div class="dialog-content">
                             <QInput
-                                name="category"
+                                name="email"
                                 outlined
                                 stack-label
                                 label="이메일"
@@ -188,7 +188,7 @@ function submit() {
 
 function joinSubmit() {
     process(upProcessSpinner, downProcessSpinner, async () => {
-        await Api.post('anon/join', {
+        await Api.post('anon/joinUser', {
             email: joinEmailInput.value,
             password: joinPasswordInput.value,
             name: joinNameInput.value,
@@ -198,6 +198,11 @@ function joinSubmit() {
         isVisibleJoinFormDialog.value = false;
         clearDialogForm();
         // 성공시 dialog
+
+        $q.notify({
+            type: 'positive',
+            message: '정상적으로 회원가입 되었습니다.'
+        });
     });
 }
 
@@ -216,10 +221,10 @@ function isPasswordValid(password: string): boolean {
     if (password.length < 6 || password.length > 12) {
         return false;
     }
-    
+
     const hasLetter = /[a-zA-Z]/.test(password);
     const hasNumber = /\d/.test(password);
-    
+
     return hasLetter && hasNumber;
 }
 
@@ -308,7 +313,7 @@ watch(errorStore.errors, async (newError, oldError) => {
                     height: 0px;
                     margin: auto;
                     border: 1px inset $grey-5;
-                } 
+                }
             }
 
             > .login-btns {
