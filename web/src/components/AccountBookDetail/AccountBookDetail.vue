@@ -150,6 +150,8 @@ function getAccounts() {
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
         process(upProcessSpinner, downProcessSpinner, async () => {
+            if (chart.value) chart.value.drillUp();
+
             const dayAccountList: Array<DayAccount> = await Api.get('user/accounts', {
                 startDate: startDate,
                 endDate: endDate,
@@ -169,7 +171,7 @@ function getAccounts() {
                         drilldown: account.category
                     })
                     drilldownSerialDataArray.push({
-                        name: account.category, 
+                        name: account.category,
                         id: account.category,
                         data: [[`${apiDateToDateStr(account.date)} (${account.memo})`, account.money]]
                     });
@@ -181,7 +183,7 @@ function getAccounts() {
                     );
                 }
             });
-            
+
             chartOptions = {
                 chart: {
                     type: 'pie'
@@ -210,13 +212,13 @@ function getAccounts() {
                             filter: {
                                 property: 'percentage',
                                 operator: '>',
-                                value: 5
+                                value: 10
                             },
                             formatter: function () {
                                 return `<span style="color:${this.color}; text-decoration:'none'">` +
                                     `Category: ${this.key} <br>` +
-                                    `Value: ${this.y.toLocaleString()}원 <br>` +   
-                                    `Percent: ${this.percentage.toFixed(2)}% <br>` +   
+                                    `Value: ${this.y.toLocaleString()}원 <br>` +
+                                    `Percent: ${this.percentage.toFixed(2)}% <br>` +
                                     `</span>`;
                             }
                         }
@@ -238,10 +240,21 @@ function getAccounts() {
                     }
                 ],
                 drilldown: {
+                    animation: false,
                     activeDataLabelStyle: {
                         textDecoration: 'none',
                     },
                     series: drilldownSerialDataArray
+                },
+                exporting: {
+                    buttons: {
+                        contextButton: {
+                            menuItems: [{
+                                text: '뒤로',
+                                onclick: null // "뒤로" 버튼을 제거합니다.
+                            }]
+                        }
+                    }
                 }
             };
 
