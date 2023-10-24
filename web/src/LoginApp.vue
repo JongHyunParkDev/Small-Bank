@@ -190,7 +190,7 @@ function joinSubmit() {
     process(upProcessSpinner, downProcessSpinner, async () => {
         await Api.post('anon/joinUser', {
             email: joinEmailInput.value,
-            password: joinPasswordInput.value,
+            password: joinPasswordInput.value === '' ? undefined : joinPasswordInput.value,
             name: joinNameInput.value,
             phone: joinPhoneInput.value,
         });

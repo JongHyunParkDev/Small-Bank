@@ -5,6 +5,7 @@ import com.dev.was.security.AuthenticationUtil;
 import com.dev.was.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,9 +16,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/userinfo")
-    public UserDto getAccounts() {
+    public UserDto getUserInfo() {
         String userId = AuthenticationUtil.getCurrentUserId();
 
         return userService.getUserInfo(userId);
     }
+
+//    @PutMapping("/userinfo")
+//    public UserDto
 }

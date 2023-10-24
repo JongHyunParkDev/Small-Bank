@@ -38,13 +38,7 @@ camera.lookAt( 0, 0, 0 );
 
 const baseGeometry = new THREE.BoxGeometry( 5, 5, 5 );
 const baseLight = new THREE.PointLight( 0xffffff, 1, 500, 2 );
-
-const baseMat = new THREE.MeshStandardMaterial( {
-    emissive: 0xf22400,
-    emissiveIntensity: 100,
-    color: 0x000000
-} );
-baseLight.add( new THREE.Mesh( baseGeometry, baseMat ) );
+baseLight.add( new THREE.Mesh( baseGeometry ) );
 baseLight.castShadow = true;
 baseLight.power = 1000000;
 scene.add( baseLight );
