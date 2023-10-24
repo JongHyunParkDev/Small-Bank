@@ -82,9 +82,9 @@
                                 type="password"
                                 outlined
                                 stack-label
-                                label="패스워드"
+                                label="패스워드 (공백인 경우 변경하지 않습니다.)"
                                 v-model="updatePasswordInput"
-                                :rules="[(val) => isPasswordValid(val) || '영문자, 숫자 필수이며, 6 ~ 12글자로 사용가능합니다.']"
+                                :rules="[(val) => isPasswordValid(val) || '영문자, 숫자 필수이며, 6 ~ 12글자로 사용 가능합니다.']"
                             />
                             <QInput
                                 name="name"
@@ -92,7 +92,7 @@
                                 stack-label
                                 label="이름"
                                 v-model="updateNameInput"
-                                :rules="[(val) => val.length >= 2 && val.length <= 6 || '이름은 2 ~ 6글자 사용가능합니다.']"
+                                :rules="[(val) => val.length >= 2 && val.length <= 6 || '이름은 2 ~ 6글자 사용 가능합니다.']"
                             />
                             <QInput
                                 name="phone"
@@ -156,8 +156,6 @@ const updateEmailInput: Ref<string> = ref('');
 const updatePasswordInput: Ref<string> = ref('');
 const updateNameInput: Ref<string> = ref('');
 const updatePhoneInput: Ref<string> = ref('');
-
-updateUserInfoForm();
 
 const toggleLeftDrawer = () => {
     leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -247,6 +245,7 @@ if (authStore.isAuth) {
     }, async () => {
         await authStore.login();
         userInfo.value = authStore.userInfo;
+        updateUserInfoForm();
     });
 }
 
@@ -259,7 +258,6 @@ watch(errorStore.errors, async (newError) => {
 
 provide('upProcessSpinner', upProcessSpinner);
 provide('downProcessSpinner', downProcessSpinner);
-// router 이동하면 mounted 타지 않는다.
 </script>
 
 <style lang="scss" scoped>

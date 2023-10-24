@@ -98,7 +98,7 @@
                                 stack-label
                                 label="패스워드"
                                 v-model="joinPasswordInput"
-                                :rules="[(val) => isPasswordValid(val) || '영문자, 숫자 필수이며, 6 ~ 12글자로 사용가능합니다.']"
+                                :rules="[(val) => isPasswordValid(val) || '영문자, 숫자 필수이며, 6 ~ 12글자로 사용 가능합니다.']"
                             />
                             <QInput
                                 name="name"
@@ -106,7 +106,7 @@
                                 stack-label
                                 label="이름"
                                 v-model="joinNameInput"
-                                :rules="[(val) => val.length >= 2 && val.length <= 6 || '이름은 2 ~ 6글자 사용가능합니다.']"
+                                :rules="[(val) => val.length >= 2 && val.length <= 6 || '이름은 2 ~ 6글자 사용 가능합니다.']"
                             />
                             <QInput
                                 name="phone"
@@ -190,7 +190,7 @@ function joinSubmit() {
     process(upProcessSpinner, downProcessSpinner, async () => {
         await Api.post('anon/joinUser', {
             email: joinEmailInput.value,
-            password: joinPasswordInput.value === '' ? undefined : joinPasswordInput.value,
+            password: joinPasswordInput.value,
             name: joinNameInput.value,
             phone: joinPhoneInput.value,
         });
