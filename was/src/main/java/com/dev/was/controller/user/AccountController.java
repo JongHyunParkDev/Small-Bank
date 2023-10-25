@@ -22,19 +22,19 @@ public class AccountController {
     public List<AccountDto> getAccounts(
         @RequestParam(value = "startDate") String startDate,
         @RequestParam(value = "endDate") String endDate) {
-        String userId = AuthenticationUtil.getCurrentUserId();
+        Long id = AuthenticationUtil.getCurrentId();
 
-        return accountService.getAccountsByUserIdAndDateBetween(userId,
+        return accountService.getAccountsByUserIdAndDateBetween(id,
                 DBUtil.toLocalDate(startDate), DBUtil.toLocalDate(endDate));
     }
 
     @PostMapping("/accounts")
     public AccountDto addAccount(@RequestBody @Valid RequestAddAccountDto requestAddAccountDto) {
-        String userId = AuthenticationUtil.getCurrentUserId();
+        Long id = AuthenticationUtil.getCurrentId();
 
         return accountService.saveAccount(
                 null,
-                userId,
+                id,
                 DBUtil.toLocalDate(requestAddAccountDto.date),
                 requestAddAccountDto.time,
                 requestAddAccountDto.memo,
@@ -46,11 +46,11 @@ public class AccountController {
 
     @PutMapping("/accounts")
     public AccountDto updateAccount(@RequestBody @Valid RequestUpdateAccountDto requestUpdateAccountDto) {
-        String userId = AuthenticationUtil.getCurrentUserId();
+        Long id = AuthenticationUtil.getCurrentId();
 
         return accountService.saveAccount(
                 requestUpdateAccountDto.id,
-                userId,
+                id,
                 DBUtil.toLocalDate(requestUpdateAccountDto.date),
                 requestUpdateAccountDto.time,
                 requestUpdateAccountDto.memo,

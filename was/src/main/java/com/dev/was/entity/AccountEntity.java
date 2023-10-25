@@ -18,7 +18,7 @@ public class AccountEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //기본키
     @Column(nullable = false)
-    private String userId;
+    private Long userId; // userEntity id
     @Column(nullable = false)
     private LocalDate date;
     @Column(nullable = false)
@@ -39,7 +39,7 @@ public class AccountEntity {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public AccountEntity(Long id, String userId, LocalDate date, String time, String memo, Long money, String category, String type, LocalDateTime createdDate, LocalDateTime modifiedDate) {
+    public AccountEntity(Long id, Long userId, LocalDate date, String time, String memo, Long money, String category, String type, LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.id = id;
         this.userId = userId;
         this.date = date;

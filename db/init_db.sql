@@ -30,3 +30,17 @@ CREATE TABLE tm_user (
 	user_id varchar(255) NOT NULL,
 	CONSTRAINT tm_user_pkey PRIMARY KEY (id)
 );
+
+CREATE TABLE public.tm_account (
+	id bigserial NOT NULL,
+	category varchar(255) NOT NULL,
+	created_date timestamp(6) NULL,
+	"date" date NOT NULL,
+	memo varchar(255) NOT NULL,
+	modified_date timestamp(6) NULL,
+	"money" int8 NOT NULL,
+	"time" varchar(255) NOT NULL,
+	"type" varchar(255) NOT NULL,
+	user_id int4 NOT NULL,
+	CONSTRAINT tm_account_pkey PRIMARY KEY (id)
+);

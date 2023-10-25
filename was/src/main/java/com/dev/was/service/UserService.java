@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 
 @Service
@@ -50,12 +51,12 @@ public class UserService {
         }
     }
 
-    public UserDto getUserInfo(String userId) {
-        UserEntity userEntity = userRepository.findByUserId(userId);
+    public UserDto getUserInfo(Long id) {
+        Optional<UserEntity> userEntity = userRepository.findById(id);
 
-        if (userEntity == null)
+        if (userEntity.isEmpty())
             throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT);
-        return new UserDto(userEntity);
+        return new UserDto(userEntity.get());
     }
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
