@@ -22,17 +22,18 @@ public class UserController {
         return userService.getUserInfo(id);
     }
 
-//    @PutMapping("/userinfo")
-//    public void updateUserInfo(@RequestBody @Valid RequestUpdateUserDto requestUpdateUserDto) {
-//        String userId = AuthenticationUtil.getCurrentUserId();
-//
-//        userService.
-//    }
-//    public static class RequestUpdateUserDto {
-//        public String password;
-//        @NotBlank
-//        public String phone;
-//        @NotBlank
-//        public String name;
-//    }
+    @PutMapping("/userinfo")
+    public void updateUserInfo(@RequestBody @Valid RequestUpdateUserDto requestUpdateUserDto) {
+        Long id = AuthenticationUtil.getCurrentId();
+
+        userService.saveUserInfo(id,
+                requestUpdateUserDto.password, requestUpdateUserDto.phone, requestUpdateUserDto.name);
+    }
+    public static class RequestUpdateUserDto {
+        public String password;
+        @NotBlank
+        public String phone;
+        @NotBlank
+        public String name;
+    }
 }

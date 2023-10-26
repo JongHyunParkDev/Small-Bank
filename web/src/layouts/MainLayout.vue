@@ -182,8 +182,7 @@ const goHome = () => {
 
 function updateSubmit() {
     process(upProcessSpinner, downProcessSpinner, async () => {
-        await Api.put('anon/userinfo', {
-            email: updateEmailInput.value,
+        await Api.put('user/userinfo', {
             password: updatePasswordInput.value === '' ? undefined : updatePasswordInput.value,
             name: updateNameInput.value,
             phone: updatePhoneInput.value,
@@ -193,6 +192,7 @@ function updateSubmit() {
         // 성공시 dialog
 
         await authStore.login();
+        userInfo.value = authStore.userInfo;
         updateUserInfoForm();
 
         $q.notify({

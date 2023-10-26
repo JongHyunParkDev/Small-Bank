@@ -2,7 +2,9 @@ package com.dev.was.service;
 
 import com.dev.was.controller.ApiException;
 import com.dev.was.controller.ExceptionCodeEnum;
+import com.dev.was.dto.AccountDto;
 import com.dev.was.dto.UserDto;
+import com.dev.was.entity.AccountEntity;
 import com.dev.was.entity.UserEntity;
 import com.dev.was.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Optional;
 
 
@@ -57,6 +60,29 @@ public class UserService {
         if (userEntity.isEmpty())
             throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT);
         return new UserDto(userEntity.get());
+    }
+
+    public void saveUserInfo(
+            Long id,
+            String password,
+            String phone,
+            String name
+    ) {
+        Optional<UserEntity> userEntity = userRepository.findById(id);
+
+        if (userEntity.isEmpty())
+            throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT);
+
+        UserEntity saveUserEntity = userEntity.get();
+
+        saveUserEntity.setName(name);
+        saveUserEntity.setPhone(phone);
+
+        if (password != null) {
+            saveUserEntity.setPassword(passwordEncoder.encode(password));
+        }
+
+        userRepository.save(saveUserEntity);
     }
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);

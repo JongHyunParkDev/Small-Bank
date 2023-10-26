@@ -1,11 +1,10 @@
 package com.dev.was.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity(name="tm_user")
 public class UserEntity {
@@ -24,7 +23,8 @@ public class UserEntity {
     private String role; //유저 권한 (일반 유저, 관리자)
 
     @Builder
-    public UserEntity(String userId, String name, String password, String email, String phone, String birthday, String profileImg, String role) {
+    public UserEntity(Long id, String userId, String name, String password, String email, String phone, String birthday, String profileImg, String role) {
+        this.id = id;
         this.userId = userId;
         this.name = name;
         this.password = password;
