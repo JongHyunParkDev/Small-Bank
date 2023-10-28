@@ -85,13 +85,13 @@ module.exports = configure(function (/* ctx */) {
             port: 1133,
             proxy: {
                 '/api': {
-                    target: 'https://localhost:443',
+                    target: 'https://localhost',
                     secure: false,
                     ws: true,
                     changeOrigin: true
                 },
                 '/oauth2/authorization/naver' : {
-                    target: 'https://localhost:443',
+                    target: 'https://localhost',
                     secure: false,
                     ws: true,
                     changeOrigin: true

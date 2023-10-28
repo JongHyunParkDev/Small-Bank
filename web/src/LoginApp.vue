@@ -56,9 +56,20 @@
                 <div class="login-btns">
                     <a
                         class="login-btn"
+                        href="/oauth2/authorization/google"
+                    >
+                        <img
+                            class="google-img"
+                            :src="GoogleLoginBtnSrc"
+                            alt="Google Login"
+                        />
+                    </a>
+                    <a
+                        class="login-btn"
                         href="/oauth2/authorization/naver"
                     >
                         <img
+                            class="naver-img"
                             :src="NaverLoginBtnSrc"
                             alt="Naver Login"
                         />
@@ -146,6 +157,7 @@
 import { ref, Ref, watch } from 'vue';
 import LogoSvgSrc from '@/assets/logo/logo.svg';
 import NaverLoginBtnSrc from '@/assets/images/naver_login_btn.png';
+import GoogleLoginBtnSrc from '@/assets/images/google_login_btn.svg';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { process } from '@/lib/Async';
 import { Api } from '@/lib/Api';
@@ -320,6 +332,7 @@ watch(errorStore.errors, async (newError, oldError) => {
                 display: flex;
                 > .login-btn {
                     width: 40px;
+                    margin: $spacing-sm;
 
                     img {
                         width: 40px;
