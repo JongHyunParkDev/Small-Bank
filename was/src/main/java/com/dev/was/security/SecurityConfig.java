@@ -155,7 +155,7 @@ public class SecurityConfig {
                 if (isDev)
                     response.sendRedirect(url + ":1133");
                 else
-                    response.sendRedirect(url + ":1132");
+                    response.sendRedirect(url + ":443");
 
 
             } catch (Exception e) {

@@ -85,19 +85,19 @@ module.exports = configure(function (/* ctx */) {
             port: 1133,
             proxy: {
                 '/api': {
-                    target: 'http://localhost:1132',
+                    target: 'https://localhost:443',
                     secure: false,
                     ws: true,
                     changeOrigin: true
                 },
                 '/oauth2/authorization/naver' : {
-                    target: 'http://localhost:1132',
+                    target: 'https://localhost:443',
                     secure: false,
                     ws: true,
                     changeOrigin: true
                 }
             },
-            https: false
+            https: true
         },
 
         // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
