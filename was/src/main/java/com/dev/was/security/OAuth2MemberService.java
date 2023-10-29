@@ -22,6 +22,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
+        System.out.println("oAuth2User = " + oAuth2User.getAttributes());
         String provider = userRequest.getClientRegistration().getClientId();
         Map<String, String> map = (Map<String, String>) oAuth2User.getAttributes().get("response");
         String providerId = map.get("id");
