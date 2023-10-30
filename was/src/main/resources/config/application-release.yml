@@ -1,6 +1,3 @@
-sppd:
-  dev: false
-
 logging:
   level:
     com:

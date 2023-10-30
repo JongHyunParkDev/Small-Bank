@@ -166,7 +166,7 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
 import { ref, Ref, computed, inject } from 'vue';
-import { process } from '@/lib/Async';
+import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { dateToDatetimeStr, apiDateToDateStr } from '@/lib/DateUtil';
 import { SerialInfo, BusMap, WeatherInfo } from '@/types/ArduinoTypes';
@@ -223,7 +223,7 @@ function getApiDateToDateStr(date: string) {
 function getSerialDto() {
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
-        process(upProcessSpinner, downProcessSpinner, async () => {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
             const data: SerialInfo = await Api.get('admin/serial/getSerialDto');
 
             updateDatetime.value = new Date();
@@ -264,7 +264,7 @@ function getSerialDto() {
 function sendMsg() {
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
-        process(upProcessSpinner, downProcessSpinner, async () => {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
             const data = await Api.post('admin/serial/send', {
                 msg: message.value
             });

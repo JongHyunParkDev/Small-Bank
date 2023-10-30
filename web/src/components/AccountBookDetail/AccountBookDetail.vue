@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
 import { ref, inject, onMounted } from 'vue';
-import { process } from '@/lib/Async';
+import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { dateToApiDateStr, apiDateToDateStr } from '@/lib/DateUtil';
 import { DayAccount } from '@/types/AccountTypes';
@@ -149,7 +149,7 @@ function getAccounts() {
 
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
-        process(upProcessSpinner, downProcessSpinner, async () => {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
             if (chart.value) chart.value.drillUp();
 
             const dayAccountList: Array<DayAccount> = await Api.get('user/accounts', {

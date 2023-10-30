@@ -126,7 +126,6 @@ public class SecurityConfig {
             try {
                 HttpSession session = request.getSession();
 
-
             } catch (Exception e) {
                 // 여기까지 왔으면 이미 로그인은 성공된 경우임.
                 logger.error("handle login success error.", e);
@@ -151,20 +150,13 @@ public class SecurityConfig {
                 // 이미 로그인 된 상황임.
 
                 String url = request.getScheme() + "://" + request.getServerName();
-                // dev 일 경우 proxy port 로 변경해서 redirect 한다.
-                if (isDev)
-                    response.sendRedirect(url + ":1133");
-                else
-                    response.sendRedirect(url + ":443");
-
+                response.sendRedirect(url);
 
             } catch (Exception e) {
                 // 여기까지 왔으면 이미 로그인은 성공된 경우임.
                 logger.error("handle login success error.", e);
             }
         }
-        @Value("${sppd.dev}")
-        private boolean isDev;
     }
 
     @Bean

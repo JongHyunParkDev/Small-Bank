@@ -225,7 +225,7 @@
 // TODO 모든 vue 파일을 Composition 으로 변경한다.
 import { ref, Ref, computed, inject } from 'vue';
 import { compare } from '@/lib/StrUtil';
-import { process } from '@/lib/Async';
+import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { dateToApiDateStr } from '@/lib/DateUtil';
 import { DayAccount } from '@/types/AccountTypes';
@@ -265,7 +265,7 @@ function updateCalendar({ year, month }: { year: number, month: number }) {
 
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
-        process(upProcessSpinner, downProcessSpinner, async () => {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
             const dayAccountList: Array<DayAccount> = await Api.get('user/accounts', {
                 startDate: startDate,
                 endDate: endDate,
@@ -306,7 +306,7 @@ function addHistory() {
     if (upProcessSpinner && downProcessSpinner) {
         isAddDialog.value = false;
 
-        process(upProcessSpinner, downProcessSpinner, async () => {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
             const dayAccount = await Api.post('user/accounts', {
                 date: selectedDay.value,
                 time: time.value,
@@ -336,7 +336,7 @@ function deleteHistory() {
     if (upProcessSpinner && downProcessSpinner) {
         isModifyDialog.value = false;
 
-        process(upProcessSpinner, downProcessSpinner, async () => {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
             const account = sortAccountArr.value[selectedIdx.value];
 
             await Api.delete('user/accounts', {
@@ -355,7 +355,7 @@ function modifyHistory() {
     if (upProcessSpinner && downProcessSpinner) {
         isModifyDialog.value = false;
 
-        process(upProcessSpinner, downProcessSpinner, async () => {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
             const account = sortAccountArr.value[selectedIdx.value];
 
             await Api.put('user/accounts', {

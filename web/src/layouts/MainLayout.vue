@@ -137,7 +137,7 @@ import { useAuthStore } from '@/stores/AuthStore';
 import { useErrorStore } from '@/stores/ErrorStore';
 import { Api } from '@/lib/Api';
 import { useQuasar } from 'quasar'
-import { process } from '@/lib/Async';
+import { PROCESS } from '@/lib/Async';
 import { UserInfo } from '@/types/UserTypes';
 import { useRouter } from 'vue-router';
 
@@ -170,7 +170,7 @@ const downProcessSpinner = () => {
 };
 
 const logout = async () => {
-    process(upProcessSpinner, downProcessSpinner, async () => {
+    PROCESS(upProcessSpinner, downProcessSpinner, async () => {
         await authStore.logout();
         router.push('/login');
     });
@@ -181,7 +181,7 @@ const goHome = () => {
 };
 
 function updateSubmit() {
-    process(upProcessSpinner, downProcessSpinner, async () => {
+    PROCESS(upProcessSpinner, downProcessSpinner, async () => {
         await Api.put('user/userinfo', {
             password: updatePasswordInput.value === '' ? undefined : updatePasswordInput.value,
             name: updateNameInput.value,
@@ -238,7 +238,7 @@ if (authStore.isAuth) {
     isDone.value = true;
     userInfo.value = authStore.userInfo;
 } else {
-    process(upProcessSpinner, () => {
+    PROCESS(upProcessSpinner, () => {
         isDone.value = true;
         downProcessSpinner();
     if (!authStore.isAuth) router.push('/login');

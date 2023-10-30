@@ -45,15 +45,20 @@
                         회원 가입
                     </a>
                 </div>
-
-                <div class="login-hr-area">
+                <div 
+                    v-if="enableOauth"
+                    class="login-hr-area"
+                >
                     <div class="login-hr" />
                     <div class="login-label">
                         OR
                     </div>
                     <div class="login-hr" />
                 </div>
-                <div class="login-btns">
+                <div 
+                    v-if="enableOauth"
+                    class="login-btns"
+                >
                     <a
                         class="login-btn"
                         href="/oauth2/authorization/google"
@@ -159,11 +164,16 @@ import LogoSvgSrc from '@/assets/logo/logo.svg';
 import NaverLoginBtnSrc from '@/assets/images/naver_login_btn.png';
 import GoogleLoginBtnSrc from '@/assets/images/google_login_btn.svg';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
-import { process } from '@/lib/Async';
+import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { useRouter } from 'vue-router';
 import { useErrorStore } from '@/stores/ErrorStore';
 import { useQuasar } from 'quasar'
+
+const enableOauth = ref(true);
+if (process.env.DEV) {
+    enableOauth.value = false;
+}
 
 const $q = useQuasar();
 const errorStore = useErrorStore();
@@ -187,7 +197,7 @@ function downProcessSpinner() {
 }
 
 function submit() {
-    process(upProcessSpinner, downProcessSpinner, async () => {
+    PROCESS(upProcessSpinner, downProcessSpinner, async () => {
         const formData = new FormData();
         formData.append("email", email.value);
         formData.append("pw", password.value);
@@ -199,7 +209,7 @@ function submit() {
 }
 
 function joinSubmit() {
-    process(upProcessSpinner, downProcessSpinner, async () => {
+    PROCESS(upProcessSpinner, downProcessSpinner, async () => {
         await Api.post('anon/joinUser', {
             email: joinEmailInput.value,
             password: joinPasswordInput.value,
