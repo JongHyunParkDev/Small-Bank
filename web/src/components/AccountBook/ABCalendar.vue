@@ -159,9 +159,10 @@ export default defineComponent({
             const firstDate = new Date(now.value);
             const lastDate = new Date(now.value);
             firstDate.setDate(1);
+            lastDate.setDate(1);
             lastDate.setMonth(lastDate.getMonth() + 1);
             lastDate.setDate(0);
-
+            
             const tempArray: Array<AccountBookDay> = [];
             for (let i = 0; i < firstDate.getDay(); i++)
                 tempArray.push({
