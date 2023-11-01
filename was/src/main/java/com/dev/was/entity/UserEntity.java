@@ -18,19 +18,17 @@ public class UserEntity {
     private String email; //유저 이메일
     @Column(nullable = false, unique = true)
     private String phone;
-    private String birthday;
     private String profileImg;
     private String role; //유저 권한 (일반 유저, 관리자)
 
     @Builder
-    public UserEntity(Long id, String userId, String name, String password, String email, String phone, String birthday, String profileImg, String role) {
+    public UserEntity(Long id, String userId, String name, String password, String email, String phone, String profileImg, String role) {
         this.id = id;
         this.userId = userId;
         this.name = name;
         this.password = password;
         this.email = email;
         this.phone = phone;
-        this.birthday = birthday;
         this.profileImg = profileImg;
         this.role = role;
     }

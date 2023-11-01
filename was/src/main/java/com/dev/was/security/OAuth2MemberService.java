@@ -1,9 +1,15 @@
 package com.dev.was.security;
 
+import com.dev.was.controller.ExceptionCodeEnum;
 import com.dev.was.entity.UserEntity;
+import com.dev.was.oauth2.GoogleUser;
+import com.dev.was.oauth2.NaverUser;
+import com.dev.was.oauth2.OAuthUser;
 import com.dev.was.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -22,16 +28,22 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        System.out.println("oAuth2User = " + oAuth2User.getAttributes());
-        String provider = userRequest.getClientRegistration().getClientId();
-        Map<String, String> map = (Map<String, String>) oAuth2User.getAttributes().get("response");
-        String providerId = map.get("id");
-        String userId = provider + "::" + providerId; //중복이 발생하지 않도록 provider와 providerId를 조합
-        String name = map.get("name");
-        String phone = map.get("mobile");
-        String birthday = map.get("birthday");
-        String email = map.get("email");
-        String profileImg = map.get("profile_image");
+        OAuthUser oauthUser = null;
+
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();
+
+        if (registrationId.equals("gogole"))
+            oauthUser = new GoogleUser(oAuth2User.getAttributes());
+        else if (registrationId.equals("naver"))
+            oauthUser = new NaverUser(((Map)oAuth2User.getAttributes().get("response")));
+        else
+            throw new CustomAuthenticationException(ExceptionCodeEnum.LOGIN_ERROR, "OAUTH ERROR");
+
+        String userId = oauthUser.getProvider() + "::" + oauthUser.getProviderId();
+        String name = oauthUser.getName();
+        String phone = oauthUser.getMobile();
+        String email = oauthUser.getEmail();
+        String profileImg = oauthUser.getProfileImage();
         String role = "ROLE_USER"; //일반 유저
         UserEntity userEntity = userRepository.findByUserId(userId);
 
@@ -42,7 +54,6 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
                     .email(email)
                     .password(encoder.encode("password"))
                     .phone(phone)
-                    .birthday(birthday)
                     .profileImg(profileImg)
                     .role(role)
                     .build();

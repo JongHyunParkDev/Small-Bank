@@ -2,9 +2,7 @@ package com.dev.was.service;
 
 import com.dev.was.controller.ApiException;
 import com.dev.was.controller.ExceptionCodeEnum;
-import com.dev.was.dto.AccountDto;
 import com.dev.was.dto.UserDto;
-import com.dev.was.entity.AccountEntity;
 import com.dev.was.entity.UserEntity;
 import com.dev.was.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.Optional;
 
 
