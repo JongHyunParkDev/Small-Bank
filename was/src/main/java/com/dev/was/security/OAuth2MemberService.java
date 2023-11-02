@@ -32,7 +32,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-        if (registrationId.equals("gogole"))
+        if (registrationId.equals("google"))
             oauthUser = new GoogleUser(oAuth2User.getAttributes());
         else if (registrationId.equals("naver"))
             oauthUser = new NaverUser(((Map)oAuth2User.getAttributes().get("response")));
@@ -44,10 +44,10 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         String phone = oauthUser.getMobile();
         String email = oauthUser.getEmail();
         String profileImg = oauthUser.getProfileImage();
-        String role = "ROLE_USER"; //일반 유저
+        String role = "ROLE_USER"; // 일반 유저
         UserEntity userEntity = userRepository.findByUserId(userId);
 
-        if (userEntity == null) { //찾지 못했다면
+        if (userEntity == null) { // 찾지 못했다면
             userEntity = UserEntity.builder()
                     .userId(userId)
                     .name(name)

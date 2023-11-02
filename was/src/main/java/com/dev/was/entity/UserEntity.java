@@ -16,7 +16,6 @@ public class UserEntity {
     private String password; //유저 비밀번호
     @Column(nullable = false, unique = true)
     private String email; //유저 이메일
-    @Column(nullable = false, unique = true)
     private String phone;
     private String profileImg;
     private String role; //유저 권한 (일반 유저, 관리자)

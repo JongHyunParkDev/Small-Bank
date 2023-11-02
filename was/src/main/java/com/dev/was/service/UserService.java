@@ -25,8 +25,6 @@ public class UserService {
         try {
             if (userRepository.findByEmail(email) != null)
                 throw new ApiException(ExceptionCodeEnum.DUPLICATE_EMAIL);
-            if (userRepository.findByPhone(phone) != null)
-                throw new ApiException(ExceptionCodeEnum.DUPLICATE_PHONE);
 
             UserEntity userEntity = userRepository.save(
                     UserEntity.builder()

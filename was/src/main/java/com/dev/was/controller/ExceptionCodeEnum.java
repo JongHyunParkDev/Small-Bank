@@ -22,7 +22,6 @@ public enum ExceptionCodeEnum {
     PW_INVALID(1990, "PW IS NOT VALID"),
     FOUNT_NOT_ID(1991, "FOUND NOT ID"),
     DUPLICATE_EMAIL(1997, "DUPLICATE EMAIL"),
-    DUPLICATE_PHONE(1998, "DUPLICATE PHONE"),
     LOGIN_ERROR(1999, "LOGIN ERROR");
 
     private final int code;
