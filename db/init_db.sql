@@ -21,7 +21,7 @@ create database sppd
 CREATE TABLE tm_user (
 	id bigserial NOT NULL,
 	birthday varchar(255) NULL,
-	email varchar(255) NULL,
+	email varchar(255) NULL unique,
 	"name" varchar(255) NULL,
 	"password" varchar(255) NULL,
 	phone varchar(255) NULL,
@@ -31,7 +31,7 @@ CREATE TABLE tm_user (
 	CONSTRAINT tm_user_pkey PRIMARY KEY (id)
 );
 
-CREATE TABLE public.tm_account (
+CREATE TABLE tm_account (
 	id bigserial NOT NULL,
 	category varchar(255) NOT NULL,
 	created_date timestamp(6) NULL,

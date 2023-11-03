@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import { ref, inject, onMounted } from 'vue';
+import { ref, Ref, inject, onMounted } from 'vue';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { dateToApiDateStr, apiDateToDateStr } from '@/lib/DateUtil';
@@ -63,7 +63,7 @@ import { DayAccount } from '@/types/AccountTypes';
 import Highcharts from 'highcharts';
 import accessibility from 'highcharts/modules/accessibility';
 import drilldown from 'highcharts/modules/drilldown';
-import { ChartData, DrilldownChartData, IndexMap } from '@/types/ChartTypes';
+import { ChartData, IndexMap } from '@/types/ChartTypes';
 
 // base Mobile
 const styleOption = {
@@ -77,10 +77,10 @@ if ($q.platform.is.desktop) {
 accessibility(Highcharts);
 drilldown(Highcharts);
 
-const chartContainer = ref<HTMLInputElement | null>(null);
-const chart = ref(null);
+const chartContainer: Ref<HTMLInputElement | null> = ref(null);
+const chart: Ref<Highcharts.Chart | null> = ref(null);
 
-let chartOptions = {
+let chartOptions: Highcharts.Options = {
     chart: {
         type: 'pie'
     },
@@ -93,11 +93,15 @@ let chartOptions = {
     },
     series: [
         {
+            type: 'pie',
             name: 'Accounts',
-            colorByPoint: true,
-            data: []
+            data: [] as Array<ChartData> 
         }
     ],
+    accessibility: {},
+    plotOptions: {},
+    tooltip:{},
+    drilldown:{},
 };
 
 const upProcessSpinner = inject<() => void>('upProcessSpinner');
@@ -117,23 +121,27 @@ function setMonth(num: number) {
     getAccounts();
 }
 
-function updateYear(num: number) {
-    if (num < 1910) num = 1910;
-    if (num > 2100) num = 2100;
-    nowYear.value = num;
+function updateYear(value: string | number | null) {
+    // typescript 때문에 있음
+    if (value === null || typeof value === 'string') return;
+    if (value < 1910) value = 1910;
+    if (value > 2100) value = 2100;
+    nowYear.value = value;
 
-    now.value.setFullYear(num);
+    now.value.setFullYear(value);
 
     getAccounts();
 }
 
-function updateMonth(num: number) {
-    if (num < 1) num = 1;
-    if (num > 12) num = 12;
-    nowMonth.value = num;
+function updateMonth(value: string | number | null) {
+    // typescript 때문에 있음
+    if (value === null || typeof value === 'string') return;
+    if (value < 1) value = 1;
+    if (value > 12) value = 12;
+    nowMonth.value = value;
 
     now.value.setFullYear(nowYear.value);
-    now.value.setMonth(num - 1);
+    now.value.setMonth(value - 1);
 
     getAccounts();
 }
@@ -158,7 +166,7 @@ function getAccounts() {
             });
 
             const serialDataArray: Array<ChartData> = [];
-            const drilldownSerialDataArray: Array<DrilldownChartData> = [];
+            const drilldownSerialDataArray: Array<any> = [];
             const indexMap: IndexMap = {};
             let idx = 0;
             dayAccountList.forEach((account) => {
@@ -204,7 +212,7 @@ function getAccounts() {
                     }
                 },
                 plotOptions: {
-                    series: {
+                    pie: {
                         borderRadius: 5,
                         dataLabels: {
                             enabled: true,
@@ -214,28 +222,30 @@ function getAccounts() {
                                 operator: '>',
                                 value: 10
                             },
-                            formatter: function () {
-                                return `<span style="color:${this.color}; text-decoration:'none'">` +
-                                    `Category: ${this.key} <br>` +
-                                    `Value: ${this.y.toLocaleString()}원 <br>` +
-                                    `Percent: ${this.percentage.toFixed(2)}% <br>` +
-                                    `</span>`;
+                            formatter: function (): string | undefined {
+                                if (this.y)
+                                    return `<span style="color:${this.color}; text-decoration:'none'">` +
+                                        `Category: ${this.key} <br>` +
+                                        `Value: ${this.y.toLocaleString()}원 <br>` +
+                                        `Percent: ${this.percentage.toFixed(2)}% <br>` +
+                                        `</span>`;
                             }
                         }
                     }
                 },
                 tooltip: {
                     headerFormat: '<span>{series.name}</span><br>',
-                    formatter: function () {
-                        return `Category: <span style="color:${this.color}">${this.key}</span><br/>` +
-                            `Value: <b>${this.y.toLocaleString()}원</b><br />` +
-                            `Total: <b>${this.total.toLocaleString()}원</b>`
+                    formatter: function (): string | undefined {
+                        if (this.y && this.total)
+                            return `Category: <span style="color:${this.color}">${this.key}</span><br/>` +
+                                `Value: <b>${this.y.toLocaleString()}원</b><br />` +
+                                `Total: <b>${this.total.toLocaleString()}원</b>`
                     }
                 },
                 series: [
                     {
+                        type: 'pie',
                         name: 'Accounts',
-                        colorByPoint: true,
                         data: serialDataArray
                     }
                 ],
@@ -246,16 +256,6 @@ function getAccounts() {
                     },
                     series: drilldownSerialDataArray
                 },
-                exporting: {
-                    buttons: {
-                        contextButton: {
-                            menuItems: [{
-                                text: '뒤로',
-                                onclick: null // "뒤로" 버튼을 제거합니다.
-                            }]
-                        }
-                    }
-                }
             };
 
             if (chart.value) chart.value.update(chartOptions);
@@ -265,7 +265,7 @@ function getAccounts() {
 
 onMounted(() => {
     if (chartContainer.value) {
-        chart.value = Highcharts.chart(chartContainer.value, chartOptions);
+        chart.value = Highcharts.chart(chartContainer.value, chartOptions, undefined);
         getAccounts();
     }
 })
