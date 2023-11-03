@@ -48,8 +48,45 @@
                 @click="setMonth(1)"
             />
         </div>
-        <div class="chart-container" ref="chartContainer">
-        </div>
+        <QTabPanels
+            class="tab-panels"
+            v-model="selectedTab"
+            animated
+            transition-prev="jump-up"
+            transition-next="jump-up"
+        >
+            <QTabPanel name="chart">
+                <div
+                    class="chart-container" 
+                    ref="chartContainer"
+                >
+                </div>
+            </QTabPanel>
+            <QTabPanel name="list">
+                <div
+                    class="list list-card" 
+                >
+                </div>
+            </QTabPanel>
+            <QTabPanel name="listDetail">
+                <div
+                    class="listDetail list-card" 
+                >
+                </div>
+            </QTabPanel>
+        </QTabPanels>
+        <QTabs
+            v-model="selectedTab"
+            class="tabs"
+            indicator-color="transparent"
+            outside-arrows
+            dense
+            @update:model-value="selectTab"
+        >
+            <QTab name="chart" icon="pie_chart" label="Chart"></QTab>
+            <QTab name="list" icon="list" label="List"></QTab>
+            <QTab name="listDetail" icon="view_list" label="Detail"></QTab>
+        </Qtabs>
     </div>
 </template>
 
@@ -77,6 +114,18 @@ if ($q.platform.is.desktop) {
 accessibility(Highcharts);
 drilldown(Highcharts);
 
+const selectedTab = ref('chart');
+
+function selectTab(tab) {
+    if (tab === 'chart') {
+        // id 로 해야할 지도...?
+        if (chartContainer.value) {
+            chart.value = Highcharts.chart(chartContainer.value, chartOptions, undefined);
+            getAccounts();
+        }
+    }
+}
+
 const chartContainer: Ref<HTMLInputElement | null> = ref(null);
 const chart: Ref<Highcharts.Chart | null> = ref(null);
 
@@ -88,8 +137,7 @@ let chartOptions: Highcharts.Options = {
         enabled: false
     },
     title: {
-        text: '가계부 지출 통계',
-        align: 'center'
+        text: undefined
     },
     series: [
         {
@@ -200,8 +248,7 @@ function getAccounts() {
                     enabled: false
                 },
                 title: {
-                    text: '가계부 지출 통계',
-                    align: 'center'
+                    text: undefined
                 },
                 accessibility: {
                     announceNewData: {
@@ -280,7 +327,6 @@ onMounted(() => {
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: $spacing-sm;
 
     > .header {
         display: flex;
@@ -312,9 +358,26 @@ onMounted(() => {
             margin-right: $spacing-md;
         }
     }
+
+    > .btn-toggle {
+        margin: 0px auto;
+    }
+
     > .chart-container {
         flex: 1;
         margin: 5%;
+    }
+
+    > .list-card {
+        margin-top: $spacing-lg;
+    }
+
+    > .tab-panels {
+        flex: 1;
+    }
+    > .tabs {
+        background-color: $naver-bs;
+        color: white;
     }
 }
 </style>
