@@ -3,6 +3,11 @@ logging:
     com:
       dev: DEBUG
 
+server:
+  servlet:
+    session:
+      timeout: 86400
+
 # 외부 IP 및 도메인 설정해서 release 하기
 #spring:
 #  security:

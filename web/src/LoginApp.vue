@@ -45,7 +45,7 @@
                         회원 가입
                     </a>
                 </div>
-                <div 
+                <div
                     v-if="enableOauth"
                     class="login-hr-area"
                 >
@@ -55,7 +55,7 @@
                     </div>
                     <div class="login-hr" />
                 </div>
-                <div 
+                <div
                     v-if="enableOauth"
                     class="login-btns"
                 >
@@ -169,12 +169,14 @@ import { Api } from '@/lib/Api';
 import { useRouter } from 'vue-router';
 import { useErrorStore } from '@/stores/ErrorStore';
 import { useQuasar } from 'quasar'
+import { useAuthStore } from '@/stores/AuthStore';
 
 const enableOauth = ref(true);
 if (process.env.DEV) {
     enableOauth.value = false;
 }
 
+const authStore = useAuthStore();
 const $q = useQuasar();
 const errorStore = useErrorStore();
 const router = useRouter();
@@ -203,7 +205,7 @@ function submit() {
         formData.append("pw", password.value);
 
         await Api.post('anon/login', formData);
-
+        await authStore.login();
         router.push('/');
     });
 }

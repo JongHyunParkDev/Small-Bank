@@ -48,7 +48,7 @@
         >
             <QList>
                 <QItemLabel header> Menu </QItemLabel>
-                <RouterLink v-if="isDone"> </RouterLink>
+                <RouterLink> </RouterLink>
             </QList>
         </QDrawer>
         <QPageContainer>
@@ -149,7 +149,6 @@ const leftDrawerOpen: Ref<boolean> = ref(false);
 const authStore = useAuthStore();
 const userInfo: Ref<UserInfo | undefined> = ref(authStore.userInfo);
 const processCount: Ref<number> = ref(0);
-const isDone: Ref<boolean> = ref(false);
 
 const isVisibleUpdateFormDialog = ref(false);
 const updateEmailInput: Ref<string> = ref('');
@@ -232,21 +231,6 @@ function validatePhone(phone: string): boolean {
 
 function showUpdateForm() {
     isVisibleUpdateFormDialog.value = true;
-}
-
-if (authStore.isAuth) {
-    isDone.value = true;
-    userInfo.value = authStore.userInfo;
-} else {
-    PROCESS(upProcessSpinner, () => {
-        isDone.value = true;
-        downProcessSpinner();
-    if (!authStore.isAuth) router.push('/login');
-    }, async () => {
-        await authStore.login();
-        userInfo.value = authStore.userInfo;
-        updateUserInfoForm();
-    });
 }
 
 watch(errorStore.errors, async (newError) => {

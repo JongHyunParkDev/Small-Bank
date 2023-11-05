@@ -14,19 +14,16 @@ const routes: RouteRecordRaw[] = [
         path: '/AccountBook',
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/AccountBookPage.vue') }],
-        meta: { isAuth: true }
     },
     {
         path: '/AccountBookDetail',
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/AccountBookDetailPage.vue') }],
-        meta: { isAuth: true }
     },
     {
         path: '/Arduino',
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/ArduinoPage.vue') }],
-        meta: { isAuth: true, isAdmin: true }
     },
 
     // Always leave this as last one,
