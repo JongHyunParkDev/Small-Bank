@@ -6,24 +6,32 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../LoginApp.vue')
     },
     {
+        path: '/survey/:key/:code',
+        component: () => import('../SurveyApp.vue'),
+    },
+    {
         path: '/',
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
+        meta: { isAuth: true }
     },
     {
         path: '/AccountBook',
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/AccountBookPage.vue') }],
+        meta: { isAuth: true }
     },
     {
         path: '/AccountBookDetail',
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/AccountBookDetailPage.vue') }],
+        meta: { isAuth: true }
     },
     {
         path: '/Arduino',
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/ArduinoPage.vue') }],
+        meta: { isAuth: true, isAdmin: true }
     },
 
     // Always leave this as last one,

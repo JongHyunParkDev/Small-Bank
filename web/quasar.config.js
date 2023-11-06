@@ -53,7 +53,7 @@ module.exports = configure(function (/* ctx */) {
                 node: 'node16',
             },
 
-            vueRouterMode: 'hash', // available values: 'hash', 'history'
+            vueRouterMode: 'history', // available values: 'hash', 'history'
             // vueRouterBase,
             // vueDevtools,
             // vueOptionsAPI: false,
@@ -110,7 +110,7 @@ module.exports = configure(function (/* ctx */) {
             config: {
                 notify: {
 
-                } /* look at QuasarConfOptions from the API card */ 
+                } /* look at QuasarConfOptions from the API card */
             },
             // iconSet: 'material-icons', // Quasar icon set
             // lang: 'en-US', // Quasar language pack
@@ -122,7 +122,7 @@ module.exports = configure(function (/* ctx */) {
             // components: [],
             // directives: [],
 
-            
+
         },
 
         // animations: 'all', // --- includes all animations
