@@ -48,29 +48,88 @@
                 @click="setMonth(1)"
             />
         </div>
-        <div class="chart-container" ref="chartContainer">
-        </div>
+        <QTabPanels
+            class="tab-panels"
+            v-model="selectedTab"
+            animated
+            transition-prev="jump-up"
+            transition-next="jump-up"
+        >
+            <QTabPanel name="chart">
+                <div
+                    class="chart-container" 
+                    ref="chartContainer"
+                >
+                </div>
+            </QTabPanel>
+            <QTabPanel name="list">
+                <div
+                    class="list list-card" 
+                >
+                </div>
+            </QTabPanel>
+            <QTabPanel name="listDetail">
+                <div
+                    class="listDetail list-card" 
+                >
+                </div>
+            </QTabPanel>
+        </QTabPanels>
+        <QTabs
+            v-model="selectedTab"
+            class="tabs"
+            indicator-color="transparent"
+            outside-arrows
+            dense
+            @update:model-value="selectTab"
+        >
+            <QTab name="chart" icon="pie_chart" label="Chart"></QTab>
+            <QTab name="list" icon="list" label="List"></QTab>
+            <QTab name="listDetail" icon="view_list" label="Detail"></QTab>
+        </Qtabs>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, inject, onMounted } from 'vue';
-import { process } from '@/lib/Async';
+import { useQuasar } from 'quasar'
+import { ref, Ref, inject, onMounted } from 'vue';
+import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { dateToApiDateStr, apiDateToDateStr } from '@/lib/DateUtil';
 import { DayAccount } from '@/types/AccountTypes';
 import Highcharts from 'highcharts';
 import accessibility from 'highcharts/modules/accessibility';
 import drilldown from 'highcharts/modules/drilldown';
-import { ChartData, DrilldownChartData, IndexMap } from '@/types/ChartTypes';
+import { ChartData, IndexMap } from '@/types/ChartTypes';
+
+// base Mobile
+const styleOption = {
+    distance: '-40%',
+}
+const $q = useQuasar();
+if ($q.platform.is.desktop) {
+    styleOption.distance = '30';
+}
 
 accessibility(Highcharts);
 drilldown(Highcharts);
 
-const chartContainer = ref<HTMLInputElement | null>(null);
-const chart = ref(null);
+const selectedTab = ref('chart');
 
-let chartOptions = {
+function selectTab(tab) {
+    if (tab === 'chart') {
+        // id 로 해야할 지도...?
+        if (chartContainer.value) {
+            chart.value = Highcharts.chart(chartContainer.value, chartOptions, undefined);
+            getAccounts();
+        }
+    }
+}
+
+const chartContainer: Ref<HTMLInputElement | null> = ref(null);
+const chart: Ref<Highcharts.Chart | null> = ref(null);
+
+let chartOptions: Highcharts.Options = {
     chart: {
         type: 'pie'
     },
@@ -78,16 +137,19 @@ let chartOptions = {
         enabled: false
     },
     title: {
-        text: '가계부 지출 통계',
-        align: 'center'
+        text: undefined
     },
     series: [
         {
+            type: 'pie',
             name: 'Accounts',
-            colorByPoint: true,
-            data: []
+            data: [] as Array<ChartData> 
         }
     ],
+    accessibility: {},
+    plotOptions: {},
+    tooltip:{},
+    drilldown:{},
 };
 
 const upProcessSpinner = inject<() => void>('upProcessSpinner');
@@ -107,23 +169,27 @@ function setMonth(num: number) {
     getAccounts();
 }
 
-function updateYear(num: number) {
-    if (num < 1910) num = 1910;
-    if (num > 2100) num = 2100;
-    nowYear.value = num;
+function updateYear(value: string | number | null) {
+    // typescript 때문에 있음
+    if (value === null || typeof value === 'string') return;
+    if (value < 1910) value = 1910;
+    if (value > 2100) value = 2100;
+    nowYear.value = value;
 
-    now.value.setFullYear(num);
+    now.value.setFullYear(value);
 
     getAccounts();
 }
 
-function updateMonth(num: number) {
-    if (num < 1) num = 1;
-    if (num > 12) num = 12;
-    nowMonth.value = num;
+function updateMonth(value: string | number | null) {
+    // typescript 때문에 있음
+    if (value === null || typeof value === 'string') return;
+    if (value < 1) value = 1;
+    if (value > 12) value = 12;
+    nowMonth.value = value;
 
     now.value.setFullYear(nowYear.value);
-    now.value.setMonth(num - 1);
+    now.value.setMonth(value - 1);
 
     getAccounts();
 }
@@ -139,14 +205,16 @@ function getAccounts() {
 
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
-        process(upProcessSpinner, downProcessSpinner, async () => {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+            if (chart.value) chart.value.drillUp();
+
             const dayAccountList: Array<DayAccount> = await Api.get('user/accounts', {
                 startDate: startDate,
                 endDate: endDate,
             });
 
             const serialDataArray: Array<ChartData> = [];
-            const drilldownSerialDataArray: Array<DrilldownChartData> = [];
+            const drilldownSerialDataArray: Array<any> = [];
             const indexMap: IndexMap = {};
             let idx = 0;
             dayAccountList.forEach((account) => {
@@ -159,7 +227,7 @@ function getAccounts() {
                         drilldown: account.category
                     })
                     drilldownSerialDataArray.push({
-                        name: account.category, 
+                        name: account.category,
                         id: account.category,
                         data: [[`${apiDateToDateStr(account.date)} (${account.memo})`, account.money]]
                     });
@@ -171,7 +239,7 @@ function getAccounts() {
                     );
                 }
             });
-            
+
             chartOptions = {
                 chart: {
                     type: 'pie'
@@ -180,8 +248,7 @@ function getAccounts() {
                     enabled: false
                 },
                 title: {
-                    text: '가계부 지출 통계',
-                    align: 'center'
+                    text: undefined
                 },
                 accessibility: {
                     announceNewData: {
@@ -192,41 +259,50 @@ function getAccounts() {
                     }
                 },
                 plotOptions: {
-                    series: {
+                    pie: {
                         borderRadius: 5,
                         dataLabels: {
                             enabled: true,
-                            formatter: function () {
-                                return `<span style="color:${this.color}; text-decoration:'none'">` +
-                                    `Category: ${this.key} <br>` +
-                                    `Value: ${this.y.toLocaleString()}원 <br>` +   
-                                    `Percent: ${this.percentage.toFixed(2)}% <br>` +   
-                                    `</span>`;
+                            distance: styleOption.distance,
+                            filter: {
+                                property: 'percentage',
+                                operator: '>',
+                                value: 10
+                            },
+                            formatter: function (): string | undefined {
+                                if (this.y)
+                                    return `<span style="color:${this.color}; text-decoration:'none'">` +
+                                        `Category: ${this.key} <br>` +
+                                        `Value: ${this.y.toLocaleString()}원 <br>` +
+                                        `Percent: ${this.percentage.toFixed(2)}% <br>` +
+                                        `</span>`;
                             }
                         }
                     }
                 },
                 tooltip: {
                     headerFormat: '<span>{series.name}</span><br>',
-                    formatter: function () {
-                        return `Category: <span style="color:${this.color}">${this.key}</span><br/>` +
-                            `Value: <b>${this.y.toLocaleString()}원</b><br />` +
-                            `Total: <b>${this.total.toLocaleString()}원</b>`
+                    formatter: function (): string | undefined {
+                        if (this.y && this.total)
+                            return `Category: <span style="color:${this.color}">${this.key}</span><br/>` +
+                                `Value: <b>${this.y.toLocaleString()}원</b><br />` +
+                                `Total: <b>${this.total.toLocaleString()}원</b>`
                     }
                 },
                 series: [
                     {
+                        type: 'pie',
                         name: 'Accounts',
-                        colorByPoint: true,
                         data: serialDataArray
                     }
                 ],
                 drilldown: {
+                    animation: false,
                     activeDataLabelStyle: {
                         textDecoration: 'none',
                     },
                     series: drilldownSerialDataArray
-                }
+                },
             };
 
             if (chart.value) chart.value.update(chartOptions);
@@ -236,7 +312,7 @@ function getAccounts() {
 
 onMounted(() => {
     if (chartContainer.value) {
-        chart.value = Highcharts.chart(chartContainer.value, chartOptions);
+        chart.value = Highcharts.chart(chartContainer.value, chartOptions, undefined);
         getAccounts();
     }
 })
@@ -251,7 +327,6 @@ onMounted(() => {
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: $spacing-sm;
 
     > .header {
         display: flex;
@@ -283,9 +358,26 @@ onMounted(() => {
             margin-right: $spacing-md;
         }
     }
+
+    > .btn-toggle {
+        margin: 0px auto;
+    }
+
     > .chart-container {
         flex: 1;
         margin: 5%;
+    }
+
+    > .list-card {
+        margin-top: $spacing-lg;
+    }
+
+    > .tab-panels {
+        flex: 1;
+    }
+    > .tabs {
+        background-color: $naver-bs;
+        color: white;
     }
 }
 </style>

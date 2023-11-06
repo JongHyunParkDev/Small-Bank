@@ -3,7 +3,7 @@ import { ApiError } from '@/lib/Errors';
 
 const errorStore = useErrorStore();
 
-export async function process(firstProcess: () => void, lastProcess: () => void, func: () => void)
+export async function PROCESS(firstProcess: () => void, lastProcess: () => void, func: () => void)
 {
     firstProcess();
     try {

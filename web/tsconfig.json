@@ -1,10 +1,14 @@
 {
     "extends": "@quasar/app-vite/tsconfig-preset",
     "compilerOptions": {
+        "target": "es5", 
+        "module": "commonjs", 
         "baseUrl": ".",
         "paths": {
             "@/*": ["src/*"]
         },
+        "skipLibCheck": true, // 라이브러리 파일의 타입 체크 스킵
+        "noImplicitAny": false,
     },
     "include": [
         "src/**/*.ts",

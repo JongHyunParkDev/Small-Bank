@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class AccountDto {
     private Long id;
-    private String userId;
+    private Long userId;
     private String date;
     private String time;
     private String memo;

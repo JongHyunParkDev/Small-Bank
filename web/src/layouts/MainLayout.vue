@@ -21,11 +21,16 @@
                 </QToolbarTitle>
 
                 <div class="avatar-content">
-                    <QAvatar>
-                        <img :src="userInfo?.profileImg">
-                    </QAvatar>
-                    <div class="name">
-                        {{ userInfo?.name }}
+                    <div
+                        class="update-area"
+                        @click="showUpdateForm"
+                    >
+                        <QAvatar>
+                            <img :src="userInfo?.profileImg">
+                        </QAvatar>
+                        <div class="name">
+                            {{ userInfo?.name }}
+                        </div>
                     </div>
                     <QIcon
                         class="icon"
@@ -43,47 +48,113 @@
         >
             <QList>
                 <QItemLabel header> Menu </QItemLabel>
-                <RouterLink v-if="isDone"> </RouterLink>
+                <RouterLink> </RouterLink>
             </QList>
         </QDrawer>
-
-        <QBanner v-if="errors.length !== 0" rounded class="error-area">
-            <div
-                v-for="(error, idx) in errors"
-                :key="idx"
-                class="error-row"
-            >
-                {{ error }}
-            </div>
-            <template v-slot:action>
-                <QBtn class="btn" size="sm" flat color="white" label="닫기" @click="hideError"/>
-            </template>
-        </QBanner>
-
         <QPageContainer>
             <RouterView />
         </QPageContainer>
+        <QDialog
+            class="update-form-dialog"
+            v-model="isVisibleUpdateFormDialog"
+            persistent
+        >
+            <QCard class="update-form-card">
+                <QForm @submit="updateSubmit">
+                    <QCardSection class="row items-center">
+                        <QToolbar>
+                            <QToolbarTitle>
+                                사용자 정보 변경
+                            </QToolbarTitle>
+                        </QToolbar>
+                        <div class="dialog-content">
+                            <QInput
+                                name="email"
+                                outlined
+                                stack-label
+                                label="이메일"
+                                v-model="updateEmailInput"
+                                disable
+                                :rules="[(val) => true]"
+                            />
+                            <QInput
+                                name="password"
+                                type="password"
+                                outlined
+                                stack-label
+                                label="패스워드 (공백인 경우 변경하지 않습니다.)"
+                                v-model="updatePasswordInput"
+                                :rules="[(val) => isPasswordValid(val) || '영문자, 숫자 필수이며, 6 ~ 12글자로 사용 가능합니다.']"
+                            />
+                            <QInput
+                                name="name"
+                                outlined
+                                stack-label
+                                label="이름"
+                                v-model="updateNameInput"
+                                :rules="[(val) => val.length >= 2 && val.length <= 6 || '이름은 2 ~ 6글자 사용 가능합니다.']"
+                            />
+                            <QInput
+                                name="phone"
+                                outlined
+                                stack-label
+                                label="전화번호"
+                                v-model="updatePhoneInput"
+                                :rules="[(val) => validatePhone(val) || '010-0000-0000 형식으로 작성해주세요.']"
+                            />
+                        </div>
+                    </QCardSection>
+                    <QCardActions
+                        align="right"
+                    >
+                        <QBtn
+                            flat
+                            padding="xs lg"
+                            label="취소"
+                            color="primary"
+                            @click="updateUserInfoForm"
+                            v-close-popup
+                        />
+                        <QBtn
+                            padding="xs lg"
+                            type="submit"
+                            label="변경"
+                            color="primary"
+                        />
+                    </QCardActions>
+                </QForm>
+            </QCard>
+        </QDialog>
         <ProcessSpinner v-if="processCount > 0"/>
     </QLayout>
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, computed, provide } from 'vue';
+import { ref, Ref, watch, provide } from 'vue';
 import RouterLink from 'components/RouterLink.vue';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useErrorStore } from '@/stores/ErrorStore';
-import { process } from '@/lib/Async';
+import { Api } from '@/lib/Api';
+import { useQuasar } from 'quasar'
+import { PROCESS } from '@/lib/Async';
 import { UserInfo } from '@/types/UserTypes';
 import { useRouter } from 'vue-router';
+
+const $q = useQuasar();
+const errorStore = useErrorStore();
 
 const router = useRouter();
 const leftDrawerOpen: Ref<boolean> = ref(false);
 const authStore = useAuthStore();
 const userInfo: Ref<UserInfo | undefined> = ref(authStore.userInfo);
 const processCount: Ref<number> = ref(0);
-const isDone: Ref<boolean> = ref(false);
-const errorStore = useErrorStore();
+
+const isVisibleUpdateFormDialog = ref(false);
+const updateEmailInput: Ref<string> = ref('');
+const updatePasswordInput: Ref<string> = ref('');
+const updateNameInput: Ref<string> = ref('');
+const updatePhoneInput: Ref<string> = ref('');
 
 const toggleLeftDrawer = () => {
     leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -98,7 +169,7 @@ const downProcessSpinner = () => {
 };
 
 const logout = async () => {
-    process(upProcessSpinner, downProcessSpinner, async () => {
+    PROCESS(upProcessSpinner, downProcessSpinner, async () => {
         await authStore.logout();
         router.push('/login');
     });
@@ -108,29 +179,69 @@ const goHome = () => {
     router.push('/');
 };
 
-const hideError = () => {
-    errorStore.clearError();
-};
+function updateSubmit() {
+    PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+        await Api.put('user/userinfo', {
+            password: updatePasswordInput.value === '' ? undefined : updatePasswordInput.value,
+            name: updateNameInput.value,
+            phone: updatePhoneInput.value,
+        });
 
-if (authStore.isAuth) {
-    isDone.value = true;
-    userInfo.value = authStore.userInfo;
-} else {
-    process(upProcessSpinner, () => {
-        isDone.value = true;
-        downProcessSpinner();
-    if (!authStore.isAuth) router.push('/login');
-    }, async () => {
+        isVisibleUpdateFormDialog.value = false;
+        // 성공시 dialog
+
         await authStore.login();
         userInfo.value = authStore.userInfo;
+        updateUserInfoForm();
+
+        $q.notify({
+            type: 'positive',
+            message: '정상적으로 사용자 정보가 업데이트 되었습니다.'
+        });
     });
 }
 
-const errors = computed(() => errorStore.errors);
+function updateUserInfoForm() {
+    if (userInfo.value) {
+        updateEmailInput.value = userInfo.value.email;
+        updateNameInput.value = userInfo.value.name;
+        updatePhoneInput.value = userInfo.value.phone;
+    }
+}
+
+function isPasswordValid(password: string): boolean {
+    // 비번 변경은 하기 싫은 경우
+    if (password === '') return true;
+
+    if (password.length < 6 || password.length > 12) {
+        return false;
+    }
+
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+
+    return hasLetter && hasNumber;
+}
+
+function validatePhone(phone: string): boolean {
+    const checkPhone = /^\d{2,3}-\d{3,4}-\d{4}$/.test(phone);
+
+    return checkPhone;
+}
+
+function showUpdateForm() {
+    isVisibleUpdateFormDialog.value = true;
+}
+
+watch(errorStore.errors, async (newError) => {
+    $q.notify({
+        type: 'negative',
+        message: newError[0]
+    });
+});
 
 provide('upProcessSpinner', upProcessSpinner);
 provide('downProcessSpinner', downProcessSpinner);
-// router 이동하면 mounted 타지 않는다.
 </script>
 
 <style lang="scss" scoped>
@@ -146,12 +257,22 @@ provide('downProcessSpinner', downProcessSpinner);
         display: flex;
         flex-direction: row;
 
-        img {
-            border: 1px solid $grey-7;
-        }
+        > .update-area {
+            display: flex;
+            border-radius: 5%;
 
-        > .name {
-            padding: $spacing-md;
+            &:hover {
+                cursor: pointer;
+                background-color: $naver-dk;
+            }
+
+            img {
+                border: 1px solid $grey-7;
+            }
+
+            > .name {
+                padding: $spacing-md;
+            }
         }
 
         > .icon {
@@ -187,6 +308,14 @@ provide('downProcessSpinner', downProcessSpinner);
             border: 1px solid $grey-4;
             width: 60px;
         }
+    }
+}
+
+.update-form-dialog {
+    .dialog-content {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
     }
 }
 </style>

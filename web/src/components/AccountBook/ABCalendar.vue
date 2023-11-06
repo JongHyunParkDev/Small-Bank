@@ -69,7 +69,7 @@
                 :key="idx2"
                 :class="convertClass(idx2)"
                 :item="item"
-                :account-map="dayAccountTypeMap[item.num]"
+                :account-map="dayAccountTypeMap[item.num ? item.num : -1]"
                 :selected-abday="selectedABDay"
                 @selectDay="selectDay($event)"
             />
@@ -133,12 +133,11 @@ export default defineComponent({
     computed: {
         dayAccountTypeMap() {
             const map = {};
-
+            if (this.dayAccountArr)
             this.dayAccountArr.forEach(dayAccount => {
                 if (map[+dayAccount.date.substring(6, 8)] === undefined)
                     map[+dayAccount.date.substring(6, 8)] = {};
                 map[+dayAccount.date.substring(6, 8)][dayAccount.type] = true;
-
             })
             return map;
         }
@@ -159,9 +158,10 @@ export default defineComponent({
             const firstDate = new Date(now.value);
             const lastDate = new Date(now.value);
             firstDate.setDate(1);
+            lastDate.setDate(1);
             lastDate.setMonth(lastDate.getMonth() + 1);
             lastDate.setDate(0);
-
+            
             const tempArray: Array<AccountBookDay> = [];
             for (let i = 0; i < firstDate.getDay(); i++)
                 tempArray.push({
@@ -194,22 +194,24 @@ export default defineComponent({
 
             this.updateCalendar();
         },
-        updateYear(num: number) {
-            if (num < 1910) num = 1910;
-            if (num > 2100) num = 2100;
-            nowYear.value = num;
+        updateYear(value: string | number | null) {
+            if (value === null || typeof value === 'string') return;
+            if (value < 1910) value = 1910;
+            if (value > 2100) value = 2100;
+            nowYear.value = value;
 
-            now.value.setFullYear(num);
+            now.value.setFullYear(value);
 
             this.updateCalendar();
         },
-        updateMonth(num: number) {
-            if (num < 1) num = 1;
-            if (num > 12) num = 12;
-            nowMonth.value = num;
+        updateMonth(value: string | number | null) {
+            if (value === null || typeof value === 'string') return;
+            if (value < 1) value = 1;
+            if (value > 12) value = 12;
+            nowMonth.value = value;
 
             now.value.setFullYear(nowYear.value);
-            now.value.setMonth(num - 1);
+            now.value.setMonth(value - 1);
 
             this.updateCalendar();
         },

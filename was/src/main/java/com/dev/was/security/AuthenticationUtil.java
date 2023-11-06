@@ -30,10 +30,10 @@ public class AuthenticationUtil
     }
 
 
-    public static String getCurrentUserId()
+    public static Long getCurrentId()
     {
         Authentication authentication = getAuthentication();
-        return authentication.getName();
+        return Long.parseLong(authentication.getName());
     }
 
     public static List<String> getCurrentUserRoles()

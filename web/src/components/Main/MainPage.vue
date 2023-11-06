@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import * as THREE from 'three';
-import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import CoinSrc from '@/assets/images/coin.png';
 
 const threeDiv = ref<HTMLInputElement | null>(null);
@@ -26,7 +26,7 @@ let isCoinState = false;
 // three js 에서 typescript 모두 지원하지 않음으로 대부분을 any 로 둔다.
 let mixer: any, renderer: any, lastObject: any, animationId = -1;
 let x = 90, y = 0, z = - 90;
-let scene = new THREE.Scene();
+let scene: any= new THREE.Scene();
 const clock = new THREE.Clock();
 
 scene.background = new THREE.Color( 0xffffff );
@@ -38,13 +38,7 @@ camera.lookAt( 0, 0, 0 );
 
 const baseGeometry = new THREE.BoxGeometry( 5, 5, 5 );
 const baseLight = new THREE.PointLight( 0xffffff, 1, 500, 2 );
-
-const baseMat = new THREE.MeshStandardMaterial( {
-    emissive: 0xf22400,
-    emissiveIntensity: 100,
-    color: 0x000000
-} );
-baseLight.add( new THREE.Mesh( baseGeometry, baseMat ) );
+baseLight.add( new THREE.Mesh( baseGeometry ) );
 baseLight.castShadow = true;
 baseLight.power = 1000000;
 scene.add( baseLight );
