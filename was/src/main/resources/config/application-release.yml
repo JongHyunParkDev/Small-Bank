@@ -7,6 +7,8 @@ server:
   servlet:
     session:
       timeout: 86400
+  ssl:
+    key-store: C:\projects\run\bootsecurity.p12
 
 # 외부 IP 및 도메인 설정해서 release 하기
 #spring:
