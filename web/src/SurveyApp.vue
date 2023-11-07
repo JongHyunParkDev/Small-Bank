@@ -28,7 +28,7 @@
                 <div
                     v-for="(el, idx) in inputList"
                     :key="idx"
-                    :ref="'input_' + idx"
+                    ref="inputListRef"
                     class="row-input"
                 >
                     <div class="num">
@@ -39,8 +39,9 @@
                     </div>
                     <QRadio
                         class="radio"
+                        id="radio"
                         v-for="(value, idx) in el.valueList"
-                        :key="idx + '_' + value"
+                        :key="idx"
                         :val="value"
                         dense
                         v-model="el.selectInput"
@@ -48,7 +49,106 @@
                     </QRadio>
                 </div>
             </div>
+            <div class="submit-area">
+                <QBtn
+                    class="submit"
+                    padding="xs lg"
+                    label="제출"
+                    color="primary"
+                    @click="showCheck"
+                />
+            </div>
         </div>
+        <QDialog
+            class="is-form-dialog"
+            v-model="isFormDialog"
+            persistent
+        >
+            <QCard class="form-card">
+                <QForm @submit="submit">
+                    <QCardSection class="bg-primary">
+                        <div class="text-h6 text-white">정보 입력</div>
+                    </QCardSection>
+
+                    <QCardSection class="q-pa-md content">
+                        <QInput
+                            class="q-mb-sm"
+                            name="name"
+                            outlined
+                            stack-label
+                            label="이름"
+                            v-model="formInput.name"
+                            :rules="[(val) => val.length >= 2 && val.length <= 6 || '이름은 2 ~ 6글자 사용 가능합니다.']"
+                        />
+                        <QBtnToggle
+                            class="q-mb-lg"
+                            v-model="formInput.gender"
+                            toggle-color="primary"
+                            :options="[
+                                {label: '남자', value: true},
+                                {label: '여자', value: false}
+                            ]"
+                        />
+                        <QInput
+                            class="q-mb-lg"
+                            outlined
+                            stack-label
+                            label="생일"
+                            v-model="formInput.birth"
+
+                        >
+                            <template v-slot:append>
+                                <QIcon
+                                    name="event"
+                                    class="cursor-pointer"
+                                >
+                                    <QPopupProxy
+                                        cover
+                                        transition-show="scale"
+                                        transition-hide="scale"
+                                    >
+                                        <QDate
+                                            v-model="formInput.birth"
+                                            mask="YYYY-MM-DD"
+                                        >
+                                            <div class="row items-center justify-end">
+                                                <QBtn
+                                                    v-close-popup
+                                                    label="Close"
+                                                    color="primary"
+                                                />
+                                            </div>
+                                        </QDate>
+                                    </QPopupProxy>
+                                </QIcon>
+                            </template>
+                        </QInput>
+                        <QInput
+                            class="q-mb-lg"
+                            name="dept"
+                            outlined
+                            stack-label
+                            label="부서"
+                            v-model="formInput.dept"
+                        />
+                    </QCardSection>
+
+                    <QCardSection align="right">
+                        <QBtn
+                            class="q-mr-sm"
+                            label="취소"
+                            color="negative"
+                            v-close-popup
+                        />
+                        <QBtn
+                            type="submit"
+                            label="제출"
+                            color="primary"
+                        />
+                    </QCardSection>
+                </QForm>
+            </QCard>
+        </QDialog>
     </div>
 </template>
 
@@ -60,8 +160,7 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 const $q = useQuasar();
 
-const data: Ref<Array<any>> = ref([]);
-
+const inputListRef = ref([]);
 const inputList = ref([
     {
         text: '근무장소가 깨끗하고 쾌적하다.',
@@ -329,8 +428,62 @@ const inputList = ref([
         selectInput: 0,
     },
 ]);
+const isFormDialog = ref(false);
+const formInput = ref({
+    name: '',
+    birth: '1995-07-07',
+    dept: '',
+    gender: true,
+})
+
+// test
+inputList.value.forEach(input => input.selectInput = 1);
 
 
+function submit() {
+    // inputVaildChek() {}
+}
+function showCheck () {
+    if (validCheck()) {
+        createSummary();
+        isFormDialog.value = true;
+    }
+}
+
+function createSummary() {
+    const map = {all: 0};
+    inputList.value.forEach(input => {
+        map.all += input.selectInput;
+        if (map[input.category]) {
+            map[input.category] += input.selectInput;
+        }
+        else {
+            map[input.category] = input.selectInput;
+        }
+    });
+    console.log(map);
+}
+function validCheck() {
+    for (let i = 0; i < inputList.value.length; i++) {
+        const input = inputList.value[i];
+        if (input.selectInput === 0) {
+
+            $q.notify({
+                type: 'negative',
+                message: '기입 되지 않은 곳이 있습니다.'
+            });
+
+            const radioContainer = inputListRef.value[i] as HTMLElement;
+            if (radioContainer) {
+                const radioElement = radioContainer.querySelector("#radio") as HTMLElement;
+                if (radioElement) radioElement.focus();
+            }
+            return false;
+        }
+    }
+
+    return true;
+}
 
 console.log(route.params);
 
@@ -383,7 +536,11 @@ onMounted(() => {
             border-radius: 10px;
 
             > .row-header {
+                position: sticky;
+                z-index: 2;
+                top: 0px;
                 border-bottom: 1px black solid;
+                font-weight: bold;
                 display: flex;
                 background-color: $naver-bs;
                 color: white;
@@ -424,8 +581,28 @@ onMounted(() => {
                     flex: 1;
                     justify-content: center;
                 }
+
+                &:hover {
+                    background-color: $grey-4;
+                }
             }
         }
+
+        > .submit-area {
+            position: absolute;
+            height: 100px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            padding: $spacing-lg;
+            text-align: center;
+        }
+    }
+}
+
+.is-form-dialog {
+    .form-card {
+        min-width: 300px;
     }
 }
 </style>
