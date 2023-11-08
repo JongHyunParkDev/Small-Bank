@@ -39,7 +39,14 @@ export default route(function (/* { store, ssrContext } */) {
 
     Router.beforeEach(async (to, from, next) => {
         const authStore = useAuthStore();
-        if (! authStore.userInfo) await authStore.login();
+        if (! authStore.userInfo) {
+            try {
+                await authStore.login();
+            }
+            catch (err) {
+                // next({ path: '/login' });
+            }
+        }
 
         if (to.matched.some(record => record.meta.isAdmin)) {
             if (authStore.isAdmin) {

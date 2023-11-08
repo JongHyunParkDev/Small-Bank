@@ -147,9 +147,10 @@ public class SecurityConfig {
                 HttpSession session = request.getSession();
                 String sessionId = session.getId();
                 String userId = auth.getName();
+                String oauthPostfixPath = "/#/oauthCallback";
                 // 이미 로그인 된 상황임.
 
-                String url = request.getScheme() + "://" + request.getServerName() + "/#/oauthCallback";
+                String url = request.getScheme() + "://" + request.getServerName() + oauthPostfixPath;
                 response.sendRedirect(url);
 
             } catch (Exception e) {
