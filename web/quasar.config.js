@@ -53,7 +53,7 @@ module.exports = configure(function (/* ctx */) {
                 node: 'node16',
             },
 
-            vueRouterMode: 'history', // available values: 'hash', 'history'
+            vueRouterMode: 'hash', // available values: 'hash', 'history'
             // vueRouterBase,
             // vueDevtools,
             // vueOptionsAPI: false,
@@ -77,7 +77,7 @@ module.exports = configure(function (/* ctx */) {
             // ]
             alias: {
                 '@': path.join(__dirname, 'src')
-              }
+            }
         },
 
         // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
@@ -90,12 +90,6 @@ module.exports = configure(function (/* ctx */) {
                     ws: true,
                     changeOrigin: true
                 },
-                '/oauth2/authorization/naver' : {
-                    target: 'https://localhost',
-                    secure: false,
-                    ws: true,
-                    changeOrigin: true
-                }
             },
             https: true
         },

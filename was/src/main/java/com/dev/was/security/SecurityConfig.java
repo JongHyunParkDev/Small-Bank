@@ -149,7 +149,7 @@ public class SecurityConfig {
                 String userId = auth.getName();
                 // 이미 로그인 된 상황임.
 
-                String url = request.getScheme() + "://" + request.getServerName();
+                String url = request.getScheme() + "://" + request.getServerName() + "/#/oauthCallback";
                 response.sendRedirect(url);
 
             } catch (Exception e) {

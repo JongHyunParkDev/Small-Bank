@@ -6,6 +6,10 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../LoginApp.vue')
     },
     {
+        path: '/oauthCallback',
+        component: () => import('../OauthCallback.vue')
+    },
+    {
         path: '/survey/:key/:code',
         component: () => import('../SurveyApp.vue'),
     },

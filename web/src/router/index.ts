@@ -37,8 +37,9 @@ export default route(function (/* { store, ssrContext } */) {
         history: createHistory(process.env.VUE_ROUTER_BASE),
     });
 
-    Router.beforeEach((to, from, next) => {
+    Router.beforeEach(async (to, from, next) => {
         const authStore = useAuthStore();
+        if (! authStore.userInfo) await authStore.login();
 
         if (to.matched.some(record => record.meta.isAdmin)) {
             if (authStore.isAdmin) {
