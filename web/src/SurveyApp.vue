@@ -436,24 +436,30 @@ const formInput = ref({
     gender: true,
 })
 
-// test
-inputList.value.forEach(input => input.selectInput = 1);
-
-
 function submit() {
-    // inputVaildChek() {}
+    const list = createSummary();
+
+    // api.post('anon/surveyResult', {inputForm, list})
+
+    isFormDialog.value = false;
+
+    $q.notify({
+        type: 'positive',
+        message: '제출이 완료되었습니다.',
+    });
 }
+
 function showCheck () {
     if (validCheck()) {
-        createSummary();
         isFormDialog.value = true;
     }
 }
 
 function createSummary() {
-    const map = {all: 0};
+    const map = {};
+    const list: any[] = [];
+
     inputList.value.forEach(input => {
-        map.all += input.selectInput;
         if (map[input.category]) {
             map[input.category] += input.selectInput;
         }
@@ -461,8 +467,17 @@ function createSummary() {
             map[input.category] = input.selectInput;
         }
     });
-    console.log(map);
+
+    for (const key in map) {
+        list.push({
+            category: key,
+            value: map[key]
+        });
+    }
+
+    return list;
 }
+
 function validCheck() {
     for (let i = 0; i < inputList.value.length; i++) {
         const input = inputList.value[i];

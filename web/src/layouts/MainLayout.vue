@@ -190,10 +190,6 @@ function updateSubmit() {
         isVisibleUpdateFormDialog.value = false;
         // 성공시 dialog
 
-        await authStore.login();
-        userInfo.value = authStore.userInfo;
-        updateUserInfoForm();
-
         $q.notify({
             type: 'positive',
             message: '정상적으로 사용자 정보가 업데이트 되었습니다.'
@@ -229,8 +225,12 @@ function validatePhone(phone: string): boolean {
     return checkPhone;
 }
 
-function showUpdateForm() {
+async function showUpdateForm() {
     isVisibleUpdateFormDialog.value = true;
+
+    await authStore.login();
+    userInfo.value = authStore.userInfo;
+    updateUserInfoForm();
 }
 
 watch(errorStore.errors, async (newError) => {
