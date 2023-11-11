@@ -38,7 +38,7 @@ spring:
         show_sql: true
         format_sql: true
     hibernate:
-      ddl-auto: validate #create validate
+      ddl-auto: validate #create validate update
 
 logging:
   config: classpath:logback-spring.xml
@@ -54,7 +54,7 @@ server:
 #https://manage.sslforfree.com/certificates
 #자동 갱신
 #https://certbot.eff.org/instructions?ws=apache&os=windows
-
+# (command) openssl pkcs12 -export -out keystore.p12 -inkey private.key -in certificate.crt
 
 sppd:
   schedule:

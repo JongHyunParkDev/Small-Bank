@@ -437,8 +437,7 @@ const formInput = ref({
 })
 
 function submit() {
-    const list = createSummary();
-
+    // const list = createSummary();
     // api.post('anon/surveyResult', {inputForm, list})
 
     isFormDialog.value = false;
