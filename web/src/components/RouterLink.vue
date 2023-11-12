@@ -5,17 +5,17 @@
         clickable
         :to="route.to"
     >
-      <QItemSection
-          v-if="route.icon"
-          avatar
-      >
-          <QIcon :name="route.icon" />
-      </QItemSection>
+        <QItemSection
+            v-if="route.icon"
+            avatar
+        >
+            <QIcon :name="route.icon" />
+        </QItemSection>
 
-      <QItemSection>
-          <QItemLabel>{{ route.title }}</QItemLabel>
-          <QItemLabel caption>{{ route.caption }}</QItemLabel>
-      </QItemSection>
+        <QItemSection>
+            <QItemLabel>{{ route.title }}</QItemLabel>
+            <QItemLabel caption>{{ route.caption }}</QItemLabel>
+        </QItemSection>
     </QItem>
 </template>
 
@@ -30,13 +30,19 @@ const routeList = ref<Route[]>([
         title: '가계부',
         caption: '간단한 가계부 서비스 (일)',
         icon: 'calendar_today',
-        to: '/AccountBook'
+        to: '/AccountBook',
     },
     {
         title: '가계부 통계',
         caption: '간단한 가계부 서비스 (달)',
         icon: 'list',
-        to: '/AccountBookDetail'
+        to: '/AccountBookDetail',
+    },
+    {
+        title: '설문조사',
+        caption: '설문조사',
+        icon: 'description',
+        to: '/surveyForm',
     },
 ]);
 
@@ -46,8 +52,8 @@ onMounted(() => {
             title: 'Toy',
             caption: 'Arduino Toy',
             icon: 'developer_board',
-            to: '/Arduino'
-        })
+            to: '/Arduino',
+        });
     }
-})
+});
 </script>
