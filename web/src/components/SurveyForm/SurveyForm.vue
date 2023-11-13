@@ -8,15 +8,13 @@
             transition-next="jump-up"
         >
             <QTabPanel name="base">
-                <SurveyBase
-                    @select-survey="selectSurvey"
-                />
+                <SurveyBase @select-survey="selectSurvey" />
             </QTabPanel>
             <QTabPanel name="edit">
-                <SurveyEdit />
+                <SurveyEdit :selected-survey-idx="selectedSurveyIdx" />
             </QTabPanel>
             <QTabPanel name="search">
-                <SurveySearch />
+                <SurveySearch :selected-survey-idx="selectedSurveyIdx" />
             </QTabPanel>
         </QTabPanels>
         <QTabs
@@ -27,8 +25,17 @@
             v-model="selectedTab"
             @update:model-value="selectTab"
         >
-            <QTab name="base" icon="description" label="Base"></QTab>
-            <QTab name="edit" icon="edit" label="Edit" :disable="selectedSurveyIdx === undefined">
+            <QTab
+                name="base"
+                icon="description"
+                label="Base"
+            ></QTab>
+            <QTab
+                name="edit"
+                icon="edit"
+                label="Edit"
+                :disable="selectedSurveyIdx === undefined"
+            >
                 <QTooltip
                     class="bg-naver-dk"
                     v-if="selectedSurveyIdx === undefined"
@@ -36,7 +43,12 @@
                     BASE 의 설문조사 항목을 선택해주세요
                 </QTooltip>
             </QTab>
-            <QTab name="search" icon="search" label="Search" :disable="selectedSurveyIdx === undefined">
+            <QTab
+                name="search"
+                icon="search"
+                label="Search"
+                :disable="selectedSurveyIdx === undefined"
+            >
                 <QTooltip
                     class="bg-naver-dk"
                     v-if="selectedSurveyIdx === undefined"
@@ -44,7 +56,7 @@
                     BASE 의 설문조사 항목을 선택해주세요
                 </QTooltip>
             </QTab>
-        </Qtabs>
+        </QTabs>
     </div>
 </template>
 

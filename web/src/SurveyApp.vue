@@ -6,24 +6,12 @@
         <div class="content">
             <div class="scroll-container">
                 <div class="row-header">
-                    <div class="num">
-                        구분
-                    </div>
-                    <div class="text">
-                        내용
-                    </div>
-                    <div class="radio-label">
-                        전혀 그렇지 않다.
-                    </div>
-                    <div class="radio-label">
-                        그렇지 않다.
-                    </div>
-                    <div class="radio-label">
-                        그렇다.
-                    </div>
-                    <div class="radio-label">
-                        매우 그렇다.
-                    </div>
+                    <div class="num">구분</div>
+                    <div class="text">내용</div>
+                    <div class="radio-label">전혀 그렇지 않다.</div>
+                    <div class="radio-label">그렇지 않다.</div>
+                    <div class="radio-label">그렇다.</div>
+                    <div class="radio-label">매우 그렇다.</div>
                 </div>
                 <div
                     v-for="(el, idx) in inputList"
@@ -78,15 +66,19 @@
                             stack-label
                             label="이름"
                             v-model="formInput.name"
-                            :rules="[(val) => val.length >= 2 && val.length <= 6 || '이름은 2 ~ 6글자 사용 가능합니다.']"
+                            :rules="[
+                                (val) =>
+                                    (val.length >= 2 && val.length <= 6) ||
+                                    '이름은 2 ~ 6글자 사용 가능합니다.',
+                            ]"
                         />
                         <QBtnToggle
                             class="q-mb-lg"
                             v-model="formInput.gender"
                             toggle-color="primary"
                             :options="[
-                                {label: '남자', value: true},
-                                {label: '여자', value: false}
+                                { label: '남자', value: true },
+                                { label: '여자', value: false },
                             ]"
                         />
                         <QInput
@@ -95,7 +87,6 @@
                             stack-label
                             label="생일"
                             v-model="formInput.birth"
-
                         >
                             <template v-slot:append>
                                 <QIcon
@@ -154,7 +145,7 @@
 
 <script setup lang="ts">
 import { ref, Ref, onMounted } from 'vue';
-import { useQuasar } from 'quasar'
+import { useQuasar } from 'quasar';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
@@ -262,167 +253,167 @@ const inputList = ref([
     },
 
     {
-        text:'나의 상사는 업무를 완료하는데 도움을 준다.',
+        text: '나의 상사는 업무를 완료하는데 도움을 준다.',
         category: '관계갈등',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'나의 동료는 업무를 완료하는데 도움을 준다.',
+        text: '나의 동료는 업무를 완료하는데 도움을 준다.',
         category: '관계갈등',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'직장에서 내가 힘들때 내가 힘들다는 것을 알아주고 이해해 주는 사람이 있다.',
+        text: '직장에서 내가 힘들때 내가 힘들다는 것을 알아주고 이해해 주는 사람이 있다.',
         category: '관계갈등',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'직장생활의 고충을 함께 나눌 동료가 있다.',
+        text: '직장생활의 고충을 함께 나눌 동료가 있다.',
         category: '관계갈등',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
 
     {
-        text:'지금의 직장을 옮겨도 나에게 적합한 새로운 일을 쉽게 찾을 수 있다.',
+        text: '지금의 직장을 옮겨도 나에게 적합한 새로운 일을 쉽게 찾을 수 있다.',
         category: '직무불안정',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'현재의 직장을 그만두더라도 현재 수준만큼의 직업(직장)을 쉽게 구할수 있다.',
+        text: '현재의 직장을 그만두더라도 현재 수준만큼의 직업(직장)을 쉽게 구할수 있다.',
         category: '직무불안정',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'직장사정이 불안하여 미래가 불확실한다.',
+        text: '직장사정이 불안하여 미래가 불확실한다.',
         category: '직무불안정',
         valueList: [1, 2, 3, 4],
         selectInput: 0,
     },
     {
-        text:'나의 작업은 실직하거나 해고당할 염려가 없다.',
+        text: '나의 작업은 실직하거나 해고당할 염려가 없다.',
         category: '직무불안정',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'앞으로 2년동안 현재의 내 직업을 잃을 가능성이 있다.',
+        text: '앞으로 2년동안 현재의 내 직업을 잃을 가능성이 있다.',
         category: '직무불안정',
         valueList: [1, 2, 3, 4],
         selectInput: 0,
     },
     {
-        text:'나의 근무조건이나 상황에 바람직하지 못한 변화(예:구조조정)가 있었거나 있을 것으로 예상된다.',
+        text: '나의 근무조건이나 상황에 바람직하지 못한 변화(예:구조조정)가 있었거나 있을 것으로 예상된다.',
         category: '직무불안정',
         valueList: [1, 2, 3, 4],
         selectInput: 0,
     },
 
     {
-        text:'우리 직장은 근무평가,인사제도(승진,부서배치등)가 공정하고 합리적이다.',
+        text: '우리 직장은 근무평가,인사제도(승진,부서배치등)가 공정하고 합리적이다.',
         category: '조직체계',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'업무수행에 필요한 인원, 공간, 시설, 장비, 훈련, 등의 지원이 잘 이루어지고 있다.',
+        text: '업무수행에 필요한 인원, 공간, 시설, 장비, 훈련, 등의 지원이 잘 이루어지고 있다.',
         category: '조직체계',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'우리 부서와 타 부서간에는 마찰이 없고 업무 협조가 잘 이루어진다.',
+        text: '우리 부서와 타 부서간에는 마찰이 없고 업무 협조가 잘 이루어진다.',
         category: '조직체계',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'근로자, 간부, 경영주 모두가 직장을 위해 한마음으로 일한다.',
+        text: '근로자, 간부, 경영주 모두가 직장을 위해 한마음으로 일한다.',
         category: '조직체계',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'일에 대한 나의 생각을 반영할 수 있는 기회와 통로가 있다.',
+        text: '일에 대한 나의 생각을 반영할 수 있는 기회와 통로가 있다.',
         category: '조직체계',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'나의 경력개발과 승진은 무난히 잘 될 것으로 예상한다.',
+        text: '나의 경력개발과 승진은 무난히 잘 될 것으로 예상한다.',
         category: '조직체계',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'내 현재 직위는 나의 교육 및 경력에 비추어볼때 적절하다.',
+        text: '내 현재 직위는 나의 교육 및 경력에 비추어볼때 적절하다.',
         category: '조직체계',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
 
     {
-        text:'나의 직업은 내가 평소 기대했던 것에 미치지 못한다.',
+        text: '나의 직업은 내가 평소 기대했던 것에 미치지 못한다.',
         category: '보상부적절',
         valueList: [1, 2, 3, 4],
         selectInput: 0,
     },
     {
-        text:'나의 모든 노력과 업적을 고려할 때 내 봉급/수입은 적절하다.',
+        text: '나의 모든 노력과 업적을 고려할 때 내 봉급/수입은 적절하다.',
         category: '보상부적절',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'나의 모든 노력과 업적을 고려할 때, 나는 직장에서 제대로 존중과 신임을 받고 있다.',
+        text: '나의 모든 노력과 업적을 고려할 때, 나는 직장에서 제대로 존중과 신임을 받고 있다.',
         category: '보상부적절',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'나는 지금하는일에 흥미를 느낀다.',
+        text: '나는 지금하는일에 흥미를 느낀다.',
         category: '보상부적절',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'내 사정이 앞으로 더 좋아질 것을 생각하면 힘든 줄 모르고 일하게 된다.',
+        text: '내 사정이 앞으로 더 좋아질 것을 생각하면 힘든 줄 모르고 일하게 된다.',
         category: '보상부적절',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
     {
-        text:'나의 능력을 개발하고 발휘할 수 있는 기회가 주어진다.',
+        text: '나의 능력을 개발하고 발휘할 수 있는 기회가 주어진다.',
         category: '보상부적절',
         valueList: [4, 3, 2, 1],
         selectInput: 0,
     },
 
     {
-        text:'회식자리가 불편하다.',
+        text: '회식자리가 불편하다.',
         category: '직장문화',
         valueList: [1, 2, 3, 4],
         selectInput: 0,
     },
     {
-        text:'나는 기준이나 일관성이 없는 상태로 업무지시를 받는다.',
+        text: '나는 기준이나 일관성이 없는 상태로 업무지시를 받는다.',
         category: '직장문화',
         valueList: [1, 2, 3, 4],
         selectInput: 0,
     },
     {
-        text:'직장의 분위기가 권위적이고 수직적이다.',
+        text: '직장의 분위기가 권위적이고 수직적이다.',
         category: '직장문화',
         valueList: [1, 2, 3, 4],
         selectInput: 0,
     },
     {
-        text:'남성,여성이라는 성적인 차이 때문에 불이익을 받는다.',
+        text: '남성,여성이라는 성적인 차이 때문에 불이익을 받는다.',
         category: '직장문화',
         valueList: [1, 2, 3, 4],
         selectInput: 0,
@@ -434,7 +425,7 @@ const formInput = ref({
     birth: '1995-07-07',
     dept: '',
     gender: true,
-})
+});
 
 function submit() {
     // const list = createSummary();
@@ -448,7 +439,7 @@ function submit() {
     });
 }
 
-function showCheck () {
+function showCheck() {
     if (validCheck()) {
         isFormDialog.value = true;
     }
@@ -458,11 +449,10 @@ function createSummary() {
     const map = {};
     const list: any[] = [];
 
-    inputList.value.forEach(input => {
+    inputList.value.forEach((input) => {
         if (map[input.category]) {
             map[input.category] += input.selectInput;
-        }
-        else {
+        } else {
             map[input.category] = input.selectInput;
         }
     });
@@ -470,7 +460,7 @@ function createSummary() {
     for (const key in map) {
         list.push({
             category: key,
-            value: map[key]
+            value: map[key],
         });
     }
 
@@ -481,15 +471,14 @@ function validCheck() {
     for (let i = 0; i < inputList.value.length; i++) {
         const input = inputList.value[i];
         if (input.selectInput === 0) {
-
             $q.notify({
                 type: 'negative',
-                message: '기입 되지 않은 곳이 있습니다.'
+                message: '기입 되지 않은 곳이 있습니다.',
             });
 
             const radioContainer = inputListRef.value[i] as HTMLElement;
             if (radioContainer) {
-                const radioElement = radioContainer.querySelector("#radio") as HTMLElement;
+                const radioElement = radioContainer.querySelector('#radio') as HTMLElement;
                 if (radioElement) radioElement.focus();
             }
             return false;
@@ -504,8 +493,6 @@ console.log(route.params);
 onMounted(() => {
     console.log($q);
 });
-
-
 </script>
 
 <style lang="scss" scoped>
