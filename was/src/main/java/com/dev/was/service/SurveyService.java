@@ -1,8 +1,8 @@
 package com.dev.was.service;
 
-import com.dev.was.dto.AccountDto;
+import com.dev.was.controller.ApiException;
+import com.dev.was.controller.ExceptionCodeEnum;
 import com.dev.was.dto.SurveyDto;
-import com.dev.was.entity.AccountEntity;
 import com.dev.was.entity.SurveyEntity;
 import com.dev.was.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +26,57 @@ public class SurveyService {
         });
 
         return surveyDtoListDtoList;
+    }
+
+    public SurveyDto saveSurvey(
+            Long id,
+            Long userId,
+            String title,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        SurveyEntity saveSurveyEntity = SurveyEntity.builder()
+                .id(id)
+                .userId(userId)
+                .title(title)
+                .startDate(startDate)
+                .endDate(endDate)
+                .build();
+
+        SurveyEntity surveyEntity = surveyRepository.save(saveSurveyEntity);
+        return new SurveyDto(surveyEntity);
+    }
+
+    public SurveyDto saveSurvey(
+            Long id,
+            String title,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        SurveyEntity surveyEntity = surveyRepository.findById(id)
+                .orElseThrow(() -> new ApiException(ExceptionCodeEnum.FOUNT_NOT_ID, "Not Found Survey Id"));
+
+        surveyEntity.setTitle(title);
+        surveyEntity.setStartDate(startDate);
+        surveyEntity.setEndDate(endDate);
+
+        SurveyEntity resultSurveyEntity = surveyRepository.save(surveyEntity);
+        return new SurveyDto(resultSurveyEntity);
+    }
+
+    public SurveyDto saveSurvey(
+            Long id
+    ) {
+        SurveyEntity surveyEntity = surveyRepository.findById(id)
+                .orElseThrow(() -> new ApiException(ExceptionCodeEnum.FOUNT_NOT_ID, "Not Found Survey Id"));
+
+        surveyEntity.setActive(! surveyEntity.isActive());
+        SurveyEntity resultSurveyEntity = surveyRepository.save(surveyEntity);
+
+        return new SurveyDto(resultSurveyEntity);
+    }
+
+    public void deleteSurvey(Long id) {
+        surveyRepository.deleteById(id);
     }
 }

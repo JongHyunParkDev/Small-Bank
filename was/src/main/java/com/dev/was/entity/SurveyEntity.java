@@ -8,6 +8,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Entity(name="tm_survey")
 public class SurveyEntity {
     @Id
@@ -48,6 +50,22 @@ public class SurveyEntity {
 
     @LastModifiedDate
     private LocalDateTime modifiedDate;
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 
     @Builder
     public SurveyEntity(Long id, Long userId, String title, LocalDate startDate, LocalDate endDate, boolean isActive, List<SurveyUserEntity> surveyUserEntityList, List<SurveyDetailEntity> surveyDetailEntityList, LocalDateTime createdDate, LocalDateTime modifiedDate) {
