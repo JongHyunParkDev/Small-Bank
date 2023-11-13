@@ -3,6 +3,8 @@
   - 심플 가계부
 - 날씨, 버스 (공공데이터) 정보 가져오기
   - 시리얼 통신해서 Toy 로 Display
+- 설문조사
+  - form, target open
 - 부동산 (공공데이터) - 제한이 꽤 있음으로, 생각중...
   - OpenStreetMap
   - 국토 교통부 실거래가 http://rtdown.molit.go.kr/ (API 쓰지 않아도 될 수도?), 초기 데이터 말 때 사용
