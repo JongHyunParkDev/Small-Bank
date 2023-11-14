@@ -272,9 +272,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue';
+import { ref, Ref, defineEmits, inject } from 'vue';
+import { PROCESS } from '@/lib/Async';
+import { Api } from '@/lib/Api';
 import { useQuasar } from 'quasar';
-import { dateToDateStr } from '@/lib/DateUtil';
+import { dateToDateStr, datestrToApiDateStr } from '@/lib/DateUtil';
+import { Survey } from '@/types/SurveyTypes';
+
+const upProcessSpinner = inject<() => void>('upProcessSpinner');
+const downProcessSpinner = inject<() => void>('downProcessSpinner');
 
 const $q = useQuasar();
 
@@ -290,7 +296,7 @@ const addDialogOption = ref({
 
 const modifyDialogOption = ref({
     visible: false,
-    id: '',
+    id: -1,
     title: '',
     startDate: '',
     endDate: '',
@@ -303,9 +309,9 @@ const pagination = ref({
 
 const columns = ref([
     {
-        name: 'id',
+        name: 'num',
         label: 'Num',
-        field: 'id',
+        field: 'num',
         required: true,
         sortable: true,
         align: 'left',
@@ -333,76 +339,31 @@ const columns = ref([
         align: 'left',
     },
     {
-        name: 'isActive',
+        name: 'active',
         label: 'Active',
-        field: 'isActive',
+        field: 'active',
         required: true,
         align: 'left',
         format: (val) => (val ? '활성화' : '비활성화'),
     },
 ]);
+const rows: Ref<Array<Survey>> = ref([]);
+// 반드시 [0] 만 존재
+const selectedRow: Ref<Array<Survey>> = ref([]);
 
-// TODO num, id 정리가 필요함 num은 row 생성시 만들어주는 col 이고 id 는 db 에 있는 col 이여야 함.
+init();
 
-const rows = ref([
-    {
-        id: 1,
-        title: '이게나라냐',
-        startDate: '2023-11-03',
-        endDate: '2023-11-10',
-        isActive: false,
-    },
-    {
-        id: 2,
-        title: '이게나라냐',
-        startDate: '2023-11-05',
-        endDate: '2023-11-10',
-        isActive: false,
-    },
-    {
-        id: 3,
-        title: '이게나라냐',
-        startDate: '2023-11-01',
-        endDate: '2023-11-10',
-        isActive: false,
-    },
-    {
-        id: 4,
-        title: '이게나라냐',
-        startDate: '2023-11-02',
-        endDate: '2023-11-10',
-        isActive: false,
-    },
-    {
-        id: 5,
-        title: '이게나라냐',
-        startDate: '2023-11-04',
-        endDate: '2023-11-10',
-        isActive: false,
-    },
-    {
-        id: 6,
-        title: '이게나라냐',
-        startDate: '2023-11-01',
-        endDate: '2023-11-10',
-        isActive: false,
-    },
-    {
-        id: 7,
-        title: '이게나라냐',
-        startDate: '2023-11-02',
-        endDate: '2023-11-10',
-        isActive: false,
-    },
-    {
-        id: 8,
-        title: '이게나라냐',
-        startDate: '2023-11-04',
-        endDate: '2023-11-10',
-        isActive: false,
-    },
-]);
-const selectedRow = ref([]);
+function init() {
+    if (upProcessSpinner && downProcessSpinner) {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+            const result: Array<Survey> = await Api.get('user/surveys');
+            result.forEach((el, idx) => {
+                el.num = idx + 1;
+                rows.value.push(el);
+            });
+        });
+    }
+}
 
 function selectRow(selectOption) {
     // single
@@ -410,11 +371,55 @@ function selectRow(selectOption) {
 }
 
 function addSurvey() {
-    console.log('a');
+    if (upProcessSpinner && downProcessSpinner) {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+            const result: Survey = await Api.post('user/survey', {
+                title: addDialogOption.value.title,
+                startDate: datestrToApiDateStr(addDialogOption.value.startDate),
+                endDate: datestrToApiDateStr(addDialogOption.value.endDate),
+            });
+
+            $q.notify({
+                type: 'positive',
+                message: '설문지가 추가되었습니다.',
+            });
+
+            rows.value.push({
+                id: result.id,
+                num: rows.value.length + 1,
+                title: result.title,
+                startDate: result.startDate,
+                endDate: result.endDate,
+                active: result.active,
+            });
+
+            addDialogOption.value.visible = false;
+        });
+    }
 }
 
 function modifySurvey() {
-    console.log('a');
+    if (upProcessSpinner && downProcessSpinner) {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+            const result = await Api.put('user/survey', {
+                id: modifyDialogOption.value.id,
+                title: modifyDialogOption.value.title,
+                startDate: datestrToApiDateStr(modifyDialogOption.value.startDate),
+                endDate: datestrToApiDateStr(modifyDialogOption.value.endDate),
+            });
+
+            $q.notify({
+                type: 'positive',
+                message: '설문지가 변경되었습니다.',
+            });
+
+            selectedRow.value[0].title = result.title;
+            selectedRow.value[0].startDate = result.startDate;
+            selectedRow.value[0].endDate = result.endDate;
+
+            modifyDialogOption.value.visible = false;
+        });
+    }
 }
 
 function toggleRow(evt: Event) {
@@ -422,7 +427,7 @@ function toggleRow(evt: Event) {
         type: 'warning',
         position: 'center',
         message: `해당 설문지의 상태를 ${
-            selectedRow.value.isActive ? '비활성화' : '활성화'
+            selectedRow.value[0].active ? '비활성화' : '활성화'
         }로 변경할까요?`,
         timeout: 300000,
         actions: [
@@ -443,12 +448,16 @@ function toggleRow(evt: Event) {
         ],
     });
 
-    async function apply() {
-        // await api.put()
-        console.log('활성화비활성화');
-        selectedRow.value[0].isActive = !selectedRow.value[0].isActive;
-        // rows.value[0].isActive = true;
-        // selectedRow 로는 설정되지 않음. 아마 deep copy 를 하는 듯함.
+    function apply() {
+        if (upProcessSpinner && downProcessSpinner) {
+            PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+                await Api.put('user/surveyIsActive', {
+                    id: selectedRow.value[0].id,
+                });
+
+                selectedRow.value[0].active = !selectedRow.value[0].active;
+            });
+        }
     }
 }
 
@@ -477,10 +486,16 @@ function deleteRow(evt: Event) {
     });
 
     async function apply() {
-        // await api.delete()
-        console.log('삭제');
-        // rows.value[0].isActive = true;
-        // selectedRow 로는 설정되지 않음. 아마 deep copy 를 하는 듯함.
+        if (upProcessSpinner && downProcessSpinner) {
+            PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+                await Api.delete('user/survey', {
+                    id: selectedRow.value[0].id,
+                });
+
+                if (selectedRow.value[0].num) rows.value.splice(selectedRow.value[0].num - 1, 1);
+                rows.value.forEach((row, idx) => (row.num = idx + 1));
+            });
+        }
     }
 }
 
@@ -494,9 +509,9 @@ function showAddDialog() {
 
 function showModifyDialog() {
     modifyDialogOption.value.id = selectedRow.value[0].id;
+    modifyDialogOption.value.title = selectedRow.value[0].title;
     modifyDialogOption.value.startDate = selectedRow.value[0].startDate;
     modifyDialogOption.value.endDate = selectedRow.value[0].endDate;
-    modifyDialogOption.value.title = selectedRow.value[0].title;
 
     modifyDialogOption.value.visible = true;
 }
