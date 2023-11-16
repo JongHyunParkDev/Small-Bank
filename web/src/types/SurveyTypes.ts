@@ -6,3 +6,11 @@ export type Survey = {
     endDate: string;
     active: boolean;
 };
+
+export type SurveyDetail = {
+    id: number;
+    num?: number;
+    content: string;
+    category: string;
+    isSort: boolean;
+};

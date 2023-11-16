@@ -530,7 +530,6 @@ function showModifyDialog() {
 .survey-add-dialog,
 .survey-modify-dialog {
     .survey-card {
-        max-width: 350px;
         min-width: 350px;
     }
 }

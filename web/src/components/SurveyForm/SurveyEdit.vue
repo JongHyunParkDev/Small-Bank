@@ -73,13 +73,21 @@
                             v-model="addDialogOption.content"
                             :rules="[(val) => val !== '' || '항목을 입력해주세요.']"
                         />
+                        <QInput
+                            name="category"
+                            outlined
+                            stack-label
+                            label="카테고리"
+                            v-model="addDialogOption.category"
+                            :rules="[(val) => val !== '' || '카테고리을 입력해주세요.']"
+                        />
                         <QBtnToggle
-                            v-model="addDialogOption.sort"
+                            v-model="addDialogOption.isSort"
                             toggle-color="primary"
                             :options="[
                                 {label: 'ASC (1,2,3,4)', value: true },
                                 {label: 'DESC (4,3,2,1)', value: false },
-                        ]"
+                            ]"
                         />
                     </QCardSection>
                     <QCardSection align="right">
@@ -117,7 +125,22 @@
                             v-model="modifyDialogOption.content"
                             :rules="[(val) => val !== '' || '항목을 입력해주세요.']"
                         />
-
+                        <QInput
+                            name="category"
+                            outlined
+                            stack-label
+                            label="카테고리"
+                            v-model="modifyDialogOption.category"
+                            :rules="[(val) => val !== '' || '카테고리을 입력해주세요.']"
+                        />
+                        <QBtnToggle
+                            v-model="modifyDialogOption.isSort"
+                            toggle-color="primary"
+                            :options="[
+                                {label: 'ASC (1,2,3,4)', value: true },
+                                {label: 'DESC (4,3,2,1)', value: false },
+                            ]"
+                        />
                     </QCardSection>
                     <QCardSection align="right">
                         <QBtn
@@ -139,8 +162,14 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps, ref} from 'vue';
+import {defineProps, ref, Ref, inject} from 'vue';
 import { useQuasar } from 'quasar';
+import { Api } from '@/lib/Api';
+import { PROCESS } from '@/lib/Async';
+import { SurveyDetail } from '@/types/SurveyTypes';
+
+const upProcessSpinner = inject<() => void>('upProcessSpinner');
+const downProcessSpinner = inject<() => void>('downProcessSpinner');
 
 const $q = useQuasar();
 
@@ -151,9 +180,9 @@ const props = defineProps({
     },
 });
 
-const rows = ref([]);
+const rows: Ref<Array<SurveyDetail>> = ref([]);
 
-const selectedRow = ref([]);
+const selectedRow: Ref<Array<SurveyDetail>> = ref([]);
 
 const columns = ref([
     {
@@ -170,6 +199,12 @@ const columns = ref([
         align: 'left',
     },
     {
+        name: 'category',
+        label: 'Category',
+        field: 'category',
+        align: 'left',
+    },
+    {
         name: 'isSort',
         label: 'Sort',
         field: 'isSort',
@@ -181,24 +216,49 @@ const columns = ref([
 const addDialogOption = ref({
     visible: false,
     content: '',
-    sort: true,
+    category: '',
+    isSort: true,
 });
 
 const modifyDialogOption = ref({
     visible: false,
     id: -1,
     content: '',
-    sort: true,
+    category: '',
+    isSort: true,
 });
 
 function addSurvey() {
+    if (upProcessSpinner && downProcessSpinner) {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+            const result: SurveyDetail = await Api.post('user/surveyDetail', {
+                surveyId: props.selectedSurveyIdx,
+                content: addDialogOption.value.content,
+                category: addDialogOption.value.category,
+                isSort: addDialogOption.value.isSort
+            });
+
+            $q.notify({
+                type: 'positive',
+                message: '설문지 항목이 추가되었습니다.',
+            });
+            
+            rows.value.push({
+                id: result.id,
+                num: rows.value.length + 1,
+                content: result.content,
+                category: result.category,
+                isSort: result.isSort
+            });
+
+            addDialogOption.value.visible = false;
+        });
+    }
     // const result = Api.post();
 
     // rows.value.push({
     //     id: result.id ...
     // })
-
-    addDialogOption.value.visible = false;
 }
 
 function modifySurvey() {
@@ -217,7 +277,8 @@ function modifySurvey() {
 
 function showAddDialog() {
     addDialogOption.value.content = '';
-    addDialogOption.value.sort = true;
+    addDialogOption.value.category = '';
+    addDialogOption.value.isSort = true;
 
     addDialogOption.value.visible = true;
 }
@@ -225,7 +286,8 @@ function showAddDialog() {
 function showModifyDialog() {
     modifyDialogOption.value.id = selectedRow.value[0].id;
     modifyDialogOption.value.content = selectedRow.value[0].content;
-    modifyDialogOption.value.sort = selectedRow.value[0].sort;
+    modifyDialogOption.value.category = selectedRow.value[0].category;
+    modifyDialogOption.value.isSort = selectedRow.value[0].isSort;
 
     modifyDialogOption.value.visible = true;
 }
@@ -270,6 +332,13 @@ function deleteRow(evt: Event) {
 
     > .table {
         height: calc(100% - 56px);
+    }
+}
+
+.survey-add-dialog,
+.survey-modify-dialog {
+    .survey-card {
+        min-width: 350px;
     }
 }
 

@@ -56,14 +56,14 @@ export default route(function (/* { store, ssrContext } */) {
                 next({ path: '/' });
             }
             else {
-                next({ path: '/login' });
+                next({ path: '/Login' });
             }
         }
         else if (to.matched.some(record => record.meta.isAuth)) {
             if (authStore.isAuth) {
                 next();
             } else {
-                next({ path: '/login' });
+                next({ path: '/Login' });
             }
         } else {
             next();
