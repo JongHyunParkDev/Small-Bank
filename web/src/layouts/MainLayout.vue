@@ -171,7 +171,7 @@ const downProcessSpinner = () => {
 const logout = async () => {
     PROCESS(upProcessSpinner, downProcessSpinner, async () => {
         await authStore.logout();
-        router.push('/login');
+        router.push('/Login');
     });
 };
 

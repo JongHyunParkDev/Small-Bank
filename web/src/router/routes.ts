@@ -2,15 +2,15 @@ import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
     {
-        path: '/login',
+        path: '/Login',
         component: () => import('../LoginApp.vue'),
     },
     {
-        path: '/oauthCallback',
+        path: '/OauthCallback',
         component: () => import('../OauthCallback.vue'),
     },
     {
-        path: '/survey/:key/:code',
+        path: '/Survey/:key/:code',
         component: () => import('../SurveyApp.vue'),
     },
     {

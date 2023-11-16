@@ -15,7 +15,7 @@ async function init () {
         router.push('/');
     }
     catch (error) {
-        router.push('/login');
+        router.push('/Login');
     }
 }
 </script>
