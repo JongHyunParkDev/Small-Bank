@@ -1,6 +1,7 @@
 package com.dev.was.controller.user;
 
 import com.dev.was.dto.AccountDto;
+import com.dev.was.dto.SurveyDetailDto;
 import com.dev.was.dto.SurveyDto;
 import com.dev.was.security.AuthenticationUtil;
 import com.dev.was.service.SurveyService;
@@ -75,5 +76,24 @@ public class SurveyController {
     public static class RequestSurveyDto {
         @NotNull
         public Long id;
+    }
+
+    @PostMapping("/surveyDetail")
+    public SurveyDetailDto saveSurveyDetail(@RequestBody @Valid RequestAddSurveyDetailDto requestAddSurveyDetailDto) {
+        SurveyDetailDto surveyDetailDto = surveyService.saveSurveyDetail(requestAddSurveyDetailDto.surveyId, requestAddSurveyDetailDto.content,
+                requestAddSurveyDetailDto.category, requestAddSurveyDetailDto.isSort);
+        return surveyDetailDto;
+    }
+
+    public static class RequestAddSurveyDetailDto {
+        @NotNull
+        public Long surveyId;
+        @NotBlank
+        public String content;
+
+        @NotBlank
+        public String category;
+        @NotNull
+        public Boolean isSort;
     }
 }

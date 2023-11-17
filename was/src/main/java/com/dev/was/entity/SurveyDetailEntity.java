@@ -6,11 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Entity(name="tm_survey_detail")
 public class SurveyDetailEntity {
     @Id
@@ -19,6 +21,9 @@ public class SurveyDetailEntity {
 
     @Column(nullable = false)
     private String content;
+
+    @Column(nullable = false)
+    private String category;
 
     @Column(nullable = false)
     private boolean isSort; // true asc, false desc (1,2,3,4), (4,3,2,1)
@@ -34,9 +39,10 @@ public class SurveyDetailEntity {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public SurveyDetailEntity(Long id, String content, boolean isSort, SurveyEntity surveyEntity, LocalDateTime createdDate, LocalDateTime modifiedDate) {
+    public SurveyDetailEntity(Long id, String content, String category, boolean isSort, SurveyEntity surveyEntity, LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.id = id;
         this.content = content;
+        this.category = category;
         this.isSort = isSort;
         this.surveyEntity = surveyEntity;
         this.createdDate = createdDate;
