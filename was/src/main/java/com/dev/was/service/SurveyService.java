@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,22 @@ public class SurveyService {
 
         return surveyDtoListDtoList;
     }
+
+    public SurveyDto getSurvey(Long surveyId) {
+        SurveyEntity surveyEntity = surveyRepository.findById(surveyId).orElseThrow(
+                () -> new ApiException(ExceptionCodeEnum.FOUNT_NOT_ID, "Not Found Survey Id"));
+
+        SurveyDto surveyDto = new SurveyDto(surveyEntity);
+        surveyDto.setDetailDtoList(surveyEntity
+                .getSurveyDetailEntityList()
+                .stream()
+                .map(SurveyDetailDto::new)
+                .collect(Collectors.toList())
+                );
+
+        return surveyDto;
+    }
+
 
     public SurveyDto saveSurvey(
             Long id,

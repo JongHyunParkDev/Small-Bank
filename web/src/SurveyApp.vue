@@ -140,6 +140,7 @@
                 </QForm>
             </QCard>
         </QDialog>
+        <ProcessSpinner v-if="processCount > 0"/>
     </div>
 </template>
 
@@ -147,10 +148,23 @@
 import { ref, Ref, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
 import { useRoute } from 'vue-router';
+import { PROCESS } from '@/lib/Async';
+import { Api } from '@/lib/Api';
+import ProcessSpinner from '@/components/ProcessSpinner.vue';
 
 const route = useRoute();
 const $q = useQuasar();
 
+const surveyId = route.params.surveyId;
+
+function upProcessSpinner() {
+    processCount.value = 1;
+}
+function downProcessSpinner() {
+    processCount.value = 0;
+}
+
+const processCount: Ref<number> = ref(0);
 const inputListRef = ref([]);
 const inputList = ref([
     {
@@ -488,10 +502,18 @@ function validCheck() {
     return true;
 }
 
-console.log(route.params);
+function init() {
+    PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+        const result= await Api.get('anon/survey', {
+            surveyId: surveyId
+        });
+        console.log(result);
+    });
+}
 
 onMounted(() => {
     console.log($q);
+    init();
 });
 </script>
 

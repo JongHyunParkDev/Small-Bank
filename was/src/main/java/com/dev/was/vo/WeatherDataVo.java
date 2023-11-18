@@ -70,7 +70,7 @@ public class WeatherDataVo {
 
         public void setFcstValue(String fcstValue) {
             if (fcstValue.equals("적설없음") || fcstValue.equals("강수없음")) this.fcstValue = "0";
-            else this.fcstValue = fcstValue.split("mm")[0];
+            else this.fcstValue = fcstValue.split("mm|cm")[0];
         }
 
         public void setNx(String nx) {
