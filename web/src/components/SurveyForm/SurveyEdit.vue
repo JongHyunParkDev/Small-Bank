@@ -66,7 +66,7 @@
                     </QCardSection>
                     <QCardSection class="q-pa-md content">
                         <QInput
-                            name="content"
+                            name="survey-content"
                             outlined
                             stack-label
                             label="항목"
@@ -74,7 +74,7 @@
                             :rules="[(val) => val !== '' || '항목을 입력해주세요.']"
                         />
                         <QInput
-                            name="category"
+                            name="survey-category"
                             outlined
                             stack-label
                             label="카테고리"
@@ -118,7 +118,7 @@
                     </QCardSection>
                     <QCardSection class="q-pa-md content">
                         <QInput
-                            name="title"
+                            name="survey-content"
                             outlined
                             stack-label
                             label="항목"
@@ -126,7 +126,7 @@
                             :rules="[(val) => val !== '' || '항목을 입력해주세요.']"
                         />
                         <QInput
-                            name="category"
+                            name="survey-category"
                             outlined
                             stack-label
                             label="카테고리"
@@ -228,6 +228,22 @@ const modifyDialogOption = ref({
     isSort: true,
 });
 
+init();
+
+function init() {
+    if (upProcessSpinner && downProcessSpinner) {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+            const result: Array<SurveyDetail> = await Api.get('user/surveyDetails', {
+                surveyId: props.selectedSurveyIdx
+            });
+            result.forEach((el, idx) => {
+                el.num = idx + 1;
+                rows.value.push(el);
+            });
+        });
+    }
+}
+
 function addSurvey() {
     if (upProcessSpinner && downProcessSpinner) {
         PROCESS(upProcessSpinner, downProcessSpinner, async () => {
@@ -254,25 +270,30 @@ function addSurvey() {
             addDialogOption.value.visible = false;
         });
     }
-    // const result = Api.post();
-
-    // rows.value.push({
-    //     id: result.id ...
-    // })
 }
 
 function modifySurvey() {
-    // const result = Api.put();
+    if (upProcessSpinner && downProcessSpinner) {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+            const result: SurveyDetail = await Api.put('user/surveyDetail', {
+                surveyDetailId: modifyDialogOption.value.id,
+                content: modifyDialogOption.value.content,
+                category: modifyDialogOption.value.category,
+                isSort: modifyDialogOption.value.isSort
+            });
+            
+            $q.notify({
+                type: 'positive',
+                message: '해당 항목이 변경되었습니다.',
+            });
 
-    // selectedRow.value[0].content = result.content;
-    // selectedRow.value[0].isSort = result.isSort;
+            selectedRow.value[0].content = result.content;
+            selectedRow.value[0].category = result.category;
+            selectedRow.value[0].isSort = result.isSort;
 
-    $q.notify({
-        type: 'positive',
-        message: '해당 항목이 변경되었습니다.',
-    });
-
-    modifyDialogOption.value.visible = false;
+            modifyDialogOption.value.visible = false;
+        });
+    }
 }
 
 function showAddDialog() {
@@ -317,10 +338,16 @@ function deleteRow(evt: Event) {
     });
 
     async function apply() {
-        // await api.delete()
-        console.log('삭제');
-        // rows.value[0].isActive = true;
-        // selectedRow 로는 설정되지 않음. 아마 deep copy 를 하는 듯함.
+        if (upProcessSpinner && downProcessSpinner) {
+            PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+                await Api.delete('user/surveyDetail', {
+                    surveyDetailId: selectedRow.value[0].id,
+                });
+
+                if (selectedRow.value[0].num) rows.value.splice(selectedRow.value[0].num - 1, 1);
+                rows.value.forEach((row, idx) => (row.num = idx + 1));
+            });
+        }
     }
 }
 </script>

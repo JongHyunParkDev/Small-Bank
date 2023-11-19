@@ -7,5 +7,5 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
-    List<AccountEntity> findByUserIdAndDateBetween(Long userId, LocalDate startDate, LocalDate endDate);
+    List<AccountEntity> findByIdAndDateBetween(Long id, LocalDate startDate, LocalDate endDate);
 }

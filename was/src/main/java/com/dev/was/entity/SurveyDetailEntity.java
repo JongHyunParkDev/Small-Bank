@@ -38,6 +38,22 @@ public class SurveyDetailEntity {
     @LastModifiedDate
     private LocalDateTime modifiedDate;
 
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setSurveyEntity(SurveyEntity surveyEntity) {
+        this.surveyEntity = surveyEntity;
+    }
+
+    public void setSort(boolean sort) {
+        isSort = sort;
+    }
+
     @Builder
     public SurveyDetailEntity(Long id, String content, String category, boolean isSort, SurveyEntity surveyEntity, LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.id = id;

@@ -72,11 +72,11 @@
             <QCard class="survey-card">
                 <QForm @submit="addSurvey">
                     <QCardSection class="bg-primary">
-                        <div class="text-h6 text-white">설문조사 변경하기</div>
+                        <div class="text-h6 text-white">설문조사 추가하기</div>
                     </QCardSection>
                     <QCardSection class="q-pa-md content">
                         <QInput
-                            name="title"
+                            name="survey-title"
                             outlined
                             stack-label
                             label="제목"
@@ -178,7 +178,7 @@
                     </QCardSection>
                     <QCardSection class="q-pa-md content">
                         <QInput
-                            name="title"
+                            name="survey-title"
                             outlined
                             stack-label
                             label="제목"

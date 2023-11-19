@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +37,14 @@ public class SurveyService {
 
     public SurveyDto getSurvey(Long surveyId) {
         SurveyEntity surveyEntity = surveyRepository.findById(surveyId).orElseThrow(
-                () -> new ApiException(ExceptionCodeEnum.FOUNT_NOT_ID, "Not Found Survey Id"));
+                () -> new ApiException(ExceptionCodeEnum.DB_ERROR, "Not found survey id"));
+
+        LocalDate now = LocalDate.now();
+        if (! surveyEntity.isActive())
+            throw new ApiException(ExceptionCodeEnum.UNAVAILABLE_DATA, "Survey state is not active");
+        else if (now.compareTo(surveyEntity.getStartDate()) < 0 || now.compareTo(surveyEntity.getEndDate()) > 0 ) {
+            throw new ApiException(ExceptionCodeEnum.UNAVAILABLE_DATA, "Survey date is not available");
+        }
 
         SurveyDto surveyDto = new SurveyDto(surveyEntity);
         surveyDto.setDetailDtoList(surveyEntity
@@ -76,7 +84,7 @@ public class SurveyService {
             LocalDate endDate
     ) {
         SurveyEntity surveyEntity = surveyRepository.findById(id)
-                .orElseThrow(() -> new ApiException(ExceptionCodeEnum.FOUNT_NOT_ID, "Not Found Survey Id"));
+                .orElseThrow(() -> new ApiException(ExceptionCodeEnum.DB_ERROR, "Not Found Survey Id"));
 
         surveyEntity.setTitle(title);
         surveyEntity.setStartDate(startDate);
@@ -90,7 +98,7 @@ public class SurveyService {
             Long id
     ) {
         SurveyEntity surveyEntity = surveyRepository.findById(id)
-                .orElseThrow(() -> new ApiException(ExceptionCodeEnum.FOUNT_NOT_ID, "Not Found Survey Id"));
+                .orElseThrow(() -> new ApiException(ExceptionCodeEnum.DB_ERROR, "Not Found Survey Id"));
 
         surveyEntity.setActive(! surveyEntity.isActive());
         SurveyEntity resultSurveyEntity = surveyRepository.save(surveyEntity);
@@ -100,6 +108,25 @@ public class SurveyService {
 
     public void deleteSurvey(Long id) {
         surveyRepository.deleteById(id);
+    }
+
+    @Transactional
+    public List<SurveyDetailDto> getSurveyDetailsBySurveyId(
+            Long surveyId
+    ) {
+        Optional<SurveyEntity> surveyEntityOptional = surveyRepository.findById(surveyId);
+
+        if (surveyEntityOptional.isPresent()) {
+            SurveyEntity surveyEntity = surveyEntityOptional.get();
+
+            return surveyEntity.getSurveyDetailEntityList()
+                    .stream()
+                    .map(SurveyDetailDto::new)
+                    .collect(Collectors.toList());
+        }
+        else {
+            throw new ApiException(ExceptionCodeEnum.DB_ERROR, "Failed to DB insert");
+        }
     }
 
     @Transactional
@@ -121,13 +148,44 @@ public class SurveyService {
                     .surveyEntity(surveyEntity)
                     .build();
 
-            surveyEntity.getSurveyDetailEntityList().add(surveyDetailEntity);
+            surveyDetailEntity.setSurveyEntity(surveyEntity);
 
-            surveyRepository.save(surveyEntity);
+            surveyDetailEntity = surveyDetailRepository.save(surveyDetailEntity);
+
+//            surveyEntity.getSurveyDetailEntityList().add(surveyDetailEntity);
+//
+//            surveyRepository.save(surveyEntity);
             return new SurveyDetailDto(surveyDetailEntity);
         }
         else {
             throw new ApiException(ExceptionCodeEnum.DB_ERROR, "Failed to DB insert");
         }
+    }
+
+    public SurveyDetailDto updateSurveyDetail(
+            Long surveyDetailId,
+            String content,
+            String category,
+            Boolean isSort
+    ) {
+        Optional<SurveyDetailEntity> surveyEntityDeOptional = surveyDetailRepository.findById(surveyDetailId);
+
+        if (surveyEntityDeOptional.isPresent()) {
+            SurveyDetailEntity surveyDetailEntity = surveyEntityDeOptional.get();
+
+            surveyDetailEntity.setContent(content);
+            surveyDetailEntity.setCategory(category);
+            surveyDetailEntity.setSort(isSort);
+
+            surveyDetailRepository.save(surveyDetailEntity);
+            return new SurveyDetailDto(surveyDetailEntity);
+        }
+        else {
+            throw new ApiException(ExceptionCodeEnum.DB_ERROR, "Failed to DB update");
+        }
+    }
+
+    public void deleteSurveyDetail(Long surveyDetailId) {
+        surveyDetailRepository.deleteById(surveyDetailId);
     }
 }

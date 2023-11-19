@@ -51,7 +51,6 @@ public class SurveyController {
         surveyService.deleteSurvey(requestSurveyDto.id);
     }
 
-
     public static class RequestAddSurveyDto {
         @NotNull
         public String title;
@@ -78,11 +77,27 @@ public class SurveyController {
         public Long id;
     }
 
+    @GetMapping("/surveyDetails")
+    public List<SurveyDetailDto> getSurveyDetails(@RequestParam(value = "surveyId") Long surveyId) {
+        return surveyService.getSurveyDetailsBySurveyId(surveyId);
+    }
+
     @PostMapping("/surveyDetail")
     public SurveyDetailDto saveSurveyDetail(@RequestBody @Valid RequestAddSurveyDetailDto requestAddSurveyDetailDto) {
-        SurveyDetailDto surveyDetailDto = surveyService.saveSurveyDetail(requestAddSurveyDetailDto.surveyId, requestAddSurveyDetailDto.content,
+        return surveyService.saveSurveyDetail(requestAddSurveyDetailDto.surveyId, requestAddSurveyDetailDto.content,
                 requestAddSurveyDetailDto.category, requestAddSurveyDetailDto.isSort);
-        return surveyDetailDto;
+    }
+
+    @PutMapping("/surveyDetail")
+    public SurveyDetailDto updateSurveyDetail(@RequestBody @Valid RequestUpdateSurveyDetailDto requestUpdateSurveyDetailDto) {
+        return surveyService.updateSurveyDetail(requestUpdateSurveyDetailDto.surveyDetailId,
+                requestUpdateSurveyDetailDto.content, requestUpdateSurveyDetailDto.content,
+                requestUpdateSurveyDetailDto.isSort);
+    }
+
+    @DeleteMapping("/surveyDetail")
+    public void deleteSurveyDetail(@RequestBody @Valid RequestDetailSurveyDetailDto requestDetailSurveyDetailDto) {
+        surveyService.deleteSurveyDetail(requestDetailSurveyDetailDto.surveyDetailId);
     }
 
     public static class RequestAddSurveyDetailDto {
@@ -95,5 +110,22 @@ public class SurveyController {
         public String category;
         @NotNull
         public Boolean isSort;
+    }
+
+    public static class RequestUpdateSurveyDetailDto {
+        @NotNull
+        public Long surveyDetailId;
+        @NotBlank
+        public String content;
+
+        @NotBlank
+        public String category;
+        @NotNull
+        public Boolean isSort;
+    }
+
+    public static class RequestDetailSurveyDetailDto {
+        @NotNull
+        public Long surveyDetailId;
     }
 }

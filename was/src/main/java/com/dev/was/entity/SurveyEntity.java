@@ -38,11 +38,11 @@ public class SurveyEntity {
     private boolean isActive;
 
     @BatchSize(size = 1000)
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "surveyEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SurveyUserEntity> surveyUserEntityList;
 
     @BatchSize(size = 100)
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "surveyEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SurveyDetailEntity> surveyDetailEntityList;
 
     @CreatedDate

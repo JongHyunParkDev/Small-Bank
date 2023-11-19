@@ -35,12 +35,10 @@
         >
             <QCard class="abhistory-card">
                 <QForm @submit="addHistory">
+                    <QCardSection class="bg-primary">
+                        <div class="text-h6 text-white">내역 추가하기</div>
+                    </QCardSection>
                     <QCardSection class="row items-center">
-                        <QToolbar>
-                            <QToolbarTitle>
-                                내역 추가하기
-                            </QToolbarTitle>
-                        </QToolbar>
                         <div class="dialog-content">
                             <QInput
                                 outlined
@@ -127,12 +125,10 @@
         >
             <QCard class="abhistory-card">
                 <QForm @submit="modifyHistory">
+                    <QCardSection class="bg-primary">
+                        <div class="text-h6 text-white">내역 변경하기</div>
+                    </QCardSection>
                     <QCardSection class="row items-center">
-                        <QToolbar>
-                            <QToolbarTitle>
-                                내역 추가하기
-                            </QToolbarTitle>
-                        </QToolbar>
                         <div class="dialog-content">
                             <QInput
                                 outlined

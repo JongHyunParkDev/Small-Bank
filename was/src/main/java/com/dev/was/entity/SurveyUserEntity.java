@@ -39,7 +39,7 @@ public class SurveyUserEntity {
     private SurveyEntity surveyEntity;
 
     @BatchSize(size = 100)
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "surveyUserEntity",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SurveyUserResultEntity> surveyUserResultEntityList;
 
     @CreatedDate

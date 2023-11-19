@@ -24,7 +24,7 @@ public class AccountController {
         @RequestParam(value = "endDate") String endDate) {
         Long id = AuthenticationUtil.getCurrentId();
 
-        return accountService.getAccountsByUserIdAndDateBetween(id,
+        return accountService.getAccountsByIdAndDateBetween(id,
                 DBUtil.toLocalDate(startDate), DBUtil.toLocalDate(endDate));
     }
 

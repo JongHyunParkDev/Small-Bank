@@ -25,6 +25,8 @@ export const ApiCode = {
     INVALID_ARGUMENT: '1101',
     MISSING_REQUIRED_FIELD: '1102',
 
+    UNAVAILABLE_DATA: '1201',
+
     CALL_DATA_GO_API_ERROR: '1300',
 
     LOGIN_NEED: '1900',
@@ -47,6 +49,8 @@ export const ApiMessage = {
     // server
     [ApiCode.GENERIC]: '에러가 발생하였습니다.',
     [ApiCode.NOT_FOUND]: '내용(파일)을 찾을 수 없습니다.',
+
+    [ApiCode.UNAVAILABLE_DATA]: '사용가능한 데이터가 아닙니다.',
 
     [ApiCode.CALL_DATA_GO_API_ERROR]: '데이터를 불러오는데 에러가 발생했습니다.',
 
