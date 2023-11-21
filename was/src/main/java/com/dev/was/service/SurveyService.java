@@ -2,10 +2,13 @@ package com.dev.was.service;
 
 import com.dev.was.controller.ApiException;
 import com.dev.was.controller.ExceptionCodeEnum;
+import com.dev.was.controller.anon.AnonSurveyController;
 import com.dev.was.dto.SurveyDetailDto;
 import com.dev.was.dto.SurveyDto;
 import com.dev.was.entity.SurveyDetailEntity;
 import com.dev.was.entity.SurveyEntity;
+import com.dev.was.entity.SurveyUserEntity;
+import com.dev.was.entity.SurveyUserResultEntity;
 import com.dev.was.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,6 +27,7 @@ import java.util.stream.Collectors;
 public class SurveyService {
     private final SurveyRepository surveyRepository;
     private final SurveyDetailRepository surveyDetailRepository;
+    private final SurveyUserRepository surveyUserRepository;
 
     public List<SurveyDto> getSurveysByUserId(Long userId) {
         List<SurveyEntity> surveyEntityList = surveyRepository.findAllByUserId(userId);
@@ -187,5 +192,32 @@ public class SurveyService {
 
     public void deleteSurveyDetail(Long surveyDetailId) {
         surveyDetailRepository.deleteById(surveyDetailId);
+    }
+
+    public void saveSurveyUserResult(Long surveyId, String name, LocalDate birthDay, Boolean gender, String dept,
+                                     List<Map<String, Object>> list) {
+        SurveyEntity surveyEntity = surveyRepository.findById(surveyId)
+                .orElseThrow(() -> new ApiException(ExceptionCodeEnum.DB_ERROR, "Not Found Survey Id"));
+
+        SurveyUserEntity surveyUserEntity = SurveyUserEntity.builder()
+                .name(name)
+                .birthDay(birthDay)
+                .gender(gender)
+                .dept(dept)
+                .surveyEntity(surveyEntity)
+                .build();
+
+        List<SurveyUserResultEntity> surveyUserResultEntityList = new ArrayList<>();
+        list.forEach(map -> {
+            surveyUserResultEntityList.add(SurveyUserResultEntity.builder()
+                    .category((String) map.get("category"))
+                    .score(((Integer)map.get("value")).longValue())
+                    .surveyUserEntity(surveyUserEntity)
+                    .build());
+        });
+
+        surveyUserEntity.setSurveyUserResultEntityList(surveyUserResultEntityList);
+        surveyEntity.getSurveyUserEntityList().add(surveyUserEntity);
+        surveyRepository.save(surveyEntity);
     }
 }

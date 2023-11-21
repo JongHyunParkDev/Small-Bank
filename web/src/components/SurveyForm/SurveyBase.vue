@@ -47,7 +47,7 @@
                     label-position="top"
                     color="secondary"
                     text-color="white"
-                    icon="mail"
+                    icon="check"
                     label="활성화"
                     :disable="selectedRow.length === 0"
                     @click="toggleRow"

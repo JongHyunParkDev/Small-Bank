@@ -42,6 +42,10 @@ public class SurveyUserEntity {
     @OneToMany(mappedBy = "surveyUserEntity",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SurveyUserResultEntity> surveyUserResultEntityList;
 
+    public void setSurveyUserResultEntityList(List<SurveyUserResultEntity> surveyUserResultEntityList) {
+        this.surveyUserResultEntityList = surveyUserResultEntityList;
+    }
+
     @CreatedDate
     private LocalDateTime createdDate;
 
@@ -49,13 +53,14 @@ public class SurveyUserEntity {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public SurveyUserEntity(Long id, String name, LocalDate birthDay, boolean gender, String dept, SurveyEntity surveyEntity, LocalDateTime createdDate, LocalDateTime modifiedDate) {
+    public SurveyUserEntity(Long id, String name, LocalDate birthDay, boolean gender, String dept, SurveyEntity surveyEntity, List<SurveyUserResultEntity> surveyUserResultEntityList,  LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.id = id;
         this.name = name;
         this.birthDay = birthDay;
         this.gender = gender;
         this.dept = dept;
         this.surveyEntity = surveyEntity;
+        this.surveyUserResultEntityList = surveyUserResultEntityList;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
     }

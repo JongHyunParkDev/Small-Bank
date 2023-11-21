@@ -13,4 +13,6 @@ export type SurveyDetail = {
     content: string;
     category: string;
     isSort: boolean;
+    valueList?: Array<number>;
+    selectInput?: number;
 };
