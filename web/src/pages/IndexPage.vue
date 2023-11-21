@@ -1,10 +1,11 @@
 <template>
-    <QPage class="row items-center justify-evenly">
-        <MainPage/>
+    <QPage class="row">
+        <MatterJsMain/>
     </QPage>
 </template>
 
 <script setup lang="ts">
-import MainPage from '@/components/Main/MainPage.vue';
+// import ThreeJsMain from '@/components/Main/ThreeJsMain.vue';
+import MatterJsMain from '@/components/Main/MatterJsMain.vue';
 
 </script>
