@@ -38,7 +38,7 @@ spring:
         show_sql: true
         format_sql: true
     hibernate:
-      ddl-auto: update #create validate update
+      ddl-auto: validate #create validate update
 
 logging:
   config: classpath:logback-spring.xml

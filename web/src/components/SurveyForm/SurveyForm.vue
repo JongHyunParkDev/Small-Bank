@@ -11,7 +11,10 @@
                 <SurveyBase @select-survey="selectSurvey" />
             </QTabPanel>
             <QTabPanel name="edit">
-                <SurveyEdit :selected-survey-idx="selectedSurveyIdx" />
+                <SurveyEdit
+                    :selected-survey-idx="selectedSurveyIdx"
+                    :selected-survey-active="selectedSurveyActive"
+                />
             </QTabPanel>
             <QTabPanel name="search">
                 <SurveySearch :selected-survey-idx="selectedSurveyIdx" />
@@ -68,9 +71,11 @@ import SurveySearch from 'components/SurveyForm/SurveySearch.vue';
 
 const selectedTab = ref('base');
 const selectedSurveyIdx = ref(undefined);
+const selectedSurveyActive = ref(false);
 
-function selectSurvey(idx) {
-    selectedSurveyIdx.value = idx;
+function selectSurvey(selectOption) {
+    selectedSurveyIdx.value = selectOption.id;
+    selectedSurveyActive.value = selectOption.active;
 }
 
 function selectTab(tab) {

@@ -99,13 +99,19 @@ public class SurveyService {
         return new SurveyDto(resultSurveyEntity);
     }
 
+    @Transactional
     public SurveyDto saveSurvey(
             Long id
     ) {
         SurveyEntity surveyEntity = surveyRepository.findById(id)
                 .orElseThrow(() -> new ApiException(ExceptionCodeEnum.DB_ERROR, "Not Found Survey Id"));
 
+        // 비활성화 시 result 삭제
+        if (surveyEntity.isActive()) {
+            surveyEntity.getSurveyUserEntityList().clear();
+        }
         surveyEntity.setActive(! surveyEntity.isActive());
+
         SurveyEntity resultSurveyEntity = surveyRepository.save(surveyEntity);
 
         return new SurveyDto(resultSurveyEntity);

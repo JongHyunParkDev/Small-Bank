@@ -85,8 +85,8 @@
                             v-model="addDialogOption.isSort"
                             toggle-color="primary"
                             :options="[
-                                {label: 'ASC (1,2,3,4)', value: true },
-                                {label: 'DESC (4,3,2,1)', value: false },
+                                { label: 'ASC (1,2,3,4)', value: true },
+                                { label: 'DESC (4,3,2,1)', value: false },
                             ]"
                         />
                     </QCardSection>
@@ -137,8 +137,8 @@
                             v-model="modifyDialogOption.isSort"
                             toggle-color="primary"
                             :options="[
-                                {label: 'ASC (1,2,3,4)', value: true },
-                                {label: 'DESC (4,3,2,1)', value: false },
+                                { label: 'ASC (1,2,3,4)', value: true },
+                                { label: 'DESC (4,3,2,1)', value: false },
                             ]"
                         />
                     </QCardSection>
@@ -162,7 +162,7 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps, ref, Ref, inject} from 'vue';
+import { defineProps, ref, Ref, inject } from 'vue';
 import { useQuasar } from 'quasar';
 import { Api } from '@/lib/Api';
 import { PROCESS } from '@/lib/Async';
@@ -176,6 +176,10 @@ const $q = useQuasar();
 const props = defineProps({
     selectedSurveyIdx: {
         type: Number,
+        required: true,
+    },
+    selectedSurveyActive: {
+        type: Boolean,
         required: true,
     },
 });
@@ -234,7 +238,7 @@ function init() {
     if (upProcessSpinner && downProcessSpinner) {
         PROCESS(upProcessSpinner, downProcessSpinner, async () => {
             const result: Array<SurveyDetail> = await Api.get('user/surveyDetails', {
-                surveyId: props.selectedSurveyIdx
+                surveyId: props.selectedSurveyIdx,
             });
             result.forEach((el, idx) => {
                 el.num = idx + 1;
@@ -251,20 +255,20 @@ function addSurvey() {
                 surveyId: props.selectedSurveyIdx,
                 content: addDialogOption.value.content,
                 category: addDialogOption.value.category,
-                isSort: addDialogOption.value.isSort
+                isSort: addDialogOption.value.isSort,
             });
 
             $q.notify({
                 type: 'positive',
                 message: '설문지 항목이 추가되었습니다.',
             });
-            
+
             rows.value.push({
                 id: result.id,
                 num: rows.value.length + 1,
                 content: result.content,
                 category: result.category,
-                isSort: result.isSort
+                isSort: result.isSort,
             });
 
             addDialogOption.value.visible = false;
@@ -279,9 +283,9 @@ function modifySurvey() {
                 surveyDetailId: modifyDialogOption.value.id,
                 content: modifyDialogOption.value.content,
                 category: modifyDialogOption.value.category,
-                isSort: modifyDialogOption.value.isSort
+                isSort: modifyDialogOption.value.isSort,
             });
-            
+
             $q.notify({
                 type: 'positive',
                 message: '해당 항목이 변경되었습니다.',
@@ -297,6 +301,8 @@ function modifySurvey() {
 }
 
 function showAddDialog() {
+    if (!vaildSurvey()) return;
+
     addDialogOption.value.content = '';
     addDialogOption.value.category = '';
     addDialogOption.value.isSort = true;
@@ -305,6 +311,8 @@ function showAddDialog() {
 }
 
 function showModifyDialog() {
+    if (!vaildSurvey()) return;
+
     modifyDialogOption.value.id = selectedRow.value[0].id;
     modifyDialogOption.value.content = selectedRow.value[0].content;
     modifyDialogOption.value.category = selectedRow.value[0].category;
@@ -313,7 +321,23 @@ function showModifyDialog() {
     modifyDialogOption.value.visible = true;
 }
 
+function vaildSurvey() {
+    if (props.selectedSurveyActive) {
+        $q.notify({
+            type: 'warning',
+            position: 'center',
+            message: '해당 설문지가 활성화 인 경우에는 변경할 수 없습니다.',
+            caption: '설문지를 비활성화시 이전 RESULT 내용은 삭제됩니다.',
+        });
+
+        return false;
+    }
+    return true;
+}
+
 function deleteRow(evt: Event) {
+    if (!vaildSurvey()) return;
+
     $q.notify({
         type: 'warning',
         position: 'center',
@@ -368,5 +392,4 @@ function deleteRow(evt: Event) {
         min-width: 350px;
     }
 }
-
 </style>

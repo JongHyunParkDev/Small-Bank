@@ -367,7 +367,12 @@ function init() {
 
 function selectRow(selectOption) {
     // single
-    emit('select-survey', selectOption.added ? selectOption.keys[0] : undefined);
+    emit(
+        'select-survey',
+        selectOption.added
+            ? { id: selectOption.keys[0], active: selectOption.rows[0].active }
+            : { id: undefined }
+    );
 }
 
 function addSurvey() {
@@ -429,6 +434,8 @@ function toggleRow(evt: Event) {
         message: `해당 설문지의 상태를 ${
             selectedRow.value[0].active ? '비활성화' : '활성화'
         }로 변경할까요?`,
+        caption: '비활성화시 이전 RESULT 내용은 삭제됩니다.',
+        // html: true,
         timeout: 300000,
         actions: [
             {
