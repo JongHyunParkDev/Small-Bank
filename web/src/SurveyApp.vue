@@ -145,7 +145,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, onMounted } from 'vue';
+import { ref, Ref, onMounted, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import { useRoute } from 'vue-router';
 import { PROCESS } from '@/lib/Async';
@@ -153,9 +153,11 @@ import { Api } from '@/lib/Api';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { SurveyDetail } from '@/types/SurveyTypes';
 import { datestrToApiDateStr } from '@/lib/DateUtil';
+import { useErrorStore } from '@/stores/ErrorStore';
 
 const route = useRoute();
 const $q = useQuasar();
+const errorStore = useErrorStore();
 
 const surveyId = route.params.surveyId;
 
@@ -537,6 +539,14 @@ function init() {
         });
     });
 }
+
+watch(errorStore.errors, async (newError) => {
+    $q.notify({
+        type: 'negative',
+        message: newError[0],
+        caption: '관리인에게 문의해주세요.',
+    });
+});
 
 onMounted(() => {
     init();
