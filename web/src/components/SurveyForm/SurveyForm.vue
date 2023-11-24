@@ -79,7 +79,10 @@ function selectSurvey(selectOption) {
 }
 
 function selectTab(tab) {
-    if (tab === 'base') selectedSurveyIdx.value = undefined;
+    if (tab === 'base') {
+        selectedSurveyIdx.value = undefined;
+        selectedSurveyActive.value = false;
+    }
 }
 </script>
 

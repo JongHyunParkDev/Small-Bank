@@ -463,6 +463,11 @@ function toggleRow(evt: Event) {
                 });
 
                 selectedRow.value[0].active = !selectedRow.value[0].active;
+
+                emit('select-survey', {
+                    id: selectedRow.value[0].id,
+                    active: selectedRow.value[0].active,
+                });
             });
         }
     }
@@ -501,6 +506,11 @@ function deleteRow(evt: Event) {
 
                 if (selectedRow.value[0].num) rows.value.splice(selectedRow.value[0].num - 1, 1);
                 rows.value.forEach((row, idx) => (row.num = idx + 1));
+
+                emit('select-survey', {
+                    id: undefined,
+                    active: false,
+                });
             });
         }
     }

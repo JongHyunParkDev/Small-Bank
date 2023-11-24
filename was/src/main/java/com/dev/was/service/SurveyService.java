@@ -47,9 +47,10 @@ public class SurveyService {
         LocalDate now = LocalDate.now();
         if (! surveyEntity.isActive())
             throw new ApiException(ExceptionCodeEnum.UNAVAILABLE_DATA, "Survey state is not active");
-        else if (now.compareTo(surveyEntity.getStartDate()) < 0 || now.compareTo(surveyEntity.getEndDate()) > 0 ) {
+        else if (now.compareTo(surveyEntity.getStartDate()) < 0 || now.compareTo(surveyEntity.getEndDate()) > 0 )
             throw new ApiException(ExceptionCodeEnum.UNAVAILABLE_DATA, "Survey date is not available");
-        }
+        else if (surveyEntity.getSurveyDetailEntityList().isEmpty())
+            throw new ApiException(ExceptionCodeEnum.UNAVAILABLE_DATA, "Survey Detail is empty");
 
         SurveyDto surveyDto = new SurveyDto(surveyEntity);
         surveyDto.setDetailDtoList(surveyEntity
