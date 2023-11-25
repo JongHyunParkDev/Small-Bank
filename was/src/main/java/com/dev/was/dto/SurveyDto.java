@@ -17,7 +17,7 @@ public class SurveyDto {
     private LocalDate endDate;
     private boolean isActive;
 
-    private List<SurveyDetailDto> detailDtoList;
+    private List<SurveyDetailDto> surveyDetailDtoList;
 
     @Builder
     public SurveyDto(SurveyEntity surveyEntity) {

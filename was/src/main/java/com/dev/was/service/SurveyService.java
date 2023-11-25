@@ -5,6 +5,8 @@ import com.dev.was.controller.ExceptionCodeEnum;
 import com.dev.was.controller.anon.AnonSurveyController;
 import com.dev.was.dto.SurveyDetailDto;
 import com.dev.was.dto.SurveyDto;
+import com.dev.was.dto.SurveyUserDto;
+import com.dev.was.dto.SurveyUserResultDto;
 import com.dev.was.entity.SurveyDetailEntity;
 import com.dev.was.entity.SurveyEntity;
 import com.dev.was.entity.SurveyUserEntity;
@@ -53,7 +55,7 @@ public class SurveyService {
             throw new ApiException(ExceptionCodeEnum.UNAVAILABLE_DATA, "Survey Detail is empty");
 
         SurveyDto surveyDto = new SurveyDto(surveyEntity);
-        surveyDto.setDetailDtoList(surveyEntity
+        surveyDto.setSurveyDetailDtoList(surveyEntity
                 .getSurveyDetailEntityList()
                 .stream()
                 .map(SurveyDetailDto::new)
@@ -226,5 +228,31 @@ public class SurveyService {
         surveyUserEntity.setSurveyUserResultEntityList(surveyUserResultEntityList);
         surveyEntity.getSurveyUserEntityList().add(surveyUserEntity);
         surveyRepository.save(surveyEntity);
+    }
+
+    public List<SurveyUserDto> getSurveyUser(Long surveyId, String name, String dept, Boolean gender) {
+        List<SurveyUserDto> surveyUserDtoList = new ArrayList<>();
+
+        List<SurveyUserEntity> surveyUserEntityList = surveyUserRepository.findBySurveyEntityId(surveyId);
+
+        surveyUserEntityList.forEach(surveyUserEntity -> {
+            List<SurveyUserResultDto> surveyUserResultDtoList = new ArrayList<>();
+
+            surveyUserEntity.getSurveyUserResultEntityList().forEach(surveyUserResultEntity ->
+                    surveyUserResultDtoList.add(new SurveyUserResultDto(surveyUserResultEntity)));
+
+            surveyUserDtoList.add(
+                    SurveyUserDto.builder()
+                            .id(surveyUserEntity.getId())
+                            .name(surveyUserEntity.getName())
+                            .dept(surveyUserEntity.getDept())
+                            .gender(surveyUserEntity.isGender())
+                            .birthDay(surveyUserEntity.getBirthDay())
+                            .surveyUserResultDtoList(surveyUserResultDtoList)
+                            .build()
+            );
+        });
+
+        return surveyUserDtoList;
     }
 }

@@ -1,8 +1,9 @@
 package com.dev.was.controller.user;
 
-import com.dev.was.dto.AccountDto;
 import com.dev.was.dto.SurveyDetailDto;
 import com.dev.was.dto.SurveyDto;
+import com.dev.was.dto.SurveyUserDto;
+import com.dev.was.dto.SurveyUserResultDto;
 import com.dev.was.security.AuthenticationUtil;
 import com.dev.was.service.SurveyService;
 import com.dev.was.util.DBUtil;
@@ -127,5 +128,15 @@ public class SurveyController {
     public static class RequestDetailSurveyDetailDto {
         @NotNull
         public Long surveyDetailId;
+    }
+
+    @GetMapping("/surveyUsers")
+    public List<SurveyUserDto> getSurveyUsers(
+            @RequestParam(value = "surveyId") Long surveyId,
+            @RequestParam(value = "name") String name,
+            @RequestParam(value = "dept") String dept,
+            @RequestParam(value = "gender") Boolean gender
+    ) {
+        return surveyService.getSurveyUser(surveyId, name, dept, gender);
     }
 }
