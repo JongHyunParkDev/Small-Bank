@@ -31,6 +31,8 @@ public class SurveyService {
     private final SurveyDetailRepository surveyDetailRepository;
     private final SurveyUserRepository surveyUserRepository;
 
+    private final SurveyUserRepositoryDSL surveyUserRepositoryDSL;
+
     public List<SurveyDto> getSurveysByUserId(Long userId) {
         List<SurveyEntity> surveyEntityList = surveyRepository.findAllByUserId(userId);
 
@@ -233,7 +235,8 @@ public class SurveyService {
     public List<SurveyUserDto> getSurveyUser(Long surveyId, String name, String dept, Boolean gender) {
         List<SurveyUserDto> surveyUserDtoList = new ArrayList<>();
 
-        List<SurveyUserEntity> surveyUserEntityList = surveyUserRepository.findBySurveyEntityId(surveyId);
+        List<SurveyUserEntity> surveyUserEntityList = surveyUserRepositoryDSL.findSurveyUserEntityList(surveyId,
+                name, dept, gender);
 
         surveyUserEntityList.forEach(surveyUserEntity -> {
             List<SurveyUserResultDto> surveyUserResultDtoList = new ArrayList<>();
