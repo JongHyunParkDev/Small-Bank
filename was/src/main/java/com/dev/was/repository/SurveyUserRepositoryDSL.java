@@ -26,7 +26,7 @@ public class SurveyUserRepositoryDSL {
         if (name != null && !name.isEmpty())
             where.and(surveyUserEntity.name.contains(name));
         if (dept != null && !dept.isEmpty())
-            where.and(surveyUserEntity.dept.eq(dept));
+            where.and(surveyUserEntity.dept.contains(dept));
         if (gender != null)
             where.and(surveyUserEntity.gender.eq(gender));
 

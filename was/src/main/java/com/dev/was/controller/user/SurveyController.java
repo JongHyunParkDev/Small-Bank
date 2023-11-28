@@ -135,7 +135,7 @@ public class SurveyController {
             @RequestParam(value = "surveyId") Long surveyId,
             @RequestParam(value = "name") String name,
             @RequestParam(value = "dept") String dept,
-            @RequestParam(value = "gender") Boolean gender
+            @RequestParam(value = "gender", required = false) Boolean gender
     ) {
         return surveyService.getSurveyUser(surveyId, name, dept, gender);
     }

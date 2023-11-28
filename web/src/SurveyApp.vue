@@ -527,7 +527,7 @@ function init() {
         });
 
         surveyParams.value.title = result.title;
-        result.detailDtoList.forEach((detail) => {
+        result.surveyDetailDtoList.forEach((detail) => {
             inputList.value.push({
                 id: detail.id,
                 content: detail.content,
