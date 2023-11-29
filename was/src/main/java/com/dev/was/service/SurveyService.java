@@ -2,7 +2,6 @@ package com.dev.was.service;
 
 import com.dev.was.controller.ApiException;
 import com.dev.was.controller.ExceptionCodeEnum;
-import com.dev.was.controller.anon.AnonSurveyController;
 import com.dev.was.dto.SurveyDetailDto;
 import com.dev.was.dto.SurveyDto;
 import com.dev.was.dto.SurveyUserDto;
@@ -13,15 +12,14 @@ import com.dev.was.entity.SurveyUserEntity;
 import com.dev.was.entity.SurveyUserResultEntity;
 import com.dev.was.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -232,11 +230,11 @@ public class SurveyService {
         surveyRepository.save(surveyEntity);
     }
 
-    public List<SurveyUserDto> getSurveyUser(Long surveyId, String name, String dept, Boolean gender) {
+    public Page<SurveyUserDto> getSurveyUser(Long surveyId, String name, String dept, Boolean gender, Pageable pageable) {
         List<SurveyUserDto> surveyUserDtoList = new ArrayList<>();
 
-        List<SurveyUserEntity> surveyUserEntityList = surveyUserRepositoryDSL.findSurveyUserEntityList(surveyId,
-                name, dept, gender);
+        Page<SurveyUserEntity> surveyUserEntityList = surveyUserRepositoryDSL.findSurveyUserEntityList(surveyId,
+                name, dept, gender, pageable);
 
         surveyUserEntityList.forEach(surveyUserEntity -> {
             List<SurveyUserResultDto> surveyUserResultDtoList = new ArrayList<>();
@@ -256,6 +254,6 @@ public class SurveyService {
             );
         });
 
-        return surveyUserDtoList;
+        return new PageImpl<>(surveyUserDtoList, pageable, surveyUserEntityList.getTotalElements());
     }
 }

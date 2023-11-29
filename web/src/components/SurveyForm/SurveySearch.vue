@@ -46,14 +46,12 @@
             :columns="columns"
             :rows="rows"
             row-key="id"
-            :pagination="pagination"
             :virtual-scroll="true"
-            :rows-per-page-options="[200]"
             selection="single"
-            v-model:selected="selectedRow"
             :separator="'cell'"
             :hide-selected-banner="true"
             :hide-pagination="true"
+            v-model:selected="selectedRow"
         />
         <QPagination
             class="paging flex flex-center"
@@ -65,6 +63,7 @@
             :boundary-numbers="false"
             direction-links
             boundary-links
+            @update:model-value="search($event, false)"
         />
     </div>
 </template>
@@ -91,55 +90,10 @@ const searchParams = ref({
     gender: undefined
 })
 
-
-function exportRow() {
-//     was 에서 떨궈주자
-    Export.toCsv(rows.value, 'export');
-}
-
-function search(isInit: boolean) {
-    if (upProcessSpinner && downProcessSpinner) {
-        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
-            const result = await Api.get('user/surveyUsers', {
-                surveyId: props.selectedSurveyIdx,
-                name: searchParams.value.name,
-                dept: searchParams.value.dept,
-                gender: searchParams.value.gender
-            });
-
-            rows.value = [];
-
-            result.forEach((userDto: any, idx) => {
-                userDto.sum = 0;
-
-                if (isInit && idx === 0) {
-                    console.log("음?");
-                    userDto.surveyUserResultDtoList.forEach(resultDto => {
-                        columns.value.push({
-                            name: resultDto.category,
-                            label: resultDto.category,
-                            field: resultDto.category,
-                            align: 'left'
-                        })
-                    })
-                }
-
-                userDto.surveyUserResultDtoList.forEach(resultDto => {
-                    userDto[resultDto.category] = resultDto.score;
-                    userDto.sum += resultDto.score;
-                })
-
-                rows.value.push(userDto);
-            });
-        });
-    }
-}
-
-const pagination = ref({
-    // sortBy: 'desc',
-    // descending: false,
+const pageObject = ref({
     page: 1,
-    rowsPerPage: 200
+    max: 0,
+    pagePerSize: 100,
 });
 
 const columns = ref([
@@ -186,18 +140,58 @@ const columns = ref([
     },
 ]);
 
-// TODO num, id 정리가 필요함 num은 row 생성시 만들어주는 col 이고 id 는 db 에 있는 col 이여야 함.
-
 const rows: any = ref([]);
-
-const pageObject = ref({
-    page: 1,
-    max: 0
-});
 
 const selectedRow = ref([]);
 
-search(true);
+function exportRow() {
+//     was 에서 떨궈주자
+    Export.toCsv(rows.value, 'export');
+}
+
+function search(num: number, isInit: boolean) {
+    if (upProcessSpinner && downProcessSpinner) {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+            const result = await Api.get('user/surveyUsers', {
+                surveyId: props.selectedSurveyIdx,
+                name: searchParams.value.name,
+                dept: searchParams.value.dept,
+                gender: searchParams.value.gender,
+                size: pageObject.value.pagePerSize,
+                page: pageObject.value.page - 1
+            });
+
+            rows.value = [];
+
+            result.content.forEach((userDto: any, idx) => {
+                userDto.num = idx + 1;
+                userDto.sum = 0;
+
+                if (isInit && idx === 0) {
+                    userDto.surveyUserResultDtoList.forEach(resultDto => {
+                        columns.value.push({
+                            name: resultDto.category,
+                            label: resultDto.category,
+                            field: resultDto.category,
+                            align: 'left'
+                        })
+                    })
+                }
+
+                userDto.surveyUserResultDtoList.forEach(resultDto => {
+                    userDto[resultDto.category] = resultDto.score;
+                    userDto.sum += resultDto.score;
+                })
+
+                rows.value.push(userDto);
+            });
+
+            pageObject.value.max = result.totalPages;
+        });
+    }
+}
+
+search(1, true);
 
 </script>
 

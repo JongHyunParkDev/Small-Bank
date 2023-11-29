@@ -11,6 +11,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -131,12 +134,16 @@ public class SurveyController {
     }
 
     @GetMapping("/surveyUsers")
-    public List<SurveyUserDto> getSurveyUsers(
+    public Page<SurveyUserDto> getSurveyUsers(
             @RequestParam(value = "surveyId") Long surveyId,
             @RequestParam(value = "name") String name,
             @RequestParam(value = "dept") String dept,
-            @RequestParam(value = "gender", required = false) Boolean gender
+            @RequestParam(value = "gender", required = false) Boolean gender,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        return surveyService.getSurveyUser(surveyId, name, dept, gender);
+        Pageable pageable = PageRequest.of(page, size);
+
+        return surveyService.getSurveyUser(surveyId, name, dept, gender, pageable);
     }
 }
