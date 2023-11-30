@@ -31,13 +31,13 @@
                     class="btn q-mr-sm"
                     color="primary"
                     label="검색"
-                    @click="search(false)"
+                    @click="search(0, false)"
                 />
                 <QBtn
                     color="white"
                     text-color="black"
                     label="export"
-                    @click="exportRow"
+                    @click="exportSearch(0)"
                 />
             </div>
         </div>
@@ -47,6 +47,7 @@
             :rows="rows"
             row-key="id"
             :virtual-scroll="true"
+            :rows-per-page-options="[pageObject.pagePerSize]"
             selection="single"
             :separator="'cell'"
             :hide-selected-banner="true"
@@ -144,9 +145,39 @@ const rows: any = ref([]);
 
 const selectedRow = ref([]);
 
-function exportRow() {
-//     was 에서 떨궈주자
-    Export.toCsv(rows.value, 'export');
+function exportSearch(nowPage = 0) {
+    if (upProcessSpinner && downProcessSpinner) {
+        PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+            const exportRow: any = [];
+
+            const result = await Api.get('user/surveyUsers', {
+                surveyId: props.selectedSurveyIdx,
+                name: searchParams.value.name,
+                dept: searchParams.value.dept,
+                gender: searchParams.value.gender,
+                size: 50000,
+                page: nowPage
+            });
+
+            result.content.forEach((userDto: any, idx) => {
+                userDto.num = idx + 1;
+                userDto.surveyUserResultDtoList.forEach(resultDto => {
+                    userDto[resultDto.category] = resultDto.score;
+                    userDto.sum += resultDto.score;
+                })
+                
+                delete userDto.surveyUserResultDtoList;
+                delete userDto.id;
+
+                exportRow.push(userDto);
+            });
+
+            await Export.toCsv(exportRow, 'export');
+
+            if (result.totalPages > nowPage + 1) 
+                exportSearch(nowPage + 1);
+        });
+    }
 }
 
 function search(num: number, isInit: boolean) {
@@ -221,6 +252,7 @@ search(1, true);
 
     > .table {
         flex: 1;
+        overflow-y: auto;
     }
 
     > .paging {
