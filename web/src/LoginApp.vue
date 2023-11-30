@@ -50,9 +50,7 @@
                     class="login-hr-area"
                 >
                     <div class="login-hr" />
-                    <div class="login-label">
-                        OR
-                    </div>
+                    <div class="login-label">OR</div>
                     <div class="login-hr" />
                 </div>
                 <div
@@ -71,20 +69,19 @@
                     </a>
                     <a
                         class="login-btn"
-                        href="/oauth2/authorization/naver"
+                        href="/oauth2/authorization/kakao"
                     >
                         <img
-                            class="naver-img"
-                            :src="NaverLoginBtnSrc"
-                            alt="Naver Login"
+                            class="kakao-img"
+                            :src="KakaoLoginBtnSrc"
+                            alt="Kakao Login"
                         />
                     </a>
                 </div>
             </div>
-            <div class="footer">
-            </div>
+            <div class="footer"></div>
         </div>
-        <ProcessSpinner v-if="processCount > 0"/>
+        <ProcessSpinner v-if="processCount > 0" />
         <QDialog
             class="join-form-dialog"
             v-model="isVisibleJoinFormDialog"
@@ -94,9 +91,7 @@
                 <QForm @submit="joinSubmit">
                     <QCardSection class="row items-center">
                         <QToolbar>
-                            <QToolbarTitle>
-                                회원 가입
-                            </QToolbarTitle>
+                            <QToolbarTitle> 회원 가입 </QToolbarTitle>
                         </QToolbar>
                         <div class="dialog-content">
                             <QInput
@@ -105,7 +100,9 @@
                                 stack-label
                                 label="이메일"
                                 v-model="joinEmailInput"
-                                :rules="[(val) => validateEmail(val) || '유효한 email 이 아닙니다.']"
+                                :rules="[
+                                    (val) => validateEmail(val) || '유효한 email 이 아닙니다.',
+                                ]"
                             />
                             <QInput
                                 name="password"
@@ -114,7 +111,11 @@
                                 stack-label
                                 label="패스워드"
                                 v-model="joinPasswordInput"
-                                :rules="[(val) => isPasswordValid(val) || '영문자, 숫자 필수이며, 6 ~ 12글자로 사용 가능합니다.']"
+                                :rules="[
+                                    (val) =>
+                                        isPasswordValid(val) ||
+                                        '영문자, 숫자 필수이며, 6 ~ 12글자로 사용 가능합니다.',
+                                ]"
                             />
                             <QInput
                                 name="name"
@@ -122,7 +123,11 @@
                                 stack-label
                                 label="이름"
                                 v-model="joinNameInput"
-                                :rules="[(val) => val.length >= 2 && val.length <= 6 || '이름은 2 ~ 6글자 사용 가능합니다.']"
+                                :rules="[
+                                    (val) =>
+                                        (val.length >= 2 && val.length <= 6) ||
+                                        '이름은 2 ~ 6글자 사용 가능합니다.',
+                                ]"
                             />
                             <QInput
                                 name="phone"
@@ -130,13 +135,15 @@
                                 stack-label
                                 label="전화번호"
                                 v-model="joinPhoneInput"
-                                :rules="[(val) => validatePhone(val) || '010-0000-0000 형식으로 작성해주세요.']"
+                                :rules="[
+                                    (val) =>
+                                        validatePhone(val) ||
+                                        '010-0000-0000 형식으로 작성해주세요.',
+                                ]"
                             />
                         </div>
                     </QCardSection>
-                    <QCardActions
-                        align="right"
-                    >
+                    <QCardActions align="right">
                         <QBtn
                             flat
                             padding="xs lg"
@@ -161,14 +168,14 @@
 <script setup lang="ts">
 import { ref, Ref, watch } from 'vue';
 import LogoSvgSrc from '@/assets/logo/logo.svg';
-import NaverLoginBtnSrc from '@/assets/images/naver_login_btn.png';
+import KakaoLoginBtnSrc from '@/assets/images/kakao_login_btn.png';
 import GoogleLoginBtnSrc from '@/assets/images/google_login_btn.svg';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { useRouter } from 'vue-router';
 import { useErrorStore } from '@/stores/ErrorStore';
-import { useQuasar } from 'quasar'
+import { useQuasar } from 'quasar';
 import { useAuthStore } from '@/stores/AuthStore';
 
 const enableOauth = ref(true);
@@ -201,8 +208,8 @@ function downProcessSpinner() {
 function submit() {
     PROCESS(upProcessSpinner, downProcessSpinner, async () => {
         const formData = new FormData();
-        formData.append("email", email.value);
-        formData.append("pw", password.value);
+        formData.append('email', email.value);
+        formData.append('pw', password.value);
 
         await Api.post('anon/login', formData);
         await authStore.login();
@@ -225,7 +232,7 @@ function joinSubmit() {
 
         $q.notify({
             type: 'positive',
-            message: '정상적으로 회원가입 되었습니다.'
+            message: '정상적으로 회원가입 되었습니다.',
         });
     });
 }
@@ -238,7 +245,7 @@ function clearDialogForm() {
 }
 
 function validateEmail(email: string): boolean {
-  return /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/.test(email);
+    return /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/.test(email);
 }
 
 function isPasswordValid(password: string): boolean {
@@ -265,13 +272,12 @@ function showJoinForm() {
 watch(errorStore.errors, async (newError, oldError) => {
     $q.notify({
         type: 'negative',
-        message: newError[0]
+        message: newError[0],
     });
 });
 </script>
 
 <style lang="scss" scoped>
-
 .login-app {
     position: absolute;
     top: 0;
@@ -287,7 +293,7 @@ watch(errorStore.errors, async (newError, oldError) => {
         height: 300px;
 
         > .logo {
-            filter: drop-shadow(0 0 3px	#4ec525);
+            filter: drop-shadow(0 0 3px #4ec525);
             width: 100%;
             margin-bottom: 50px;
         }
@@ -342,12 +348,19 @@ watch(errorStore.errors, async (newError, oldError) => {
 
             > .login-btns {
                 display: flex;
+                flex-direction: column;
                 > .login-btn {
-                    width: 40px;
                     margin: $spacing-sm;
+                    text-align: center;
 
-                    img {
-                        width: 40px;
+                    > .kakao-img {
+                        width: 200px;
+                        height: 50px;
+                    }
+
+                    > .google-img {
+                        width: 200px;
+                        height: 50px;
                     }
 
                     &:hover {
@@ -370,5 +383,4 @@ watch(errorStore.errors, async (newError, oldError) => {
         width: 100%;
     }
 }
-
 </style>
