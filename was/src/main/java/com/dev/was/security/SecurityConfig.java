@@ -8,20 +8,16 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
@@ -36,55 +32,58 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.httpBasic().disable();
+        http.httpBasic(AbstractHttpConfigurer::disable);
 
-        http.csrf().disable()
-            .cors().disable();
+        http.csrf(AbstractHttpConfigurer::disable)
+            .cors(AbstractHttpConfigurer::disable);
 
         http
-            .authorizeHttpRequests()
-                .requestMatchers(
-                        "/",
+            .authorizeHttpRequests((authz) -> authz
+                    .requestMatchers(
+                            "/",
                             "/api/anon/**",
                             "/index.html",
                             "/favicon.ico",
                             "/icons/**",
                             "/assets/**"
-                        )
-                    .permitAll()
-                .requestMatchers("/api/user/**")
-                    .authenticated() // user 시작하는 uri는 로그인 필수
-                .requestMatchers("/api/admin/**")
-                    .hasRole("ADMIN") // admin 시작하는 uri는 관리자 계정만 접근 가능
-                .anyRequest()
-                    .authenticated(); //나머지 uri는 모든 접근 허용
+                    ).permitAll()
+                    .requestMatchers(
+                            "/api/user/**")
+                    .authenticated() // user 시작하는 url는 로그인 필수
+                    .requestMatchers(
+                            "/api/admin/**")
+                    .hasRole("ADMIN") // admin 시작하는 url는 관리자 계정만 접근 가능
+                    .anyRequest()
+                    .authenticated()); //나머지 url는 모든 접근 허용
 
         http
-            .logout()
-                .logoutUrl("/api/user/logout") // URL mapping for logout
-                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
-                .invalidateHttpSession(true) // Invalidate HTTP session after logout
-                .clearAuthentication(true) // Clear authentication information after logout
-                .permitAll();
+            .logout((logoutConfig) -> logoutConfig
+                    .logoutUrl("/api/user/logout") // URL mapping for logout
+                    .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
+                    .invalidateHttpSession(true) // Invalidate HTTP session after logout
+                    .clearAuthentication(true) // Clear authentication information after logout
+                    .permitAll());
 
         http
-            .formLogin()
-                .usernameParameter("email")
-                .passwordParameter("pw")
-                .loginProcessingUrl("/api/anon/login")
-                .failureHandler(loginFailHandler())
-                .successHandler(formLoginSuccessHandler());
+            .formLogin((formLogin) -> formLogin
+                    .usernameParameter("email")
+                    .passwordParameter("pw")
+                    .loginProcessingUrl("/api/anon/login")
+                    .failureHandler(loginFailHandler())
+                    .successHandler(formLoginSuccessHandler())
+            );
 
         http
-            .oauth2Login()
-                .userInfoEndpoint()//로그인 완료 후 회원 정보 받기
-                .userService(oAuth2MemberService)
-                .and()
-                    .successHandler(oauthLoginSuccessHandler()); //OAuth 로그인이 성공하면 이동할 uri 설정
+            .oauth2Login((oauth) -> oauth
+                    .userInfoEndpoint((userInfo) ->
+                            userInfo.userService(oAuth2MemberService)) //로그인 완료 후 회원 정보 받기
+                    .successHandler(oauthLoginSuccessHandler()) //OAuth 로그인이 성공하면 이동할 uri 설정
+            );
 
         http
-            .exceptionHandling()
-                .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+            .exceptionHandling((exceptionHandling) -> exceptionHandling
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+            );
 
         return http.build();
     }
