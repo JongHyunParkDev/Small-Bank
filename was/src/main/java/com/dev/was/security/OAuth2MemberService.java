@@ -61,6 +61,11 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
                 throw new CustomAuthenticationException(ExceptionCodeEnum.LOGIN_ERROR, e.getMessage());
             }
         }
+        else if (! profileImg.equals(userEntity.getProfileImg())) {
+            userEntity.setProfileImg(profileImg);
+            userRepository.save(userEntity);
+        }
+
         return new PrincipalDetails(userEntity, oAuth2User.getAttributes());
     }
 }
