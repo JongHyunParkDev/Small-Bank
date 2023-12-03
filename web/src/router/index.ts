@@ -18,8 +18,6 @@ import routes from './routes';
  * with the Router instance.
  */
 
-
-
 export default route(function (/* { store, ssrContext } */) {
     const createHistory = process.env.SERVER
         ? createMemoryHistory
@@ -39,31 +37,27 @@ export default route(function (/* { store, ssrContext } */) {
 
     Router.beforeEach(async (to, from, next) => {
         const authStore = useAuthStore();
-        if (! authStore.userInfo) {
+        if (!authStore.userInfo) {
             try {
                 await authStore.login();
-            }
-            catch (err) {
+            } catch (err) {
                 // next({ path: '/login' });
             }
         }
 
-        if (to.matched.some(record => record.meta.isAdmin)) {
+        if (to.matched.some((record) => record.meta.isAdmin)) {
             if (authStore.isAdmin) {
                 next();
-            }
-            else if (authStore.isAuth) {
+            } else if (authStore.isAuth) {
                 next({ path: '/' });
+            } else {
+                next({ path: '/login' });
             }
-            else {
-                next({ path: '/Login' });
-            }
-        }
-        else if (to.matched.some(record => record.meta.isAuth)) {
+        } else if (to.matched.some((record) => record.meta.isAuth)) {
             if (authStore.isAuth) {
                 next();
             } else {
-                next({ path: '/Login' });
+                next({ path: '/login' });
             }
         } else {
             next();

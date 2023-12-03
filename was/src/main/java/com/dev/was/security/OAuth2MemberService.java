@@ -23,7 +23,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
 
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         OAuthUser oauthUser = null;
 
@@ -58,7 +58,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
                 userRepository.save(userEntity);
             }
             catch (Exception e) {
-                throw new CustomAuthenticationException(ExceptionCodeEnum.LOGIN_ERROR, e.getMessage());
+                throw new CustomAuthenticationException(ExceptionCodeEnum.OAUTH_LOGIN_ERROR);
             }
         }
         else if (! profileImg.equals(userEntity.getProfileImg())) {

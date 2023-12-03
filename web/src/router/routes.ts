@@ -2,16 +2,16 @@ import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
     {
-        path: '/Login',
+        path: '/login',
         component: () => import('../LoginApp.vue'),
     },
     {
-        path: '/OauthCallback',
-        component: () => import('../OauthCallback.vue'),
+        path: '/oauthCallback',
+        component: () => import('../oauthCallback.vue'),
     },
     {
-        path: '/Survey/:surveyId',
-        component: () => import('../SurveyApp.vue'),
+        path: '/survey/:surveyId',
+        component: () => import('../surveyApp.vue'),
     },
     {
         path: '/',
@@ -20,25 +20,25 @@ const routes: RouteRecordRaw[] = [
         meta: { isAuth: true },
     },
     {
-        path: '/AccountBook',
+        path: '/accountBook',
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/AccountBookPage.vue') }],
         meta: { isAuth: true },
     },
     {
-        path: '/SurveyForm',
+        path: '/surveyForm',
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/SurveyFormPage.vue') }],
         meta: { isAuth: true },
     },
     {
-        path: '/AccountBookDetail',
+        path: '/accountBookDetail',
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/AccountBookDetailPage.vue') }],
         meta: { isAuth: true },
     },
     {
-        path: '/Arduino',
+        path: '/arduino',
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/ArduinoPage.vue') }],
         meta: { isAuth: true, isAdmin: true },

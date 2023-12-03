@@ -23,6 +23,8 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 @RequiredArgsConstructor
@@ -77,7 +79,8 @@ public class SecurityConfig {
             .oauth2Login((oauth) -> oauth
                     .userInfoEndpoint((userInfo) ->
                             userInfo.userService(oAuth2MemberService)) //로그인 완료 후 회원 정보 받기
-                    .successHandler(oauthLoginSuccessHandler()) //OAuth 로그인이 성공하면 이동할 uri 설정
+                    .successHandler(oauthLoginSuccessHandler())
+                    .failureHandler(loginFailHandler())//OAuth 로그인이 성공하면 이동할 uri 설정
             );
 
         http
@@ -96,7 +99,6 @@ public class SecurityConfig {
         @Override
         public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
             logger.error("login fail handler");
-
             CustomAuthenticationException ce = ((CustomAuthenticationException) exception);
 
             response.setContentType("application/json");
@@ -105,10 +107,17 @@ public class SecurityConfig {
 
             String data = "{\"code\":" + ce.getCode() + ",\"message\":\"" + ce.getMessage()  + "\"}";
 
-            PrintWriter out = response.getWriter();
-            out.print(data);
-            out.flush();
-            out.close();
+            if (request.getRequestURI().contains("oauth")) {
+                String redirectUrl = "/#/login?error=" +
+                        URLEncoder.encode(data, StandardCharsets.UTF_8.toString());
+                response.sendRedirect(redirectUrl);
+            }
+            else {
+                PrintWriter out = response.getWriter();
+                out.print(data);
+                out.flush();
+                out.close();
+            }
         }
     }
 

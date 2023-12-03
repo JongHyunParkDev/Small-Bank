@@ -171,6 +171,7 @@ import LogoSvgSrc from '@/assets/logo/logo.svg';
 import KakaoLoginBtnSrc from '@/assets/images/kakao_login_btn.png';
 import GoogleLoginBtnSrc from '@/assets/images/google_login_btn.svg';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
+import { ApiMessage } from '@/lib/Errors';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { useRouter } from 'vue-router';
@@ -269,11 +270,39 @@ function showJoinForm() {
     isVisibleJoinFormDialog.value = true;
 }
 
-watch(errorStore.errors, async (newError, oldError) => {
+function showError(errorMsg: string) {
     $q.notify({
         type: 'negative',
-        message: newError[0],
+        message: errorMsg,
     });
+}
+
+// OAUTH 를 실패한 경우에만
+function checkUrlFragment() {
+    PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+        const fragment = window.location.hash;
+        const decodedFragment = decodeURIComponent(fragment);
+
+        if (decodedFragment.includes('?error=')) {
+            try {
+                const errorJson = JSON.parse(decodedFragment.replace('#/login?error=', ''));
+
+                const errorCode = errorJson.code;
+                let errorMessage = `(${errorJson.message})`;
+                if (ApiMessage[errorCode]) errorMessage = `${ApiMessage[errorCode]}` + errorMessage;
+
+                showError(`[${errorCode}] ${errorMessage}`);
+            } catch (error: any) {
+                showError(error.message);
+            }
+        }
+    });
+}
+
+checkUrlFragment();
+
+watch(errorStore.errors, async (newError, oldError) => {
+    showError(newError[0]);
 });
 </script>
 
