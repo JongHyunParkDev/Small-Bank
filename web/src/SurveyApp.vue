@@ -48,7 +48,7 @@
             </div>
         </div>
         <QDialog
-            class="is-form-dialog"
+            class="form-dialog"
             v-model="isFormDialog"
             persistent
         >
@@ -57,7 +57,6 @@
                     <QCardSection class="bg-primary">
                         <div class="text-h6 text-white">정보 입력</div>
                     </QCardSection>
-
                     <QCardSection class="q-pa-md content">
                         <QInput
                             class="q-mb-sm"
@@ -398,9 +397,9 @@ onMounted(() => {
     }
 }
 
-.is-form-dialog {
+.form-dialog {
     .form-card {
-        min-width: 300px;
+        min-width: 350px;
     }
 }
 </style>

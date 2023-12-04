@@ -65,11 +65,11 @@
             </QFab>
         </QPageSticky>
         <QDialog
-            class="survey-add-dialog"
+            class="form-dialog"
             v-model="addDialogOption.visible"
             persistent
         >
-            <QCard class="survey-card">
+            <QCard class="form-card">
                 <QForm @submit="addSurvey">
                     <QCardSection class="bg-primary">
                         <div class="text-h6 text-white">설문조사 추가하기</div>
@@ -167,11 +167,11 @@
             </QCard>
         </QDialog>
         <QDialog
-            class="survey-modify-dialog"
+            class="form-dialog"
             v-model="modifyDialogOption.visible"
             persistent
         >
-            <QCard class="survey-card">
+            <QCard class="form-card">
                 <QForm @submit="modifySurvey">
                     <QCardSection class="bg-primary">
                         <div class="text-h6 text-white">설문조사 변경하기</div>
@@ -544,9 +544,8 @@ function showModifyDialog() {
     }
 }
 
-.survey-add-dialog,
-.survey-modify-dialog {
-    .survey-card {
+.form-dialog {
+    .form-card {
         min-width: 350px;
     }
 }

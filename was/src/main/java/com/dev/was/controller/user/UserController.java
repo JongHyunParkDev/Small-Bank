@@ -5,7 +5,6 @@ import com.dev.was.security.AuthenticationUtil;
 import com.dev.was.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,14 +14,14 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/userinfo")
+    @GetMapping("/userInfo")
     public UserDto getUserInfo() {
         Long id = AuthenticationUtil.getCurrentId();
 
         return userService.getUserInfo(id);
     }
 
-    @PutMapping("/userinfo")
+    @PutMapping("/userInfo")
     public void updateUserInfo(@RequestBody @Valid RequestUpdateUserDto requestUpdateUserDto) {
         Long id = AuthenticationUtil.getCurrentId();
 

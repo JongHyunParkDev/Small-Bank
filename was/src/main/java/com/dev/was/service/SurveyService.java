@@ -91,15 +91,15 @@ public class SurveyService {
             LocalDate startDate,
             LocalDate endDate
     ) {
-        SurveyEntity surveyEntity = surveyRepository.findById(id)
+        SurveyEntity saveSurveyEntity = surveyRepository.findById(id)
                 .orElseThrow(() -> new ApiException(ExceptionCodeEnum.DB_ERROR, "Not Found Survey Id"));
 
-        surveyEntity.setTitle(title);
-        surveyEntity.setStartDate(startDate);
-        surveyEntity.setEndDate(endDate);
+        saveSurveyEntity.setTitle(title);
+        saveSurveyEntity.setStartDate(startDate);
+        saveSurveyEntity.setEndDate(endDate);
 
-        SurveyEntity resultSurveyEntity = surveyRepository.save(surveyEntity);
-        return new SurveyDto(resultSurveyEntity);
+        SurveyEntity surveyEntity = surveyRepository.save(saveSurveyEntity);
+        return new SurveyDto(surveyEntity);
     }
 
     @Transactional

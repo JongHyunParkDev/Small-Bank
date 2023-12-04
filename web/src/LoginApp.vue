@@ -83,65 +83,60 @@
         </div>
         <ProcessSpinner v-if="processCount > 0" />
         <QDialog
-            class="join-form-dialog"
+            class="form-dialog"
             v-model="isVisibleJoinFormDialog"
             persistent
         >
-            <QCard class="join-form-card">
+            <QCard class="form-card">
                 <QForm @submit="joinSubmit">
-                    <QCardSection class="row items-center">
-                        <QToolbar>
-                            <QToolbarTitle> 회원 가입 </QToolbarTitle>
-                        </QToolbar>
-                        <div class="dialog-content">
-                            <QInput
-                                name="email"
-                                outlined
-                                stack-label
-                                label="이메일"
-                                v-model="joinEmailInput"
-                                :rules="[
-                                    (val) => validateEmail(val) || '유효한 email 이 아닙니다.',
-                                ]"
-                            />
-                            <QInput
-                                name="password"
-                                type="password"
-                                outlined
-                                stack-label
-                                label="패스워드"
-                                v-model="joinPasswordInput"
-                                :rules="[
-                                    (val) =>
-                                        isPasswordValid(val) ||
-                                        '영문자, 숫자 필수이며, 6 ~ 12글자로 사용 가능합니다.',
-                                ]"
-                            />
-                            <QInput
-                                name="name"
-                                outlined
-                                stack-label
-                                label="이름"
-                                v-model="joinNameInput"
-                                :rules="[
-                                    (val) =>
-                                        (val.length >= 2 && val.length <= 6) ||
-                                        '이름은 2 ~ 6글자 사용 가능합니다.',
-                                ]"
-                            />
-                            <QInput
-                                name="phone"
-                                outlined
-                                stack-label
-                                label="전화번호"
-                                v-model="joinPhoneInput"
-                                :rules="[
-                                    (val) =>
-                                        validatePhone(val) ||
-                                        '010-0000-0000 형식으로 작성해주세요.',
-                                ]"
-                            />
-                        </div>
+                    <QCardSection class="bg-primary">
+                        <div class="text-h6 text-white">회원 가입</div>
+                    </QCardSection>
+                    <QCardSection class="q-pa-md content">
+                        <QInput
+                            name="email"
+                            outlined
+                            stack-label
+                            label="이메일"
+                            v-model="joinEmailInput"
+                            :rules="[(val) => validateEmail(val) || '유효한 email 이 아닙니다.']"
+                        />
+                        <QInput
+                            name="password"
+                            type="password"
+                            outlined
+                            stack-label
+                            label="패스워드"
+                            v-model="joinPasswordInput"
+                            :rules="[
+                                (val) =>
+                                    isPasswordValid(val) ||
+                                    '영문자, 숫자 필수이며, 6 ~ 12글자로 사용 가능합니다.',
+                            ]"
+                        />
+                        <QInput
+                            name="name"
+                            outlined
+                            stack-label
+                            label="이름"
+                            v-model="joinNameInput"
+                            :rules="[
+                                (val) =>
+                                    (val.length >= 2 && val.length <= 6) ||
+                                    '이름은 2 ~ 6글자 사용 가능합니다.',
+                            ]"
+                        />
+                        <QInput
+                            name="phone"
+                            outlined
+                            stack-label
+                            label="전화번호"
+                            v-model="joinPhoneInput"
+                            :rules="[
+                                (val) =>
+                                    validatePhone(val) || '010-0000-0000 형식으로 작성해주세요.',
+                            ]"
+                        />
                     </QCardSection>
                     <QCardActions align="right">
                         <QBtn
@@ -405,11 +400,9 @@ watch(errorStore.errors, async (newError, oldError) => {
     }
 }
 
-.join-form-dialog {
-    .dialog-content {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
+.form-dialog {
+    .form-card {
+        min-width: 350px;
     }
 }
 </style>

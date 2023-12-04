@@ -17,7 +17,7 @@ export const useAuthStore = defineStore({
     },
     actions: {
         async login() {
-            const userInfo: UserInfo = await Api.get('user/userinfo');
+            const userInfo: UserInfo = await Api.get('user/userInfo');
             if (userInfo) {
                 this.userInfo = userInfo;
             }
@@ -25,6 +25,6 @@ export const useAuthStore = defineStore({
         async logout() {
             await Api.get('user/logout');
             this.userInfo = undefined;
-        }
-    }
+        },
+    },
 });
