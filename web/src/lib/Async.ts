@@ -3,20 +3,15 @@ import { ApiError } from '@/lib/Errors';
 
 const errorStore = useErrorStore();
 
-export async function PROCESS(firstProcess: () => void, lastProcess: () => void, func: () => void)
-{
+export async function PROCESS(firstProcess: () => void, lastProcess: () => void, func: () => void) {
     firstProcess();
     try {
         return await func();
-    }
-    catch (error: unknown) {
-        if (error instanceof ApiError)
-            errorStore.addError(`[${error.code}] ${error.message}` );
-        
+    } catch (error: unknown) {
+        if (error instanceof ApiError) errorStore.addError(`[${error.code}] ${error.message}`);
+
         return Promise.reject(error);
-    }
-    finally {
+    } finally {
         lastProcess();
     }
 }
-

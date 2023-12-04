@@ -18,8 +18,6 @@ import routes from './routes';
  * with the Router instance.
  */
 
-
-
 export default route(function (/* { store, ssrContext } */) {
     const createHistory = process.env.SERVER
         ? createMemoryHistory
@@ -35,6 +33,35 @@ export default route(function (/* { store, ssrContext } */) {
         // quasar.conf.js -> build -> vueRouterMode
         // quasar.conf.js -> build -> publicPath
         history: createHistory(process.env.VUE_ROUTER_BASE),
+    });
+
+    Router.beforeEach(async (to, from, next) => {
+        const authStore = useAuthStore();
+        if (!authStore.userInfo) {
+            try {
+                await authStore.login();
+            } catch (err) {
+                // next({ path: '/login' });
+            }
+        }
+
+        if (to.matched.some((record) => record.meta.isAdmin)) {
+            if (authStore.isAdmin) {
+                next();
+            } else if (authStore.isAuth) {
+                next({ path: '/' });
+            } else {
+                next({ path: '/login' });
+            }
+        } else if (to.matched.some((record) => record.meta.isAuth)) {
+            if (authStore.isAuth) {
+                next();
+            } else {
+                next({ path: '/login' });
+            }
+        } else {
+            next();
+        }
     });
 
     return Router;

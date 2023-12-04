@@ -77,7 +77,7 @@ module.exports = configure(function (/* ctx */) {
             // ]
             alias: {
                 '@': path.join(__dirname, 'src')
-              }
+            }
         },
 
         // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
@@ -90,12 +90,6 @@ module.exports = configure(function (/* ctx */) {
                     ws: true,
                     changeOrigin: true
                 },
-                '/oauth2/authorization/naver' : {
-                    target: 'https://localhost',
-                    secure: false,
-                    ws: true,
-                    changeOrigin: true
-                }
             },
             https: true
         },
@@ -110,7 +104,7 @@ module.exports = configure(function (/* ctx */) {
             config: {
                 notify: {
 
-                } /* look at QuasarConfOptions from the API card */ 
+                } /* look at QuasarConfOptions from the API card */
             },
             // iconSet: 'material-icons', // Quasar icon set
             // lang: 'en-US', // Quasar language pack
@@ -122,7 +116,7 @@ module.exports = configure(function (/* ctx */) {
             // components: [],
             // directives: [],
 
-            
+
         },
 
         // animations: 'all', // --- includes all animations

@@ -57,20 +57,20 @@
         >
             <QTabPanel name="chart">
                 <div
-                    class="chart-container" 
+                    class="chart-container"
                     ref="chartContainer"
                 >
                 </div>
             </QTabPanel>
             <QTabPanel name="list">
                 <div
-                    class="list list-card" 
+                    class="list list-card"
                 >
                 </div>
             </QTabPanel>
             <QTabPanel name="listDetail">
                 <div
-                    class="listDetail list-card" 
+                    class="listDetail list-card"
                 >
                 </div>
             </QTabPanel>
@@ -92,7 +92,7 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import { ref, Ref, inject, onMounted } from 'vue';
+import { ref, Ref, inject, onMounted, nextTick } from 'vue';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { dateToApiDateStr, apiDateToDateStr } from '@/lib/DateUtil';
@@ -116,13 +116,10 @@ drilldown(Highcharts);
 
 const selectedTab = ref('chart');
 
-function selectTab(tab) {
+async function selectTab(tab) {
     if (tab === 'chart') {
-        // id 로 해야할 지도...?
-        if (chartContainer.value) {
-            chart.value = Highcharts.chart(chartContainer.value, chartOptions, undefined);
-            getAccounts();
-        }
+        await nextTick();
+        chartUpdate();
     }
 }
 
@@ -143,7 +140,7 @@ let chartOptions: Highcharts.Options = {
         {
             type: 'pie',
             name: 'Accounts',
-            data: [] as Array<ChartData> 
+            data: [] as Array<ChartData>
         }
     ],
     accessibility: {},
@@ -192,6 +189,13 @@ function updateMonth(value: string | number | null) {
     now.value.setMonth(value - 1);
 
     getAccounts();
+}
+
+function chartUpdate() {
+    if (chartContainer.value) {
+        chart.value = Highcharts.chart(chartContainer.value, chartOptions, undefined);
+        getAccounts();
+    }
 }
 
 function getAccounts() {
@@ -270,12 +274,11 @@ function getAccounts() {
                                 value: 10
                             },
                             formatter: function (): string | undefined {
-                                if (this.y)
-                                    return `<span style="color:${this.color}; text-decoration:'none'">` +
-                                        `Category: ${this.key} <br>` +
-                                        `Value: ${this.y.toLocaleString()}원 <br>` +
-                                        `Percent: ${this.percentage.toFixed(2)}% <br>` +
-                                        `</span>`;
+                                return `<span style="color:${this.color}; text-decoration:'none'">` +
+                                    `Category: ${this.key} <br>` +
+                                    `Value: ${this.y.toLocaleString()}원 <br>` +
+                                    `Percent: ${this.percentage.toFixed(2)}% <br>` +
+                                    `</span>`;
                             }
                         }
                     }
@@ -283,10 +286,9 @@ function getAccounts() {
                 tooltip: {
                     headerFormat: '<span>{series.name}</span><br>',
                     formatter: function (): string | undefined {
-                        if (this.y && this.total)
-                            return `Category: <span style="color:${this.color}">${this.key}</span><br/>` +
-                                `Value: <b>${this.y.toLocaleString()}원</b><br />` +
-                                `Total: <b>${this.total.toLocaleString()}원</b>`
+                        return `Category: <span style="color:${this.color}">${this.key}</span><br/>` +
+                            `Value: <b>${this.y.toLocaleString()}원</b><br />` +
+                            `Total: <b>${this.total.toLocaleString()}원</b>`
                     }
                 },
                 series: [
@@ -311,10 +313,7 @@ function getAccounts() {
 }
 
 onMounted(() => {
-    if (chartContainer.value) {
-        chart.value = Highcharts.chart(chartContainer.value, chartOptions, undefined);
-        getAccounts();
-    }
+    chartUpdate();
 })
 </script>
 
@@ -363,17 +362,16 @@ onMounted(() => {
         margin: 0px auto;
     }
 
-    > .chart-container {
-        flex: 1;
-        margin: 5%;
-    }
-
-    > .list-card {
-        margin-top: $spacing-lg;
-    }
-
     > .tab-panels {
         flex: 1;
+
+        .chart-container {
+            height: 100%;
+        }
+
+        .list-card {
+            margin-top: $spacing-lg;
+        }
     }
     > .tabs {
         background-color: $naver-bs;

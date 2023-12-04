@@ -26,9 +26,21 @@ $warning: #f2c037;
 
 // base https://quasar.dev/style/color-palette
 // custom
+$naver-mlt: #9afcc6;
+$naver-blt: #4ffa9c;
 $naver-lt: #04f972;
 $naver-bs: #03c75b;
 $naver-dk: #029544;
+$naver-bdk: #01682f;
+$naver-mdk: #003b1b;
+
+
+.bg-naver-bs {
+    background: $naver-bs !important;
+}
+.bg-naver-dk {
+    background: $naver-dk !important;
+}
 
 $spacing-tn: 3px;
 $spacing-sm: 5px;

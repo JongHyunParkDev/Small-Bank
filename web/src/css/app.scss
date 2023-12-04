@@ -20,6 +20,22 @@ body {
     font-family: 'NanumBarunGothic', sans-serif !important;
 }
 
+.sppd-table {
+    thead {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+
+        background: $naver-dk;
+        color: white;
+    }
+
+    th {
+        font-weight: bold;
+        font-size: 1.1em !important;
+    }
+}
+
 ::-webkit-scrollbar {
     width: 6px;               /* width of the entire scrollbar */
     height: 6px;

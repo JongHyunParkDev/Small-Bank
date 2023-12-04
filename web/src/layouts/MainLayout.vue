@@ -1,6 +1,9 @@
 <template>
     <QLayout view="hHh lpR fFf">
-        <QHeader elevated class="header">
+        <QHeader
+            elevated
+            class="header"
+        >
             <QToolbar>
                 <QBtn
                     flat
@@ -26,7 +29,7 @@
                         @click="showUpdateForm"
                     >
                         <QAvatar>
-                            <img :src="userInfo?.profileImg">
+                            <img :src="userInfo?.profileImg" />
                         </QAvatar>
                         <div class="name">
                             {{ userInfo?.name }}
@@ -63,9 +66,7 @@
                 <QForm @submit="updateSubmit">
                     <QCardSection class="row items-center">
                         <QToolbar>
-                            <QToolbarTitle>
-                                사용자 정보 변경
-                            </QToolbarTitle>
+                            <QToolbarTitle> 사용자 정보 변경 </QToolbarTitle>
                         </QToolbar>
                         <div class="dialog-content">
                             <QInput
@@ -84,7 +85,11 @@
                                 stack-label
                                 label="패스워드 (공백인 경우 변경하지 않습니다.)"
                                 v-model="updatePasswordInput"
-                                :rules="[(val) => isPasswordValid(val) || '영문자, 숫자 필수이며, 6 ~ 12글자로 사용 가능합니다.']"
+                                :rules="[
+                                    (val) =>
+                                        isPasswordValid(val) ||
+                                        '영문자, 숫자 필수이며, 6 ~ 12글자로 사용 가능합니다.',
+                                ]"
                             />
                             <QInput
                                 name="name"
@@ -92,7 +97,11 @@
                                 stack-label
                                 label="이름"
                                 v-model="updateNameInput"
-                                :rules="[(val) => val.length >= 2 && val.length <= 6 || '이름은 2 ~ 6글자 사용 가능합니다.']"
+                                :rules="[
+                                    (val) =>
+                                        (val.length >= 2 && val.length <= 6) ||
+                                        '이름은 2 ~ 6글자 사용 가능합니다.',
+                                ]"
                             />
                             <QInput
                                 name="phone"
@@ -100,13 +109,15 @@
                                 stack-label
                                 label="전화번호"
                                 v-model="updatePhoneInput"
-                                :rules="[(val) => validatePhone(val) || '010-0000-0000 형식으로 작성해주세요.']"
+                                :rules="[
+                                    (val) =>
+                                        validatePhone(val) ||
+                                        '010-0000-0000 형식으로 작성해주세요.',
+                                ]"
                             />
                         </div>
                     </QCardSection>
-                    <QCardActions
-                        align="right"
-                    >
+                    <QCardActions align="right">
                         <QBtn
                             flat
                             padding="xs lg"
@@ -125,7 +136,7 @@
                 </QForm>
             </QCard>
         </QDialog>
-        <ProcessSpinner v-if="processCount > 0"/>
+        <ProcessSpinner v-if="processCount > 0" />
     </QLayout>
 </template>
 
@@ -136,7 +147,7 @@ import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useErrorStore } from '@/stores/ErrorStore';
 import { Api } from '@/lib/Api';
-import { useQuasar } from 'quasar'
+import { useQuasar } from 'quasar';
 import { PROCESS } from '@/lib/Async';
 import { UserInfo } from '@/types/UserTypes';
 import { useRouter } from 'vue-router';
@@ -190,13 +201,9 @@ function updateSubmit() {
         isVisibleUpdateFormDialog.value = false;
         // 성공시 dialog
 
-        await authStore.login();
-        userInfo.value = authStore.userInfo;
-        updateUserInfoForm();
-
         $q.notify({
             type: 'positive',
-            message: '정상적으로 사용자 정보가 업데이트 되었습니다.'
+            message: '정상적으로 사용자 정보가 업데이트 되었습니다.',
         });
     });
 }
@@ -229,14 +236,18 @@ function validatePhone(phone: string): boolean {
     return checkPhone;
 }
 
-function showUpdateForm() {
+async function showUpdateForm() {
     isVisibleUpdateFormDialog.value = true;
+
+    await authStore.login();
+    userInfo.value = authStore.userInfo;
+    updateUserInfoForm();
 }
 
 watch(errorStore.errors, async (newError) => {
     $q.notify({
         type: 'negative',
-        message: newError[0]
+        message: newError[0],
     });
 });
 
