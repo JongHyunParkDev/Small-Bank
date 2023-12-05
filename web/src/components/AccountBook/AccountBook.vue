@@ -352,7 +352,7 @@ function deleteHistory() {
         PROCESS(upProcessSpinner, downProcessSpinner, async () => {
             const account = sortAccountArr.value[selectedIdx.value];
 
-            await Api.delete('user/accounts', {
+            await Api.delete('user/account', {
                 id: account.id,
             });
 

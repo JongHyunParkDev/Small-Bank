@@ -17,7 +17,7 @@ public class AnonSurveyController {
     private final SurveyService surveyService;
 
     @GetMapping("/survey")
-    public SurveyDto getSurveys(@RequestParam(value = "surveyId") Long surveyId) {
+    public SurveyDto getSurvey(@RequestParam(value = "surveyId") Long surveyId) {
         return surveyService.getSurvey(surveyId);
     }
 

@@ -1,6 +1,7 @@
 package com.dev.was.dto;
 
 
+import com.dev.was.entity.SurveyUserEntity;
 import lombok.Builder;
 import lombok.Data;
 
@@ -24,5 +25,17 @@ public class SurveyUserDto {
         this.gender = gender;
         this.dept = dept;
         this.surveyUserResultDtoList = surveyUserResultDtoList;
+    }
+
+    public SurveyUserDto(SurveyUserEntity surveyUserEntity) {
+        this.id = surveyUserEntity.getId();
+        this.name = surveyUserEntity.getName();
+        this.birthDay = surveyUserEntity.getBirthDay();
+        this.gender = surveyUserEntity.isGender();
+        this.dept = surveyUserEntity.getDept();
+        this.surveyUserResultDtoList = surveyUserEntity.getSurveyUserResultEntityList()
+                .stream()
+                .map(SurveyUserResultDto::new)
+                .toList();
     }
 }

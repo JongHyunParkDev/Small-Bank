@@ -184,24 +184,22 @@ const formInput = ref({
 
 function submit() {
     PROCESS(upProcessSpinner, downProcessSpinner, async () => {
-        try {
-            const list = createSummary();
-            await Api.post('anon/surveyResult', {
-                surveyId: surveyId,
-                name: formInput.value.name,
-                birthDay: datestrToApiDateStr(formInput.value.birth),
-                dept: formInput.value.dept,
-                gender: formInput.value.gender,
-                list: list,
-            });
+        const list = createSummary();
+        await Api.post('anon/surveyResult', {
+            surveyId: surveyId,
+            name: formInput.value.name,
+            birthDay: datestrToApiDateStr(formInput.value.birth),
+            dept: formInput.value.dept,
+            gender: formInput.value.gender,
+            list: list,
+        });
 
-            isFormDialog.value = false;
+        isFormDialog.value = false;
 
-            $q.notify({
-                type: 'positive',
-                message: '제출이 완료되었습니다.',
-            });
-        } catch (e) {}
+        $q.notify({
+            type: 'positive',
+            message: '제출이 완료되었습니다.',
+        });
     });
 }
 

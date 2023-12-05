@@ -212,7 +212,7 @@ function getAccounts() {
         PROCESS(upProcessSpinner, downProcessSpinner, async () => {
             if (chart.value) chart.value.drillUp();
 
-            const dayAccountList: Array<DayAccount> = await Api.get('user/accounts', {
+            const dayAccountList: Array<DayAccount> = await Api.get('user/account', {
                 startDate: startDate,
                 endDate: endDate,
             });

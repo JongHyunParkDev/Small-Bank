@@ -41,7 +41,7 @@ public class AdminSerialController {
         }
     }
 
-    private SerialDto createSerialDto() throws  IOException{
+    private SerialDto createSerialDto() throws IOException {
         dataGoService.refreshBusListByStation(null);
 
         return SerialDto

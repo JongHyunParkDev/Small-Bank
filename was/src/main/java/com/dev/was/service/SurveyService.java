@@ -55,11 +55,12 @@ public class SurveyService {
             throw new ApiException(ExceptionCodeEnum.UNAVAILABLE_DATA, "Survey Detail is empty");
 
         SurveyDto surveyDto = new SurveyDto(surveyEntity);
-        surveyDto.setSurveyDetailDtoList(surveyEntity
+        surveyDto.setSurveyDetailDtoList(
+            surveyEntity
                 .getSurveyDetailEntityList()
-                .stream()
-                .map(SurveyDetailDto::new)
-                .collect(Collectors.toList())
+                    .stream()
+                    .map(SurveyDetailDto::new)
+                    .collect(Collectors.toList())
                 );
 
         return surveyDto;
@@ -217,12 +218,15 @@ public class SurveyService {
                 .build();
 
         List<SurveyUserResultEntity> surveyUserResultEntityList = new ArrayList<>();
+
         list.forEach(map -> {
-            surveyUserResultEntityList.add(SurveyUserResultEntity.builder()
+            surveyUserResultEntityList.add(
+                SurveyUserResultEntity.builder()
                     .category((String) map.get("category"))
                     .score(((Integer)map.get("value")).longValue())
                     .surveyUserEntity(surveyUserEntity)
-                    .build());
+                    .build()
+            );
         });
 
         surveyUserEntity.setSurveyUserResultEntityList(surveyUserResultEntityList);
@@ -242,16 +246,7 @@ public class SurveyService {
             surveyUserEntity.getSurveyUserResultEntityList().forEach(surveyUserResultEntity ->
                     surveyUserResultDtoList.add(new SurveyUserResultDto(surveyUserResultEntity)));
 
-            surveyUserDtoList.add(
-                    SurveyUserDto.builder()
-                            .id(surveyUserEntity.getId())
-                            .name(surveyUserEntity.getName())
-                            .dept(surveyUserEntity.getDept())
-                            .gender(surveyUserEntity.isGender())
-                            .birthDay(surveyUserEntity.getBirthDay())
-                            .surveyUserResultDtoList(surveyUserResultDtoList)
-                            .build()
-            );
+            surveyUserDtoList.add(new SurveyUserDto(surveyUserEntity));
         });
 
         return new PageImpl<>(surveyUserDtoList, pageable, surveyUserEntityList.getTotalElements());
