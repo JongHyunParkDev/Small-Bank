@@ -18,15 +18,13 @@ public class WeatherDataVo {
 
     @Data
     public static class Header {
-        private String resultCode; // 결과 코드
-        private String resultMsg; // 결과 메시지
+        private String resultCode;
+        private String resultMsg;
     }
 
     @Data
     public static class Body {
-        // items 객체
         private Items items;
-        // numOfRows, pageNo, totalCount
         private int numOfRows;
         private int pageNo;
         private int totalCount;

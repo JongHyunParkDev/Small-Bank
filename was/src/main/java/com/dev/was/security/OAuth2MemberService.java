@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        OAuthUser oauthUser = null;
+        OAuthUser oauthUser;
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
@@ -42,9 +43,10 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         String email = oauthUser.getEmail();
         String profileImg = oauthUser.getProfileImage();
         String role = "ROLE_USER"; // 일반 유저
+
         UserEntity userEntity = userRepository.findByUserId(userId);
 
-        if (userEntity == null) { // 찾지 못했다면
+        if (userEntity == null) {
             try {
                 userEntity = UserEntity.builder()
                         .userId(userId)

@@ -167,9 +167,6 @@ public class SurveyService {
 
             surveyDetailEntity = surveyDetailRepository.save(surveyDetailEntity);
 
-//            surveyEntity.getSurveyDetailEntityList().add(surveyDetailEntity);
-//
-//            surveyRepository.save(surveyEntity);
             return new SurveyDetailDto(surveyDetailEntity);
         }
         else {

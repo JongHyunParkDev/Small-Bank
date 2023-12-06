@@ -51,19 +51,19 @@ public class SecurityConfig {
                     ).permitAll()
                     .requestMatchers(
                             "/api/user/**")
-                    .authenticated() // user 시작하는 url는 로그인 필수
+                    .authenticated()
                     .requestMatchers(
                             "/api/admin/**")
-                    .hasRole("ADMIN") // admin 시작하는 url는 관리자 계정만 접근 가능
+                    .hasRole("ADMIN")
                     .anyRequest()
-                    .authenticated()); //나머지 url는 모든 접근 허용
+                    .authenticated());
 
         http
             .logout((logoutConfig) -> logoutConfig
-                    .logoutUrl("/api/user/logout") // URL mapping for logout
+                    .logoutUrl("/api/user/logout")
                     .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
-                    .invalidateHttpSession(true) // Invalidate HTTP session after logout
-                    .clearAuthentication(true) // Clear authentication information after logout
+                    .invalidateHttpSession(true)
+                    .clearAuthentication(true)
                     .permitAll());
 
         http
@@ -71,16 +71,16 @@ public class SecurityConfig {
                     .usernameParameter("email")
                     .passwordParameter("pw")
                     .loginProcessingUrl("/api/anon/login")
-                    .failureHandler(loginFailHandler())
                     .successHandler(formLoginSuccessHandler())
+                    .failureHandler(loginFailHandler())
             );
 
         http
             .oauth2Login((oauth) -> oauth
                     .userInfoEndpoint((userInfo) ->
-                            userInfo.userService(oAuth2MemberService)) //로그인 완료 후 회원 정보 받기
+                            userInfo.userService(oAuth2MemberService))
                     .successHandler(oauthLoginSuccessHandler())
-                    .failureHandler(loginFailHandler())//OAuth 로그인이 성공하면 이동할 uri 설정
+                    .failureHandler(loginFailHandler())
             );
 
         http
@@ -107,6 +107,7 @@ public class SecurityConfig {
 
             String data = "{\"code\":" + ce.getCode() + ",\"message\":\"" + ce.getMessage()  + "\"}";
 
+            // /oauth2/authorization/{domain}
             if (request.getRequestURI().contains("oauth")) {
                 String redirectUrl = "/#/login?error=" +
                         URLEncoder.encode(data, StandardCharsets.UTF_8.toString());
@@ -156,7 +157,6 @@ public class SecurityConfig {
                 String sessionId = session.getId();
                 String userId = auth.getName();
                 String oauthPostfixPath = "/#/oauthCallback";
-                // 이미 로그인 된 상황임.
 
                 String url = request.getScheme() + "://" + request.getServerName() + oauthPostfixPath;
                 response.sendRedirect(url);

@@ -1,11 +1,9 @@
 package com.dev.was.util;
 
-public class RegxPatterns
-{
-    private RegxPatterns() {
-        throw new IllegalStateException("Utility class");
-    }
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
+public class RegxPatterns {
     /**
      * 공백 비허용
      */

@@ -21,9 +21,9 @@ import java.util.List;
 public class SurveyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; //기본키
+    private Long id;
     @Column(nullable = false)
-    private Long userId; // userEntity id
+    private Long userId;
 
     @Column(nullable = false)
     private String title;

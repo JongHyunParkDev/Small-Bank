@@ -2,7 +2,7 @@ package com.dev.was.oauth2;
 
 import java.util.Map;
 
-public class KakaoUser implements OAuthUser{
+public class KakaoUser implements OAuthUser {
 
     public KakaoUser(Map<String, Object> attributes) {
         this.attributes = attributes;

@@ -18,9 +18,9 @@ import java.time.LocalDateTime;
 public class AccountEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; //기본키
+    private Long id;
     @Column(nullable = false)
-    private Long userId; // userEntity id
+    private Long userId;
     @Column(nullable = false)
     private LocalDate date;
     @Column(nullable = false)
