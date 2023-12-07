@@ -237,7 +237,7 @@ init();
 function init() {
     if (upProcessSpinner && downProcessSpinner) {
         PROCESS(upProcessSpinner, downProcessSpinner, async () => {
-            const result: Array<SurveyDetail> = await Api.get('user/surveyDetails', {
+            const result: Array<SurveyDetail> = await Api.get('user/surveyDetail', {
                 surveyId: props.selectedSurveyIdx,
             });
             result.forEach((el, idx) => {

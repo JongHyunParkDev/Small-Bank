@@ -163,8 +163,6 @@ public class SurveyService {
                     .surveyEntity(surveyEntity)
                     .build();
 
-            surveyDetailEntity.setSurveyEntity(surveyEntity);
-
             surveyDetailEntity = surveyDetailRepository.save(surveyDetailEntity);
 
             return new SurveyDetailDto(surveyDetailEntity);
@@ -180,10 +178,10 @@ public class SurveyService {
             String category,
             Boolean isSort
     ) {
-        Optional<SurveyDetailEntity> surveyEntityDeOptional = surveyDetailRepository.findById(surveyDetailId);
+        Optional<SurveyDetailEntity> surveyDetailEntityOptional = surveyDetailRepository.findById(surveyDetailId);
 
-        if (surveyEntityDeOptional.isPresent()) {
-            SurveyDetailEntity surveyDetailEntity = surveyEntityDeOptional.get();
+        if (surveyDetailEntityOptional.isPresent()) {
+            SurveyDetailEntity surveyDetailEntity = surveyDetailEntityOptional.get();
 
             surveyDetailEntity.setContent(content);
             surveyDetailEntity.setCategory(category);

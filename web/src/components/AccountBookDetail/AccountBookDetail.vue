@@ -19,9 +19,7 @@
                 @update:model-value="updateYear"
             >
                 <template v-slot:append>
-                    <span class="input-append">
-                        년
-                    </span>
+                    <span class="input-append"> 년 </span>
                 </template>
             </QInput>
             <QInput
@@ -34,9 +32,7 @@
                 @update:model-value="updateMonth"
             >
                 <template v-slot:append>
-                    <span class="input-append">
-                        월
-                    </span>
+                    <span class="input-append"> 월 </span>
                 </template>
             </QInput>
             <QBtn
@@ -59,20 +55,13 @@
                 <div
                     class="chart-container"
                     ref="chartContainer"
-                >
-                </div>
+                ></div>
             </QTabPanel>
             <QTabPanel name="list">
-                <div
-                    class="list list-card"
-                >
-                </div>
+                <div class="list list-card"></div>
             </QTabPanel>
             <QTabPanel name="listDetail">
-                <div
-                    class="listDetail list-card"
-                >
-                </div>
+                <div class="listDetail list-card"></div>
             </QTabPanel>
         </QTabPanels>
         <QTabs
@@ -83,15 +72,27 @@
             dense
             @update:model-value="selectTab"
         >
-            <QTab name="chart" icon="pie_chart" label="Chart"></QTab>
-            <QTab name="list" icon="list" label="List"></QTab>
-            <QTab name="listDetail" icon="view_list" label="Detail"></QTab>
-        </Qtabs>
+            <QTab
+                name="chart"
+                icon="pie_chart"
+                label="Chart"
+            ></QTab>
+            <QTab
+                name="list"
+                icon="list"
+                label="List"
+            ></QTab>
+            <QTab
+                name="listDetail"
+                icon="view_list"
+                label="Detail"
+            ></QTab>
+        </QTabs>
     </div>
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar'
+import { useQuasar } from 'quasar';
 import { ref, Ref, inject, onMounted, nextTick } from 'vue';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
@@ -101,11 +102,12 @@ import Highcharts from 'highcharts';
 import accessibility from 'highcharts/modules/accessibility';
 import drilldown from 'highcharts/modules/drilldown';
 import { ChartData, IndexMap } from '@/types/ChartTypes';
+import { PointLabelObject } from 'highcharts';
 
 // base Mobile
 const styleOption = {
     distance: '-40%',
-}
+};
 const $q = useQuasar();
 if ($q.platform.is.desktop) {
     styleOption.distance = '30';
@@ -128,25 +130,25 @@ const chart: Ref<Highcharts.Chart | null> = ref(null);
 
 let chartOptions: Highcharts.Options = {
     chart: {
-        type: 'pie'
+        type: 'pie',
     },
     credits: {
-        enabled: false
+        enabled: false,
     },
     title: {
-        text: undefined
+        text: undefined,
     },
     series: [
         {
             type: 'pie',
             name: 'Accounts',
-            data: [] as Array<ChartData>
-        }
+            data: [] as Array<ChartData>,
+        },
     ],
     accessibility: {},
     plotOptions: {},
-    tooltip:{},
-    drilldown:{},
+    tooltip: {},
+    drilldown: {},
 };
 
 const upProcessSpinner = inject<() => void>('upProcessSpinner');
@@ -228,39 +230,41 @@ function getAccounts() {
                     serialDataArray.push({
                         name: account.category,
                         y: account.money,
-                        drilldown: account.category
-                    })
+                        drilldown: account.category,
+                    });
                     drilldownSerialDataArray.push({
                         name: account.category,
                         id: account.category,
-                        data: [[`${apiDateToDateStr(account.date)} (${account.memo})`, account.money]]
+                        data: [
+                            [`${apiDateToDateStr(account.date)} (${account.memo})`, account.money],
+                        ],
                     });
-                }
-                else {
+                } else {
                     serialDataArray[indexMap[account.category]].y += account.money;
-                    drilldownSerialDataArray[indexMap[account.category]].data.push(
-                        [`${apiDateToDateStr(account.date)} (${account.memo})`, account.money]
-                    );
+                    drilldownSerialDataArray[indexMap[account.category]].data.push([
+                        `${apiDateToDateStr(account.date)} (${account.memo})`,
+                        account.money,
+                    ]);
                 }
             });
 
             chartOptions = {
                 chart: {
-                    type: 'pie'
+                    type: 'pie',
                 },
                 credits: {
-                    enabled: false
+                    enabled: false,
                 },
                 title: {
-                    text: undefined
+                    text: undefined,
                 },
                 accessibility: {
                     announceNewData: {
-                        enabled: true
+                        enabled: true,
                     },
                     point: {
-                        valueSuffix: '원'
-                    }
+                        valueSuffix: '원',
+                    },
                 },
                 plotOptions: {
                     pie: {
@@ -271,39 +275,43 @@ function getAccounts() {
                             filter: {
                                 property: 'percentage',
                                 operator: '>',
-                                value: 10
+                                value: 10,
                             },
-                            formatter: function (): string | undefined {
-                                return `<span style="color:${this.color}; text-decoration:'none'">` +
+                            formatter: function (this: PointLabelObject): string | undefined {
+                                return (
+                                    `<span style="color:${this.color}; text-decoration:'none'">` +
                                     `Category: ${this.key} <br>` +
-                                    `Value: ${this.y.toLocaleString()}원 <br>` +
+                                    `Value: ${this.y?.toLocaleString()}원 <br>` +
                                     `Percent: ${this.percentage.toFixed(2)}% <br>` +
-                                    `</span>`;
-                            }
-                        }
-                    }
+                                    '</span>'
+                                );
+                            },
+                        },
+                    },
                 },
                 tooltip: {
                     headerFormat: '<span>{series.name}</span><br>',
-                    formatter: function (): string | undefined {
-                        return `Category: <span style="color:${this.color}">${this.key}</span><br/>` +
-                            `Value: <b>${this.y.toLocaleString()}원</b><br />` +
-                            `Total: <b>${this.total.toLocaleString()}원</b>`
-                    }
+                    formatter: function (this: PointLabelObject): string | undefined {
+                        return (
+                            `Category: <span style="color:${this.color}">${this.key}</span><br/>` +
+                            `Value: <b>${this.y?.toLocaleString()}원</b><br />` +
+                            `Total: <b>${this.total?.toLocaleString()}원</b>`
+                        );
+                    },
                 },
                 series: [
                     {
                         type: 'pie',
                         name: 'Accounts',
-                        data: serialDataArray
-                    }
+                        data: serialDataArray,
+                    },
                 ],
                 drilldown: {
                     animation: false,
                     activeDataLabelStyle: {
                         textDecoration: 'none',
                     },
-                    series: drilldownSerialDataArray
+                    series: drilldownSerialDataArray,
                 },
             };
 
@@ -314,7 +322,7 @@ function getAccounts() {
 
 onMounted(() => {
     chartUpdate();
-})
+});
 </script>
 
 <style lang="scss" scoped>
@@ -335,7 +343,8 @@ onMounted(() => {
             max-width: 100px;
             margin: 0px $spacing-sm;
             border-radius: $spacing-sm;
-            box-shadow: 0 1px $spacing-sm rgba(0, 0, 0, 0.2), 0 2px 2px rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 1px $spacing-sm rgba(0, 0, 0, 0.2), 0 2px 2px rgba(0, 0, 0, 0.14),
+                0 3px 1px -2px rgba(0, 0, 0, 0.12);
 
             ::v-deep .abc-input {
                 text-align: center;

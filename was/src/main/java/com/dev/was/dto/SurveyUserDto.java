@@ -17,16 +17,6 @@ public class SurveyUserDto {
     private String dept;
     private List<SurveyUserResultDto> surveyUserResultDtoList;
 
-    @Builder
-    public SurveyUserDto(Long id, String name, LocalDate birthDay, boolean gender, String dept, List<SurveyUserResultDto> surveyUserResultDtoList) {
-        this.id = id;
-        this.name = name;
-        this.birthDay = birthDay;
-        this.gender = gender;
-        this.dept = dept;
-        this.surveyUserResultDtoList = surveyUserResultDtoList;
-    }
-
     public SurveyUserDto(SurveyUserEntity surveyUserEntity) {
         this.id = surveyUserEntity.getId();
         this.name = surveyUserEntity.getName();
