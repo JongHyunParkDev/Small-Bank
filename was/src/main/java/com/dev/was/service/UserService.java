@@ -40,11 +40,10 @@ public class UserService {
     }
 
     public UserDto getUserInfo(Long id) {
-        Optional<UserEntity> userEntity = userRepository.findById(id);
+        UserEntity userEntity = userRepository.findById(id)
+                .orElseThrow(() -> new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT));
 
-        if (userEntity.isEmpty())
-            throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT);
-        return new UserDto(userEntity.get());
+        return new UserDto(userEntity);
     }
 
     public void saveUserInfo(
@@ -53,21 +52,17 @@ public class UserService {
             String phone,
             String name
     ) {
-        Optional<UserEntity> userEntity = userRepository.findById(id);
+        UserEntity userEntity = userRepository.findById(id)
+                .orElseThrow(() -> new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT));
 
-        if (userEntity.isEmpty())
-            throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT);
-
-        UserEntity saveUserEntity = userEntity.get();
-
-        saveUserEntity.setName(name);
-        saveUserEntity.setPhone(phone);
+        userEntity.setName(name);
+        userEntity.setPhone(phone);
 
         if (password != null) {
-            saveUserEntity.setPassword(passwordEncoder.encode(password));
+            userEntity.setPassword(passwordEncoder.encode(password));
         }
 
-        userRepository.save(saveUserEntity);
+        userRepository.save(userEntity);
     }
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
