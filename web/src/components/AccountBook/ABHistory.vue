@@ -6,7 +6,6 @@
                 :key="idx"
                 class="history-row"
             >
-                <!-- TODO API 구현 후 변경 가능성 많음 -->
                 <div class="btn item">
                     <QBtn
                         color="white"
@@ -48,7 +47,7 @@
                 <div class="income">총 수입: {{ sumIncome.toLocaleString() }}</div>
             </div>
             <div class="column last">
-                <div :class="sumIncome > sumSpend ? 'income' : 'spend' ">
+                <div :class="sumIncome > sumSpend ? 'income' : 'spend'">
                     총: {{ Math.abs(sumIncome - sumSpend).toLocaleString() }}
                 </div>
             </div>
@@ -65,9 +64,9 @@ const sumIncome = ref(0);
 
 const props = defineProps({
     dayAccountArr: {
-        type: [Array<DayAccount>],
+        type: Array<DayAccount>,
         required: true,
-    }
+    },
 });
 const emit = defineEmits(['modify-history']);
 
@@ -77,20 +76,17 @@ watch(
         sumSpend.value = 0;
         sumIncome.value = 0;
 
-        newArray.forEach(el => {
-            if (el.type === 'spend')
-                sumSpend.value += el.money;
-            else 
-                sumIncome.value += el.money;
-        })
+        newArray.forEach((el) => {
+            if (el.type === 'spend') sumSpend.value += el.money;
+            else sumIncome.value += el.money;
+        });
     },
     { deep: true }
-)
+);
 
-function modifyHistroy(idx : number) {
+function modifyHistroy(idx: number) {
     emit('modify-history', idx);
 }
-
 </script>
 
 <style lang="scss" scoped>

@@ -1,24 +1,24 @@
 <template>
     <div class="ab-day">
         <div
-            v-if="item?.num"
-            :class="{'selected': selectedAbday?.num === item.num}"
+            v-if="props.item.num"
+            :class="{ selected: props.selectedAbday?.num === props.item.num }"
             class="day"
             @click="selectDay"
         >
-            {{ item.num }}
+            {{ props.item.num }}
             <div
-                v-if="accountMap"
+                v-if="props.accountMap"
                 class="account"
             >
                 <span
-                    v-if="accountMap.income"
+                    v-if="props.accountMap?.income"
                     class="income item"
                 >
                     <QIcon name="circle" />
                 </span>
                 <span
-                    v-if="accountMap.spend"
+                    v-if="props.accountMap?.spend"
                     class="spend item"
                 >
                     <QIcon name="circle" />
@@ -28,40 +28,35 @@
                 v-else
                 class="account"
             >
-                <span class="item">
-                </span>
+                <span class="item"> </span>
             </div>
         </div>
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script setup lang="ts">
+import { PropType, defineEmits, defineProps } from 'vue';
 import { AccountBookDay } from '@/types/AccountTypes';
 
-export default defineComponent({
-    name: 'ABDay',
-    emits: ['select-day'],
-    props: {
-        item: {
-            type: Object as PropType<AccountBookDay>,
-            required: true,
-        },
-        selectedAbday: {
-            type: Object as PropType<AccountBookDay>,
-            required: false,
-        },
-        accountMap: {
-            type: Object,
-            required: false,
-        }
+const props = defineProps({
+    item: {
+        type: Object as PropType<AccountBookDay>,
+        required: true,
     },
-    methods: {
-        selectDay() {
-            this.$emit('select-day', this.item);
-        }
-    }
+    selectedAbday: {
+        type: Object as PropType<AccountBookDay>,
+        required: false,
+    },
+    accountMap: {
+        type: Object,
+        required: false,
+    },
 });
+const emit = defineEmits(['select-day']);
+
+function selectDay() {
+    emit('select-day', props.item);
+}
 </script>
 
 <style lang="scss" scoped>
