@@ -163,7 +163,7 @@
 
 <script setup lang="ts">
 import { defineProps, ref, Ref, inject } from 'vue';
-import { useQuasar } from 'quasar';
+import { useQuasar, QTableColumn } from 'quasar';
 import { Api } from '@/lib/Api';
 import { PROCESS } from '@/lib/Async';
 import { SurveyDetail } from '@/types/SurveyTypes';
@@ -188,7 +188,7 @@ const rows: Ref<Array<SurveyDetail>> = ref([]);
 
 const selectedRow: Ref<Array<SurveyDetail>> = ref([]);
 
-const columns = ref([
+const columns: Ref<Array<QTableColumn>> = ref([
     {
         name: 'num',
         label: 'Num',

@@ -355,7 +355,7 @@ getSerialDto();
                         }
                     }
 
-                    ::v-deep .bus-map {
+                    &:deep(.bus-map) {
                         background-color: $naver-bs;
                         color: white;
                         border: 2px solid $grey-6;
@@ -363,7 +363,7 @@ getSerialDto();
                         box-shadow: 3px 3px 3px $grey-5;
                     }
 
-                    ::v-deep .bus-row {
+                    &:deep(.bus-row) {
                         border-bottom: 1px solid $grey-6;
                         margin: $spacing-sm 0px;
 

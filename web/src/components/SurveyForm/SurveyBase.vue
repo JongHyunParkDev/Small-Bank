@@ -275,7 +275,7 @@
 import { ref, Ref, defineEmits, inject } from 'vue';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
-import { useQuasar } from 'quasar';
+import { useQuasar, QTableColumn } from 'quasar';
 import { dateToDateStr, datestrToApiDateStr } from '@/lib/DateUtil';
 import { Survey } from '@/types/SurveyTypes';
 
@@ -307,7 +307,7 @@ const pagination = ref({
     rowsPerPage: 0,
 });
 
-const columns = ref([
+const columns: Ref<Array<QTableColumn>> = ref([
     {
         name: 'num',
         label: 'Num',
@@ -344,7 +344,7 @@ const columns = ref([
         field: 'active',
         required: true,
         align: 'left',
-        format: (val) => (val ? '활성화' : '비활성화'),
+        format: (val, row) => (val ? '활성화' : '비활성화'),
     },
 ]);
 const rows: Ref<Array<Survey>> = ref([]);

@@ -70,7 +70,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, inject } from 'vue';
+import { ref, Ref, defineProps, inject } from 'vue';
+import { QTableColumn } from 'quasar';
 import * as Export from '@/lib/Export';
 import { Api } from '@/lib/Api';
 import { PROCESS } from '@/lib/Async';
@@ -97,7 +98,7 @@ const pageObject = ref({
     pagePerSize: 100,
 });
 
-const columns = ref([
+const columns: Ref<Array<QTableColumn>> = ref([
     {
         name: 'num',
         label: 'Num',
