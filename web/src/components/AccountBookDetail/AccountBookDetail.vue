@@ -307,7 +307,6 @@ function getAccounts() {
                     },
                 ],
                 drilldown: {
-                    animation: false,
                     activeDataLabelStyle: {
                         textDecoration: 'none',
                     },
