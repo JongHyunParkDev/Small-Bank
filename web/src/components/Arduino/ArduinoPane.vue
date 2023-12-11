@@ -420,10 +420,6 @@ getSerialDto();
 
                     }
                 }
-
-                .info {
-
-                }
             }
 
             .tabs {
