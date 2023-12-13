@@ -28,14 +28,8 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar';
-import { ref, Ref, defineProps, PropType, watch, onMounted, nextTick, computed } from 'vue';
+import { defineProps, PropType, computed } from 'vue';
 
-import Highcharts from 'highcharts';
-import accessibility from 'highcharts/modules/accessibility';
-import drilldown from 'highcharts/modules/drilldown';
-import { PointLabelObject } from 'highcharts';
-import { ChartData, IndexMap } from '@/types/ChartTypes';
 import { DayAccount } from '@/types/AccountTypes';
 
 import { apiDateToDateStr } from '@/lib/DateUtil';
@@ -60,6 +54,7 @@ const categoryList = computed(() => {
                 money: dayAccount.money.toLocaleString(),
             });
         });
+
     return map;
 });
 </script>

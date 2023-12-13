@@ -93,6 +93,7 @@ import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { dateToApiDateStr } from '@/lib/DateUtil';
 import { DayAccount } from '@/types/AccountTypes';
+import { compare } from '@/lib/StrUtil';
 import AccountDetailCategoryList from '@/components/AccountBookDetail/AccountDetailCategoryList.vue';
 import AccountDetailChart from '@/components/AccountBookDetail/AccountDetailChart.vue';
 import AccountDetailDateList from '@/components/AccountBookDetail/AccountDetailDateList.vue';
@@ -155,10 +156,14 @@ function getAccounts() {
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
         PROCESS(upProcessSpinner, downProcessSpinner, async () => {
-            acccountList.value = await Api.get('user/account', {
+            const resultAccountList: Array<DayAccount> = await Api.get('user/account', {
                 startDate: startDate,
                 endDate: endDate,
             });
+
+            const sortAccountList = resultAccountList.sort((a, b) => compare(a.date, b.date));
+
+            acccountList.value = sortAccountList;
         });
     }
 }
