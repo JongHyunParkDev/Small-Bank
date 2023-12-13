@@ -52,16 +52,13 @@
             transition-next="jump-up"
         >
             <QTabPanel name="chart">
-                <div
-                    class="chart-container"
-                    ref="chartContainer"
-                ></div>
+                <AccountDetailChart :acccount-list="acccountList" />
             </QTabPanel>
-            <QTabPanel name="list">
-                <div class="list list-card"></div>
+            <QTabPanel name="categoryList">
+                <AccountDetailCategoryList :acccount-list="acccountList" />
             </QTabPanel>
-            <QTabPanel name="listDetail">
-                <div class="listDetail list-card"></div>
+            <QTabPanel name="dateList">
+                <AccountDetailDateList :acccount-list="acccountList" />
             </QTabPanel>
         </QTabPanels>
         <QTabs
@@ -70,7 +67,6 @@
             indicator-color="transparent"
             outside-arrows
             dense
-            @update:model-value="selectTab"
         >
             <QTab
                 name="chart"
@@ -78,81 +74,35 @@
                 label="Chart"
             ></QTab>
             <QTab
-                name="list"
-                icon="list"
-                label="List"
+                name="categoryList"
+                icon="category"
+                label="category List"
             ></QTab>
             <QTab
-                name="listDetail"
-                icon="view_list"
-                label="Detail"
+                name="dateList"
+                icon="calendar_month"
+                label="date List"
             ></QTab>
         </QTabs>
     </div>
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar';
 import { ref, Ref, inject, onMounted, nextTick } from 'vue';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
-import { dateToApiDateStr, apiDateToDateStr } from '@/lib/DateUtil';
+import { dateToApiDateStr } from '@/lib/DateUtil';
 import { DayAccount } from '@/types/AccountTypes';
-import Highcharts from 'highcharts';
-import accessibility from 'highcharts/modules/accessibility';
-import drilldown from 'highcharts/modules/drilldown';
-import { ChartData, IndexMap } from '@/types/ChartTypes';
-import { PointLabelObject } from 'highcharts';
-
-// base Mobile
-const styleOption = {
-    distance: '-40%',
-};
-const $q = useQuasar();
-if ($q.platform.is.desktop) {
-    styleOption.distance = '30';
-}
-
-accessibility(Highcharts);
-drilldown(Highcharts);
-
-const selectedTab = ref('chart');
-
-async function selectTab(tab) {
-    if (tab === 'chart') {
-        await nextTick();
-        chartUpdate();
-    }
-}
-
-const chartContainer: Ref<HTMLInputElement | null> = ref(null);
-const chart: Ref<Highcharts.Chart | null> = ref(null);
-
-let chartOptions: Highcharts.Options = {
-    chart: {
-        type: 'pie',
-    },
-    credits: {
-        enabled: false,
-    },
-    title: {
-        text: undefined,
-    },
-    series: [
-        {
-            type: 'pie',
-            name: 'Accounts',
-            data: [] as Array<ChartData>,
-        },
-    ],
-    accessibility: {},
-    plotOptions: {},
-    tooltip: {},
-    drilldown: {},
-};
+import AccountDetailCategoryList from '@/components/AccountBookDetail/AccountDetailCategoryList.vue';
+import AccountDetailChart from '@/components/AccountBookDetail/AccountDetailChart.vue';
+import AccountDetailDateList from '@/components/AccountBookDetail/AccountDetailDateList.vue';
 
 const upProcessSpinner = inject<() => void>('upProcessSpinner');
 const downProcessSpinner = inject<() => void>('downProcessSpinner');
+
+const selectedTab = ref('chart');
+
+const acccountList: Ref<Array<DayAccount>> = ref([]);
 
 const now = ref(new Date());
 
@@ -193,13 +143,6 @@ function updateMonth(value: string | number | null) {
     getAccounts();
 }
 
-function chartUpdate() {
-    if (chartContainer.value) {
-        chart.value = Highcharts.chart(chartContainer.value, chartOptions, undefined);
-        getAccounts();
-    }
-}
-
 function getAccounts() {
     const year = nowYear.value;
     const month = nowMonth.value;
@@ -212,115 +155,16 @@ function getAccounts() {
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
         PROCESS(upProcessSpinner, downProcessSpinner, async () => {
-            if (chart.value) chart.value.drillUp();
-
-            const dayAccountList: Array<DayAccount> = await Api.get('user/account', {
+            acccountList.value = await Api.get('user/account', {
                 startDate: startDate,
                 endDate: endDate,
             });
-
-            const serialDataArray: Array<ChartData> = [];
-            const drilldownSerialDataArray: Array<any> = [];
-            const indexMap: IndexMap = {};
-            let idx = 0;
-            dayAccountList.forEach((account) => {
-                if (account.type === 'income') return;
-                if (indexMap[account.category] === undefined) {
-                    indexMap[account.category] = idx++;
-                    serialDataArray.push({
-                        name: account.category,
-                        y: account.money,
-                        drilldown: account.category,
-                    });
-                    drilldownSerialDataArray.push({
-                        name: account.category,
-                        id: account.category,
-                        data: [
-                            [`${apiDateToDateStr(account.date)} (${account.memo})`, account.money],
-                        ],
-                    });
-                } else {
-                    serialDataArray[indexMap[account.category]].y += account.money;
-                    drilldownSerialDataArray[indexMap[account.category]].data.push([
-                        `${apiDateToDateStr(account.date)} (${account.memo})`,
-                        account.money,
-                    ]);
-                }
-            });
-
-            chartOptions = {
-                chart: {
-                    type: 'pie',
-                },
-                credits: {
-                    enabled: false,
-                },
-                title: {
-                    text: undefined,
-                },
-                accessibility: {
-                    announceNewData: {
-                        enabled: true,
-                    },
-                    point: {
-                        valueSuffix: '원',
-                    },
-                },
-                plotOptions: {
-                    pie: {
-                        borderRadius: 5,
-                        dataLabels: {
-                            enabled: true,
-                            distance: styleOption.distance,
-                            filter: {
-                                property: 'percentage',
-                                operator: '>',
-                                value: 10,
-                            },
-                            formatter: function (this: PointLabelObject): string | undefined {
-                                return (
-                                    `<span style="color:${this.color}; text-decoration:'none'">` +
-                                    `Category: ${this.key} <br>` +
-                                    `Value: ${this.y?.toLocaleString()}원 <br>` +
-                                    `Percent: ${this.percentage.toFixed(2)}% <br>` +
-                                    '</span>'
-                                );
-                            },
-                        },
-                    },
-                },
-                tooltip: {
-                    headerFormat: '<span>{series.name}</span><br>',
-                    formatter: function (this: PointLabelObject): string | undefined {
-                        return (
-                            `Category: <span style="color:${this.color}">${this.key}</span><br/>` +
-                            `Value: <b>${this.y?.toLocaleString()}원</b><br />` +
-                            `Total: <b>${this.total?.toLocaleString()}원</b>`
-                        );
-                    },
-                },
-                series: [
-                    {
-                        type: 'pie',
-                        name: 'Accounts',
-                        data: serialDataArray,
-                    },
-                ],
-                drilldown: {
-                    activeDataLabelStyle: {
-                        textDecoration: 'none',
-                    },
-                    series: drilldownSerialDataArray,
-                },
-            };
-
-            if (chart.value) chart.value.update(chartOptions);
         });
     }
 }
 
 onMounted(() => {
-    chartUpdate();
+    getAccounts();
 });
 </script>
 
@@ -372,14 +216,6 @@ onMounted(() => {
 
     > .tab-panels {
         flex: 1;
-
-        .chart-container {
-            height: 100%;
-        }
-
-        .list-card {
-            margin-top: $spacing-lg;
-        }
     }
     > .tabs {
         background-color: $naver-bs;
