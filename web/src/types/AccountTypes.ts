@@ -17,3 +17,21 @@ export type DayAccount = {
     money: number,
     type: string,
 }
+
+export type CategoryAccountMap = {
+    [category: string]: CategoryAccountOjb
+}
+
+export type CategoryAccountOjb = {
+    list: Array<CategoryAccount>,
+    income: string,
+    spend: string
+}
+
+export type CategoryAccount = {
+    date: string
+    memo: string
+    type: string
+    money: string,
+}
+

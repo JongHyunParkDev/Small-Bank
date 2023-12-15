@@ -3,19 +3,18 @@
         <div class="header">
             <QBtn
                 class="btn-left"
-                color="white"
-                text-color="black"
+                color="grey-6"
+                text-color="white"
                 icon="chevron_left"
-                padding="sm"
+                padding="xs"
                 @click="setMonth(-1)"
             />
             <QInput
                 class="abc-outer"
                 input-class="abc-input"
-                :dense="true"
-                borderless
+                filled
+                dense
                 v-model.number="nowYear"
-                type="number"
                 @update:model-value="updateYear"
             >
                 <template v-slot:append>
@@ -25,10 +24,9 @@
             <QInput
                 class="abc-outer"
                 input-class="abc-input"
-                :dense="true"
-                borderless
+                filled
+                dense
                 v-model.number="nowMonth"
-                type="number"
                 @update:model-value="updateMonth"
             >
                 <template v-slot:append>
@@ -37,10 +35,10 @@
             </QInput>
             <QBtn
                 class="btn-right"
-                color="white"
-                text-color="black"
+                color="grey-6"
+                text-color="white"
                 icon="chevron_right"
-                padding="sm"
+                padding="xs"
                 @click="setMonth(1)"
             />
         </div>
