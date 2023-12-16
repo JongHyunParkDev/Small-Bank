@@ -1,6 +1,6 @@
 <template>
     <div class="account-detail-category-list">
-        <div 
+        <div
             class="category-empty"
             v-if="Object.keys(categoryList).length === 0"
         >
@@ -15,12 +15,8 @@
                 <div class="category-label">
                     {{ category }}
                 </div>
-                <div class="q-mr-md spend">
-                    지출: {{ categoryItem.spend.toLocaleString() }}
-                </div>
-                <div class="income">
-                    수입: {{ categoryItem.income.toLocaleString() }}
-                </div>
+                <div class="q-mr-md spend">지출: {{ categoryItem.spend.toLocaleString() }}</div>
+                <div class="income">수입: {{ categoryItem.income.toLocaleString() }}</div>
             </div>
             <div
                 class="category-item q-ml-md q-mt-sm"
@@ -33,7 +29,7 @@
                 <div class="item-memo">
                     {{ item.memo }}
                 </div>
-                <div 
+                <div
                     class="item-money"
                     :class="item.type"
                 >
@@ -61,17 +57,15 @@ const categoryList: Ref<CategoryAccountMap> = computed(() => {
     const map = {};
     if (props.acccountList)
         props.acccountList.forEach((dayAccount) => {
-            if (map[dayAccount.category] === undefined) 
+            if (map[dayAccount.category] === undefined)
                 map[dayAccount.category] = {
                     list: [],
                     income: 0,
                     spend: 0,
                 };
-            
-            if (dayAccount.type === 'income')
-                map[dayAccount.category].income += dayAccount.money;
-            else 
-                map[dayAccount.category].spend += dayAccount.money;
+
+            if (dayAccount.type === 'income') map[dayAccount.category].income += dayAccount.money;
+            else map[dayAccount.category].spend += dayAccount.money;
 
             map[dayAccount.category].list.push({
                 date: `${apiDateToDateStr(dayAccount.date)} ${dayAccount.time}`,
@@ -115,6 +109,19 @@ const categoryList: Ref<CategoryAccountMap> = computed(() => {
             font-size: 1.1em;
             justify-content: space-between;
             border-bottom: 1px solid $grey-5;
+
+            > .item-date {
+                flex: 40%;
+            }
+
+            > .item-memo {
+                flex: 30%;
+            }
+
+            > .item-money {
+                flex: 30%;
+                text-align: right;
+            }
         }
 
         .spend {
