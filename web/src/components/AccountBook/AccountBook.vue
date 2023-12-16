@@ -402,7 +402,6 @@ function modifyHistory() {
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: $spacing-sm;
 
     > .calendar {
         position: relative;

@@ -3,17 +3,19 @@
         <div class="header">
             <QBtn
                 class="btn-left"
-                color="grey-6"
-                text-color="white"
+                color="white"
+                text-color="black"
                 icon="chevron_left"
-                padding="xs"
+                padding="sm"
                 @click="setMonth(-1)"
             />
+            <!-- filled
+                dense -->
             <QInput
                 class="abc-outer"
                 input-class="abc-input"
-                filled
                 dense
+                filled
                 v-model.number="nowYear"
                 @update:model-value="updateYear"
             >
@@ -24,8 +26,8 @@
             <QInput
                 class="abc-outer"
                 input-class="abc-input"
-                filled
                 dense
+                filled
                 v-model.number="nowMonth"
                 @update:model-value="updateMonth"
             >
@@ -35,10 +37,10 @@
             </QInput>
             <QBtn
                 class="btn-right"
-                color="grey-6"
-                text-color="white"
+                color="white"
+                text-color="black"
                 icon="chevron_right"
-                padding="xs"
+                padding="sm"
                 @click="setMonth(1)"
             />
         </div>
