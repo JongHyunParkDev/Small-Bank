@@ -75,7 +75,7 @@
 import { ref, Ref, PropType, computed, onMounted, defineProps } from 'vue';
 import ABDay from '@/components/AccountBook/ABDay.vue';
 import { dateToApiDateStr } from '@/lib/DateUtil';
-import { AccountBookDay } from '@/types/AccountTypes';
+import { AccountBookDay, DayAccount } from '@/types/AccountTypes';
 
 // Date 객체
 const now = ref(new Date());
@@ -92,7 +92,7 @@ const emit = defineEmits(['select-day', 'update-calendar']);
 
 const props = defineProps({
     dayAccountArr: {
-        type: Array as PropType<Array<any>>,
+        type: Array as PropType<Array<DayAccount>>,
         required: true,
     },
 });

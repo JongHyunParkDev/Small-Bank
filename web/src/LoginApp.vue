@@ -166,7 +166,7 @@ import LogoSvgSrc from '@/assets/logo/logo.svg';
 import KakaoLoginBtnSrc from '@/assets/images/kakao_login_btn.png';
 import GoogleLoginBtnSrc from '@/assets/images/google_login_btn.svg';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
-import { ApiMessage } from '@/lib/Errors';
+import { ApiError, ApiMessage } from '@/lib/Errors';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { useRouter } from 'vue-router';
@@ -296,7 +296,7 @@ function checkUrlFragment() {
 
 checkUrlFragment();
 
-watch(errorStore.errors, async (newError, oldError) => {
+watch(errorStore.errors, async (newError) => {
     showError(newError[0]);
 });
 </script>

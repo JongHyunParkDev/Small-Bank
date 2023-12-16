@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { ref, Ref, defineProps, PropType, watch, onMounted, nextTick } from 'vue';
+import { ref, Ref, defineProps, PropType, watch, onMounted } from 'vue';
 
 import Highcharts from 'highcharts';
 import accessibility from 'highcharts/modules/accessibility';

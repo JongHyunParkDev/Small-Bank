@@ -72,7 +72,7 @@ const emit = defineEmits(['modify-history']);
 
 watch(
     props.dayAccountArr,
-    (newArray, oldArray) => {
+    (newArray) => {
         sumSpend.value = 0;
         sumIncome.value = 0;
 

@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, inject, onMounted, nextTick } from 'vue';
+import { ref, Ref, inject, onMounted } from 'vue';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { dateToApiDateStr } from '@/lib/DateUtil';

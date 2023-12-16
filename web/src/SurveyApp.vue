@@ -150,7 +150,7 @@ import { useRoute } from 'vue-router';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
-import { SurveyDetail } from '@/types/SurveyTypes';
+import { SurveyDetail, SurveyResult } from '@/types/SurveyTypes';
 import { datestrToApiDateStr } from '@/lib/DateUtil';
 import { useErrorStore } from '@/stores/ErrorStore';
 
@@ -211,7 +211,7 @@ function showCheck() {
 
 function createSummary() {
     const map = {};
-    const list: any[] = [];
+    const list: SurveyResult[] = [];
 
     inputList.value.forEach((input) => {
         if (map[input.category]) {

@@ -335,7 +335,7 @@ function vaildSurvey() {
     return true;
 }
 
-function deleteRow(evt: Event) {
+function deleteRow() {
     if (!vaildSurvey()) return;
 
     $q.notify({

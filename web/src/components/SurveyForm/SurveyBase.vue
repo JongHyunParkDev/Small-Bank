@@ -344,7 +344,7 @@ const columns: Ref<Array<QTableColumn>> = ref([
         field: 'active',
         required: true,
         align: 'left',
-        format: (val, row) => (val ? '활성화' : '비활성화'),
+        format: (val) => (val ? '활성화' : '비활성화'),
     },
 ]);
 const rows: Ref<Array<Survey>> = ref([]);
@@ -427,7 +427,7 @@ function modifySurvey() {
     }
 }
 
-function toggleRow(evt: Event) {
+function toggleRow() {
     $q.notify({
         type: 'warning',
         position: 'center',
@@ -473,7 +473,7 @@ function toggleRow(evt: Event) {
     }
 }
 
-function deleteRow(evt: Event) {
+function deleteRow() {
     $q.notify({
         type: 'warning',
         position: 'center',
