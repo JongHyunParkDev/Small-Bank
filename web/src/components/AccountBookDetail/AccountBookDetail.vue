@@ -161,7 +161,10 @@ function getAccounts() {
                 endDate: endDate,
             });
 
-            const sortAccountList = resultAccountList.sort((a, b) => compare(a.date, b.date));
+            const sortAccountList = resultAccountList.sort((a, b) => {
+                if (compare(a.date, b.date) === 0) return compare(a.category, b.category);
+                return compare(a.date, b.date);
+            });
 
             acccountList.value = sortAccountList;
         });
