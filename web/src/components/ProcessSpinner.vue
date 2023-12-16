@@ -25,8 +25,8 @@
         position: absolute;
         display: block;
         // 주의: spinner가 커지면 minus 부분을 키워야 한다.
-        left: calc(50% - 1rem);
-        top: calc(50% - 1rem);
+        left: calc(50% - 2rem);
+        top: calc(50% - 2rem);
     }
 }
 </style>
