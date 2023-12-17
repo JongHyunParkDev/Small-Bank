@@ -12,8 +12,8 @@ import { ref, Ref, defineProps, PropType, watch, onMounted } from 'vue';
 import Highcharts from 'highcharts';
 import accessibility from 'highcharts/modules/accessibility';
 import drilldown from 'highcharts/modules/drilldown';
-import { PointLabelObject } from 'highcharts';
-import { ChartData, IndexMap } from '@/types/ChartTypes';
+import { PointLabelObject, SeriesOptionsType } from 'highcharts';
+import { ChartData, DrilldownChartData, IndexMap } from '@/types/ChartTypes';
 import { DayAccount } from '@/types/AccountTypes';
 
 import { apiDateToDateStr } from '@/lib/DateUtil';
@@ -65,7 +65,7 @@ let chartOptions: Highcharts.Options = {
 
 function updateChart(newAccountList) {
     const serialDataArray: Array<ChartData> = [];
-    const drilldownSerialDataArray: Array<any> = [];
+    const drilldownSerialDataArray: Array<DrilldownChartData> = [];
     const indexMap: IndexMap = {};
     let idx = 0;
 
@@ -154,7 +154,7 @@ function updateChart(newAccountList) {
             activeDataLabelStyle: {
                 textDecoration: 'none',
             },
-            series: drilldownSerialDataArray,
+            series: drilldownSerialDataArray as SeriesOptionsType[],
         },
     };
     if (chart.value) chart.value.update(chartOptions);

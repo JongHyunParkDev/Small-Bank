@@ -111,15 +111,15 @@ const categoryList: Ref<CategoryAccountMap> = computed(() => {
             border-bottom: 1px solid $grey-5;
 
             > .item-date {
-                flex: 40%;
+                flex: 45%;
             }
 
             > .item-memo {
-                flex: 30%;
+                flex: 35%;
             }
 
             > .item-money {
-                flex: 30%;
+                flex: 20%;
                 text-align: right;
             }
         }

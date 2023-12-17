@@ -21,9 +21,9 @@
                 v-model="searchParams.gender"
                 toggle-color="primary"
                 :options="[
-                    {label: 'ALL', value: undefined },
-                    {label: '남자', value: true },
-                    {label: '여자', value: false }
+                    { label: 'ALL', value: undefined },
+                    { label: '남자', value: true },
+                    { label: '여자', value: false },
                 ]"
             />
             <div class="btn-area">
@@ -89,8 +89,8 @@ const props = defineProps({
 const searchParams = ref({
     name: '',
     dept: '',
-    gender: undefined
-})
+    gender: undefined,
+});
 
 const pageObject = ref({
     page: 1,
@@ -135,10 +135,10 @@ const columns: Ref<Array<QTableColumn>> = ref([
         align: 'left',
     },
     {
-        name:'sum',
+        name: 'sum',
         label: '총합',
         field: 'sum',
-        align: 'left'
+        align: 'left',
     },
 ]);
 
@@ -157,16 +157,16 @@ function exportSearch(nowPage = 0) {
                 dept: searchParams.value.dept,
                 gender: searchParams.value.gender,
                 size: 50000,
-                page: nowPage
+                page: nowPage,
             });
 
             result.content.forEach((userDto: any, idx) => {
                 userDto.num = idx + 1;
-                userDto.surveyUserResultDtoList.forEach(resultDto => {
+                userDto.surveyUserResultDtoList.forEach((resultDto) => {
                     userDto[resultDto.category] = resultDto.score;
                     userDto.sum += resultDto.score;
-                })
-                
+                });
+
                 delete userDto.surveyUserResultDtoList;
                 delete userDto.id;
 
@@ -175,8 +175,7 @@ function exportSearch(nowPage = 0) {
 
             await Export.toCsv(exportRow, 'export');
 
-            if (result.totalPages > nowPage + 1) 
-                exportSearch(nowPage + 1);
+            if (result.totalPages > nowPage + 1) exportSearch(nowPage + 1);
         });
     }
 }
@@ -190,7 +189,7 @@ function search(num: number, isInit: boolean) {
                 dept: searchParams.value.dept,
                 gender: searchParams.value.gender,
                 size: pageObject.value.pagePerSize,
-                page: pageObject.value.page - 1
+                page: pageObject.value.page - 1,
             });
 
             rows.value = [];
@@ -200,20 +199,20 @@ function search(num: number, isInit: boolean) {
                 userDto.sum = 0;
 
                 if (isInit && idx === 0) {
-                    userDto.surveyUserResultDtoList.forEach(resultDto => {
+                    userDto.surveyUserResultDtoList.forEach((resultDto) => {
                         columns.value.push({
                             name: resultDto.category,
                             label: resultDto.category,
                             field: resultDto.category,
-                            align: 'left'
-                        })
-                    })
+                            align: 'left',
+                        });
+                    });
                 }
 
-                userDto.surveyUserResultDtoList.forEach(resultDto => {
+                userDto.surveyUserResultDtoList.forEach((resultDto) => {
                     userDto[resultDto.category] = resultDto.score;
                     userDto.sum += resultDto.score;
-                })
+                });
 
                 rows.value.push(userDto);
             });
@@ -224,7 +223,6 @@ function search(num: number, isInit: boolean) {
 }
 
 search(1, true);
-
 </script>
 
 <style lang="scss" scoped>
