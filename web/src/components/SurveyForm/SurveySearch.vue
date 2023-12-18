@@ -151,7 +151,7 @@ function exportSearch(nowPage = 0) {
         PROCESS(upProcessSpinner, downProcessSpinner, async () => {
             const exportRow: any = [];
 
-            const result = await Api.get('user/surveyUsers', {
+            const result = await Api.get('user/surveyUser', {
                 surveyId: props.selectedSurveyIdx,
                 name: searchParams.value.name,
                 dept: searchParams.value.dept,
@@ -183,7 +183,7 @@ function exportSearch(nowPage = 0) {
 function search(num: number, isInit: boolean) {
     if (upProcessSpinner && downProcessSpinner) {
         PROCESS(upProcessSpinner, downProcessSpinner, async () => {
-            const result = await Api.get('user/surveyUsers', {
+            const result = await Api.get('user/surveyUser', {
                 surveyId: props.selectedSurveyIdx,
                 name: searchParams.value.name,
                 dept: searchParams.value.dept,

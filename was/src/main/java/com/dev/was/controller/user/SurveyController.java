@@ -133,8 +133,8 @@ public class SurveyController {
         public Long surveyDetailId;
     }
 
-    @GetMapping("/surveyUsers")
-    public Page<SurveyUserDto> getSurveyUsers(
+    @GetMapping("/surveyUser")
+    public Page<SurveyUserDto> getSurveyUser(
             @RequestParam(value = "surveyId") Long surveyId,
             @RequestParam(value = "name") String name,
             @RequestParam(value = "dept") String dept,
