@@ -418,8 +418,8 @@ function modifyHistory() {
 
     > .fab-area {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
+        bottom: 10px;
+        right: 10px;
         > .fab {
             background-color: $naver-bs;
             color: white;

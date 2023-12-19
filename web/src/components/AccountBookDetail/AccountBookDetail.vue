@@ -1,45 +1,35 @@
 <template>
-    <div class="account-book-detail">
+    <div class="account-book-detail q-pa-sm">
         <div class="header">
             <QBtn
                 class="btn-left"
-                color="white"
-                text-color="black"
                 icon="chevron_left"
+                flat
+                dense
                 padding="sm"
                 @click="setMonth(-1)"
             />
-            <!-- filled
-                dense -->
             <QInput
                 class="abc-outer"
-                input-class="abc-input"
                 dense
-                filled
+                borderless
+                input-class="text-center"
                 v-model.number="nowYear"
                 @update:model-value="updateYear"
-            >
-                <template v-slot:append>
-                    <span class="input-append"> 년 </span>
-                </template>
-            </QInput>
+            />
             <QInput
                 class="abc-outer"
-                input-class="abc-input"
                 dense
-                filled
+                borderless
+                input-class="text-center"
                 v-model.number="nowMonth"
                 @update:model-value="updateMonth"
-            >
-                <template v-slot:append>
-                    <span class="input-append"> 월 </span>
-                </template>
-            </QInput>
+            />
             <QBtn
                 class="btn-right"
-                color="white"
-                text-color="black"
                 icon="chevron_right"
+                flat
+                dense
                 padding="sm"
                 @click="setMonth(1)"
             />
@@ -188,25 +178,10 @@ onMounted(() => {
 
     > .header {
         display: flex;
-        margin: $spacing-sm auto;
 
         > .abc-outer {
-            max-width: 100px;
+            max-width: 50px;
             margin: 0px $spacing-sm;
-            border-radius: $spacing-sm;
-            box-shadow: 0 1px $spacing-sm rgba(0, 0, 0, 0.2), 0 2px 2px rgba(0, 0, 0, 0.14),
-                0 3px 1px -2px rgba(0, 0, 0, 0.12);
-
-            &:deep(.abc-input) {
-                text-align: center;
-                font-size: 18px;
-            }
-
-            .input-append {
-                font-weight: bold;
-                font-size: 14px;
-                padding-right: $spacing-sm;
-            }
         }
 
         > .btn-right {

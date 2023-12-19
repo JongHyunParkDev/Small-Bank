@@ -4,9 +4,7 @@
             <fieldset class="state-pane">
                 <legend>Toy 상태</legend>
                 <div class="row">
-                    <span class="label">
-                        사용 가능 상태
-                    </span>
+                    <span class="label"> 사용 가능 상태 </span>
                     <span class="state">
                         <QToggle
                             size="sm"
@@ -19,12 +17,13 @@
                         class="refresh label"
                         @click="getSerialDto"
                     >
-                        <QIcon name="refresh" size="1.5em"/>
+                        <QIcon
+                            name="refresh"
+                            size="1.5em"
+                        />
                     </span>
 
-                    <span class="date label">
-                        업데이트 날짜: {{ displayUpdateDatetime }}
-                    </span>
+                    <span class="date label"> 업데이트 날짜: {{ displayUpdateDatetime }} </span>
                 </div>
             </fieldset>
         </div>
@@ -40,10 +39,22 @@
                         vertical
                         class="tabs"
                     >
-                        <QTab name="message" icon="chat" label="Message"></QTab>
-                        <QTab name="weather" icon="sunny" label="Weather"></QTab>
-                        <QTab name="bus" icon="directions_bus" label="Bus"></QTab>
-                    </Qtabs>
+                        <QTab
+                            name="message"
+                            icon="chat"
+                            label="Message"
+                        ></QTab>
+                        <QTab
+                            name="weather"
+                            icon="sunny"
+                            label="Weather"
+                        ></QTab>
+                        <QTab
+                            name="bus"
+                            icon="directions_bus"
+                            label="Bus"
+                        ></QTab>
+                    </QTabs>
                 </template>
 
                 <template v-slot:after>
@@ -73,7 +84,7 @@
                                         class="btn"
                                         text-color="black"
                                         icon="send"
-                                        :disable="! isMsgState || ! isState"
+                                        :disable="!isMsgState || !isState"
                                         @click="sendMsg"
                                     />
                                 </div>
@@ -87,15 +98,23 @@
                                     >
                                         <QCard>
                                             <QCardSection>
-                                                <p>- Mattrix 에 한 글자씩 1 초 씩 보여지며, 두 번 반복합니다.</p>
-                                                <p>- 영어 대문자, 숫자, '/', ' ' 그리고 지정 특수 문자만 가능합니다.</p>
-                                                <p>- '!' (고양이), '@' (하트), '#' (해골), '$' (돼지), '%' (해), '^' (비)</p>
+                                                <p>
+                                                    - Mattrix 에 한 글자씩 1 초 씩 보여지며, 두 번
+                                                    반복합니다.
+                                                </p>
+                                                <p>
+                                                    - 영어 대문자, 숫자, '/', ' ' 그리고 지정 특수
+                                                    문자만 가능합니다.
+                                                </p>
+                                                <p>
+                                                    - '!' (고양이), '@' (하트), '#' (해골), '$'
+                                                    (돼지), '%' (해), '^' (비)
+                                                </p>
                                             </QCardSection>
                                         </QCard>
                                     </QExpansionItem>
                                 </div>
                             </div>
-
                         </QTabPanel>
 
                         <QTabPanel name="weather">
@@ -110,15 +129,11 @@
                                     </div>
                                     <img
                                         class="img"
-                                        :style="{ width : styleOption.weatherSize + '%'}"
+                                        :style="{ width: styleOption.weatherSize + '%' }"
                                         :src="weather.iconSrc"
-                                    >
-                                    <div class="label">
-                                        최고 {{ weather.tmpMax }} °C
-                                    </div>
-                                    <div class="label">
-                                        최저 {{ weather.tmpMin }} °C
-                                    </div>
+                                    />
+                                    <div class="label">최고 {{ weather.tmpMax }} °C</div>
+                                    <div class="label">최저 {{ weather.tmpMin }} °C</div>
                                 </div>
                             </div>
                         </QTabPanel>
@@ -138,18 +153,19 @@
                                         class="row bus-row"
                                     >
                                         <div class="icon label">
-                                                <QIcon name="directions_bus" />
-                                            </div>
-                                            <div class="label">
-                                                {{ bus.routeId }} 번
-                                            </div>
-                                            <div class="label">
-                                                {{ bus.predictTime1 }}분{{ bus.predictTime2 ? '/' : '' }}{{ bus.predictTime2 }}{{ bus.predictTime2 ? '분' : '' }}
-                                            </div>
-                                        <div class="row bus-row" v-if="busInfoList.length === 0">
-                                            <div class="label">
-                                                운영중인 버스가 없습니다.
-                                            </div>
+                                            <QIcon name="directions_bus" />
+                                        </div>
+                                        <div class="label">{{ bus.routeId }} 번</div>
+                                        <div class="label">
+                                            {{ bus.predictTime1 }}분{{ bus.predictTime2 ? '/' : ''
+                                            }}{{ bus.predictTime2
+                                            }}{{ bus.predictTime2 ? '분' : '' }}
+                                        </div>
+                                        <div
+                                            class="row bus-row"
+                                            v-if="busInfoList.length === 0"
+                                        >
+                                            <div class="label">운영중인 버스가 없습니다.</div>
                                         </div>
                                     </div>
                                 </QExpansionItem>
@@ -163,7 +179,7 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar'
+import { useQuasar } from 'quasar';
 import { ref, Ref, computed, inject } from 'vue';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
@@ -185,8 +201,8 @@ const downProcessSpinner = inject<() => void>('downProcessSpinner');
 // base Mobile
 const styleOption = {
     splitter: 30,
-    weatherSize: 100
-}
+    weatherSize: 100,
+};
 const $q = useQuasar();
 if ($q.platform.is.desktop) {
     styleOption.splitter = 10;
@@ -205,7 +221,7 @@ const messageRegex = /^[A-Z0-9/ !@#$%^]+$/;
 const messageRule = [
     (msg: string) => {
         return messageRegex.test(msg) || '영어 대문자, 숫자, 특수문자만 가능합니다.';
-    }
+    },
 ];
 
 const busMap: Ref<BusMap> = ref({});
@@ -213,7 +229,7 @@ const weatherInfoList: Ref<Array<WeatherInfo>> = ref([]);
 
 const displayUpdateDatetime = computed(() => {
     return dateToDatetimeStr(updateDatetime.value);
-})
+});
 
 function getApiDateToDateStr(date: string) {
     return apiDateToDateStr(date);
@@ -235,7 +251,7 @@ function getSerialDto() {
 
             busMap.value = data.busMap;
 
-            data.weatherList.forEach(weather => {
+            data.weatherList.forEach((weather) => {
                 let target = ClearDayIcon;
 
                 if (weather.sky < 1.5) target = ClearDayIcon;
@@ -265,7 +281,7 @@ function sendMsg() {
     if (upProcessSpinner && downProcessSpinner) {
         PROCESS(upProcessSpinner, downProcessSpinner, async () => {
             const data = await Api.post('admin/serial/send', {
-                msg: message.value
+                msg: message.value,
             });
 
             updateDatetime.value = new Date();
@@ -278,7 +294,6 @@ function sendMsg() {
 }
 
 getSerialDto();
-
 </script>
 
 <style lang="scss" scoped>
@@ -294,8 +309,6 @@ getSerialDto();
 
     > .header {
         padding: $spacing-sm;
-        width: auto;
-        font-size: 1.2em;
 
         > .state-pane {
             border-color: $naver-bs;
@@ -358,9 +371,8 @@ getSerialDto();
                     &:deep(.bus-map) {
                         background-color: $naver-bs;
                         color: white;
-                        border: 2px solid $grey-6;
+                        border: 2px solid $grey-4;
                         border-radius: $spacing-lg;
-                        box-shadow: 3px 3px 3px $grey-5;
                     }
 
                     &:deep(.bus-row) {
@@ -395,13 +407,11 @@ getSerialDto();
                         box-shadow: 3px 3px 3px $grey-5;
 
                         > .header {
-                            font-size: 1.2em;
                             width: 100%;
                             background-color: $naver-bs;
                             color: white;
                             padding: $spacing-sm;
                             text-align: center;
-                            font-weight: bold;
                             border-radius: $spacing-ml $spacing-ml 0px 0px;
                             border-bottom: 2px solid $grey-6;
                         }
@@ -417,7 +427,6 @@ getSerialDto();
                             text-align: center;
                             margin-bottom: $spacing-sm;
                         }
-
                     }
                 }
             }
