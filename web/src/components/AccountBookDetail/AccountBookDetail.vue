@@ -1,6 +1,6 @@
 <template>
-    <div class="account-book-detail q-pa-sm">
-        <div class="header">
+    <div class="account-book-detail">
+        <div class="header q-px-sm q-pt-sm">
             <QBtn
                 class="btn-left"
                 icon="chevron_left"
