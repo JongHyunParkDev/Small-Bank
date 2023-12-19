@@ -157,7 +157,8 @@ function setMonth(num: number) {
 }
 
 function updateYear(value: string | number | null) {
-    if (value === null || typeof value === 'string') return;
+    if (value === null) return;
+    else if (typeof value === 'string') value = +value;
     if (value < 1910) value = 1910;
     if (value > 2100) value = 2100;
     nowYear.value = value;
@@ -168,7 +169,8 @@ function updateYear(value: string | number | null) {
 }
 
 function updateMonth(value: string | number | null) {
-    if (value === null || typeof value === 'string') return;
+    if (value === null) return;
+    else if (typeof value === 'string') value = +value;
     if (value < 1) value = 1;
     if (value > 12) value = 12;
     nowMonth.value = value;
