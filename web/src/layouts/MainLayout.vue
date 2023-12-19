@@ -1,9 +1,6 @@
 <template>
     <QLayout view="hHh lpR fFf">
-        <QHeader
-            elevated
-            class="header"
-        >
+        <QHeader class="header">
             <QToolbar>
                 <QBtn
                     flat

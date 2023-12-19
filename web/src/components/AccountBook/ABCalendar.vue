@@ -3,48 +3,40 @@
         <div class="header">
             <QBtn
                 class="btn-left"
-                color="white"
-                text-color="black"
                 icon="chevron_left"
+                flat
+                dense
                 padding="sm"
                 @click="setMonth(-1)"
             />
             <QInput
                 class="abc-outer"
-                input-class="abc-input"
-                filled
                 dense
+                borderless
+                input-class="text-center"
                 v-model.number="nowYear"
                 @update:model-value="updateYear"
-            >
-                <template v-slot:append>
-                    <span class="input-append"> 년 </span>
-                </template>
-            </QInput>
+            />
             <QInput
                 class="abc-outer"
-                input-class="abc-input"
-                filled
                 dense
+                borderless
+                input-class="text-center"
                 v-model.number="nowMonth"
                 @update:model-value="updateMonth"
-            >
-                <template v-slot:append>
-                    <span class="input-append"> 월 </span>
-                </template>
-            </QInput>
+            />
             <QBtn
                 class="btn-right"
-                color="white"
-                text-color="black"
                 icon="chevron_right"
+                flat
+                dense
                 padding="sm"
                 @click="setMonth(1)"
             />
         </div>
         <div class="row">
             <div
-                class="col-item strong"
+                class="col-item"
                 v-for="(col, idx) in colArray"
                 :key="idx"
                 :class="convertClass(idx)"
@@ -83,7 +75,7 @@ const now = ref(new Date());
 const nowYear = ref(now.value.getFullYear());
 const nowMonth = ref(now.value.getMonth() + 1);
 
-const colArray = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+const colArray = ['일', '월', '화', '수', '목', '금', '토'];
 
 const selectedABDay: Ref<AccountBookDay | undefined> = ref(undefined);
 const dayArray: Ref<Array<Array<AccountBookDay>>> = ref([]);
@@ -204,32 +196,15 @@ onMounted(() => {
 
     > .header {
         display: flex;
-        margin: $spacing-sm auto;
         > .abc-outer {
-            max-width: 100px;
+            max-width: 50px;
             margin: 0px $spacing-sm;
-            border-radius: $spacing-sm;
-            box-shadow: 0 1px $spacing-sm rgba(0, 0, 0, 0.2), 0 2px 2px rgba(0, 0, 0, 0.14),
-                0 3px 1px -2px rgba(0, 0, 0, 0.12);
-
-            &:deep(.abc-input) {
-                text-align: center;
-                font-size: 18px;
-            }
-
-            .input-append {
-                font-weight: bold;
-                font-size: 14px;
-                padding-right: $spacing-sm;
-            }
         }
-
-        > .btn-right {
-            margin-left: $spacing-md;
-        }
-
         > .btn-left {
             margin-right: $spacing-md;
+        }
+        > .btn-right {
+            margin-left: $spacing-md;
         }
     }
 
@@ -249,11 +224,6 @@ onMounted(() => {
         > .blue {
             color: blue;
         }
-
-        > .strong {
-            font-weight: bold;
-        }
-
         > .row-item {
             position: relative;
             flex: 1;

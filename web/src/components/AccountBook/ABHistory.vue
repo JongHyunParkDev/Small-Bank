@@ -8,11 +8,11 @@
             >
                 <div class="btn item">
                     <QBtn
-                        color="white"
-                        text-color="black"
+                        flat
+                        dense
+                        padding="sm"
                         icon="edit"
                         size="sm"
-                        padding="sm"
                         :ripple="false"
                         @click="modifyHistroy(idx)"
                     />
@@ -41,7 +41,7 @@
                 </div>
             </div>
         </div>
-        <div class="summary-row">
+        <div class="summary-row q-mx-sm">
             <div class="column">
                 <div class="spend">총 지출: {{ sumSpend.toLocaleString() }}</div>
                 <div class="income">총 수입: {{ sumIncome.toLocaleString() }}</div>
@@ -71,7 +71,7 @@ const props = defineProps({
 const emit = defineEmits(['modify-history']);
 
 watch(
-    props.dayAccountArr,
+    () => props.dayAccountArr,
     (newArray) => {
         sumSpend.value = 0;
         sumIncome.value = 0;
@@ -105,9 +105,7 @@ function modifyHistroy(idx: number) {
 
         > .history-row {
             display: flex;
-            margin: $spacing-md;
-            font-size: 16px;
-            font-weight: bold;
+            margin: $spacing-sm;
 
             > .btn {
                 flex-grow: 1;
@@ -159,11 +157,9 @@ function modifyHistroy(idx: number) {
         right: 0px;
         display: flex;
         justify-content: space-around;
-        border-top: 1px solid $grey-5;
+        border-top: 1px solid $grey-3;
 
         > .column {
-            font-size: 16px;
-            font-weight: bold;
             text-align: center;
 
             > .spend {

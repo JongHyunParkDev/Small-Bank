@@ -1,5 +1,5 @@
 <template>
-    <div class="accountBook">
+    <div class="accountBook q-pa-sm">
         <ABCalendar
             class="calendar"
             :day-account-arr="dayAccountArr"
@@ -408,7 +408,7 @@ function modifyHistory() {
     }
 
     > .divider {
-        border-top: 0.5px $grey-5 solid;
+        border-top: 0.5px $grey-3 solid;
     }
 
     > .history {

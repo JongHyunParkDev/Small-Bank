@@ -61,9 +61,6 @@ function selectDay() {
 
 <style lang="scss" scoped>
 .ab-day {
-    font-size: 1em;
-    font-weight: bold;
-
     > .day {
         border-radius: $spacing-md;
         height: 100%;
