@@ -45,10 +45,10 @@
                 <AccountDetailChart :acccount-list="acccountList" />
             </QTabPanel>
             <QTabPanel name="categoryList">
-                <AccountDetailCategoryList :acccount-list="acccountList" />
+                <AccountDetailCategoryList :acccount-list="accountListSortCategory" />
             </QTabPanel>
             <QTabPanel name="dateList">
-                <AccountDetailDateList :acccount-list="acccountList" />
+                <AccountDetailDateList :acccount-list="accountListSortDate" />
             </QTabPanel>
         </QTabPanels>
         <QTabs
@@ -78,12 +78,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, inject, onMounted } from 'vue';
+import { ref, Ref, inject, onMounted, computed } from 'vue';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { dateToApiDateStr } from '@/lib/DateUtil';
 import { DayAccount } from '@/types/AccountTypes';
 import { compare } from '@/lib/StrUtil';
+import { cloneDeep } from 'lodash';
 import AccountDetailCategoryList from '@/components/AccountBookDetail/AccountDetailCategoryList.vue';
 import AccountDetailChart from '@/components/AccountBookDetail/AccountDetailChart.vue';
 import AccountDetailDateList from '@/components/AccountBookDetail/AccountDetailDateList.vue';
@@ -94,6 +95,22 @@ const downProcessSpinner = inject<() => void>('downProcessSpinner');
 const selectedTab = ref('chart');
 
 const acccountList: Ref<Array<DayAccount>> = ref([]);
+
+const accountListSortDate = computed(() => {
+    const sortList = cloneDeep(acccountList.value);
+    return sortList.sort((a, b) => {
+        if (compare(a.date, b.date) === 0) return compare(a.time, b.time);
+        return compare(a.date, b.date);
+    });
+});
+
+const accountListSortCategory = computed(() => {
+    const sortList = cloneDeep(acccountList.value);
+    return sortList.sort((a, b) => {
+        if (compare(a.category, b.category) === 0) return compare(a.date, b.date);
+        return compare(a.category, b.category);
+    });
+});
 
 const now = ref(new Date());
 
@@ -151,12 +168,7 @@ function getAccounts() {
                 endDate: endDate,
             });
 
-            const sortAccountList = resultAccountList.sort((a, b) => {
-                if (compare(a.date, b.date) === 0) return compare(a.category, b.category);
-                return compare(a.date, b.date);
-            });
-
-            acccountList.value = sortAccountList;
+            acccountList.value = resultAccountList;
         });
     }
 }

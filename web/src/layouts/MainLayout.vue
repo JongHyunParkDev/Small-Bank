@@ -1,5 +1,8 @@
 <template>
-    <QLayout view="hHh lpR fFf">
+    <QLayout
+        class="main-layout"
+        view="hHh lpR fFf"
+    >
         <QHeader class="header">
             <QToolbar>
                 <QBtn
@@ -43,6 +46,7 @@
 
         <QDrawer
             v-model="leftDrawerOpen"
+            class="drawer"
             bordered
             overlay
         >
@@ -250,75 +254,81 @@ provide('downProcessSpinner', downProcessSpinner);
 </script>
 
 <style lang="scss" scoped>
-.header {
-    background-color: $naver-bs;
-    color: white;
+.main-layout {
+    .header {
+        background-color: $naver-bs;
+        color: white;
 
-    .logo-text:hover {
-        cursor: pointer;
-    }
+        .logo-text:hover {
+            cursor: pointer;
+        }
 
-    .avatar-content {
-        display: flex;
-        flex-direction: row;
-
-        > .update-area {
+        .avatar-content {
             display: flex;
-            border-radius: 5%;
+            flex-direction: row;
 
-            &:hover {
-                cursor: pointer;
-                background-color: $naver-dk;
+            > .update-area {
+                display: flex;
+                border-radius: 5%;
+
+                &:hover {
+                    cursor: pointer;
+                    background-color: $naver-dk;
+                }
+
+                img {
+                    border: 1px solid $grey-7;
+                }
+
+                > .name {
+                    padding: $spacing-md;
+                }
             }
 
-            img {
-                border: 1px solid $grey-7;
-            }
-
-            > .name {
+            > .icon {
+                font-size: 1.4em;
                 padding: $spacing-md;
-            }
-        }
+                border-radius: 100%;
 
-        > .icon {
-            font-size: 1.4em;
-            padding: $spacing-md;
-            border-radius: 100%;
-
-            &:hover {
-                cursor: pointer;
-                background-color: $naver-dk;
+                &:hover {
+                    cursor: pointer;
+                    background-color: $naver-dk;
+                }
             }
         }
     }
-}
 
-.error-area {
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    background-color: $red-9;
-    color: white;
-    border: 1px solid $red-10;
-    margin: $spacing-md;
-    padding: $spacing-sm;
-    max-width: 50%;
-    z-index: 999999;
+    &:deep(.drawer) {
+        color: $grey-10;
+    }
 
-    > .action-btns {
-        text-align: end;
-        margin-left: $spacing-md;
-        margin-top: $spacing-sm;
-        > .btn {
-            border: 1px solid $grey-4;
-            width: 60px;
+    .error-area {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        background-color: $red-9;
+        color: white;
+        border: 1px solid $red-10;
+        margin: $spacing-md;
+        padding: $spacing-sm;
+        max-width: 50%;
+        z-index: 999999;
+
+        > .action-btns {
+            text-align: end;
+            margin-left: $spacing-md;
+            margin-top: $spacing-sm;
+            > .btn {
+                border: 1px solid $grey-4;
+                width: 60px;
+            }
         }
     }
-}
 
-.form-dialog {
-    .form-card {
-        min-width: 350px;
+    .form-dialog {
+        .form-card {
+            min-width: 350px;
+        }
     }
 }
 </style>

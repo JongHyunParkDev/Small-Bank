@@ -62,7 +62,7 @@
                         href="/oauth2/authorization/google"
                     >
                         <img
-                            class="google-img"
+                            class="google-img login-img"
                             :src="GoogleLoginBtnSrc"
                             alt="Google Login"
                         />
@@ -72,7 +72,7 @@
                         href="/oauth2/authorization/kakao"
                     >
                         <img
-                            class="kakao-img"
+                            class="kakao-img login-img"
                             :src="KakaoLoginBtnSrc"
                             alt="Kakao Login"
                         />
@@ -376,6 +376,11 @@ watch(errorStore.errors, async (newError) => {
                 > .login-btn {
                     margin: $spacing-sm;
                     text-align: center;
+
+                    > .login-img {
+                        border: 0.5px $grey-8 solid;
+                        border-radius: $spacing-md;
+                    }
 
                     > .kakao-img {
                         width: 200px;
