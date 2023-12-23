@@ -1,38 +1,44 @@
 <template>
     <div class="account-book-detail">
         <div class="header q-px-sm q-pt-sm">
-            <QBtn
-                class="btn-left"
-                icon="chevron_left"
-                flat
-                dense
-                padding="sm"
-                @click="setMonth(-1)"
-            />
-            <QInput
-                class="abc-outer"
-                dense
-                borderless
-                input-class="text-center"
-                v-model.number="nowYear"
-                @update:model-value="updateYear"
-            />
-            <QInput
-                class="abc-outer"
-                dense
-                borderless
-                input-class="text-center"
-                v-model.number="nowMonth"
-                @update:model-value="updateMonth"
-            />
-            <QBtn
-                class="btn-right"
-                icon="chevron_right"
-                flat
-                dense
-                padding="sm"
-                @click="setMonth(1)"
-            />
+            <div class="input-area">
+                <QBtn
+                    class="btn-left"
+                    icon="chevron_left"
+                    flat
+                    dense
+                    padding="sm"
+                    @click="setMonth(-1)"
+                />
+                <QInput
+                    class="abc-outer"
+                    dense
+                    borderless
+                    input-class="text-center"
+                    v-model.number="nowYear"
+                    @update:model-value="updateYear"
+                />
+                <QInput
+                    class="abc-outer"
+                    dense
+                    borderless
+                    input-class="text-center"
+                    v-model.number="nowMonth"
+                    @update:model-value="updateMonth"
+                />
+                <QBtn
+                    class="btn-right"
+                    icon="chevron_right"
+                    flat
+                    dense
+                    padding="sm"
+                    @click="setMonth(1)"
+                />
+            </div>
+            <div class="month-summary">
+                <div class="q-mr-md spend">지출: {{ summaryMonthMap.spend.toLocaleString() }}</div>
+                <div class="income">수입: {{ summaryMonthMap.income.toLocaleString() }}</div>
+            </div>
         </div>
         <QTabPanels
             class="tab-panels"
@@ -110,6 +116,19 @@ const accountListSortCategory = computed(() => {
         if (compare(a.category, b.category) === 0) return compare(a.date, b.date);
         return compare(a.category, b.category);
     });
+});
+
+const summaryMonthMap = computed(() => {
+    const map = {
+        income: 0,
+        spend: 0,
+    };
+
+    acccountList.value.forEach((account) => {
+        map[account.type] += account.money;
+    });
+
+    return map;
 });
 
 const now = ref(new Date());
@@ -190,25 +209,34 @@ onMounted(() => {
 
     > .header {
         display: flex;
+        justify-content: space-between;
+        > .input-area {
+            display: flex;
+            > .abc-outer {
+                max-width: 50px;
+                margin: 0px $spacing-sm;
+            }
 
-        > .abc-outer {
-            max-width: 50px;
-            margin: 0px $spacing-sm;
+            > .btn-right {
+                margin-left: $spacing-md;
+            }
+
+            > .btn-left {
+                margin-right: $spacing-md;
+            }
         }
 
-        > .btn-right {
-            margin-left: $spacing-md;
-        }
+        > .month-summary {
+            font-weight: bold;
+            > .spend {
+                color: $pink-14;
+            }
 
-        > .btn-left {
-            margin-right: $spacing-md;
+            > .income {
+                color: $indigo-14;
+            }
         }
     }
-
-    > .btn-toggle {
-        margin: 0px auto;
-    }
-
     > .tab-panels {
         flex: 1;
     }

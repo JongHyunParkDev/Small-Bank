@@ -324,11 +324,10 @@ provide('downProcessSpinner', downProcessSpinner);
             }
         }
     }
-
-    .form-dialog {
-        .form-card {
-            min-width: 350px;
-        }
+}
+.form-dialog {
+    .form-card {
+        min-width: 350px;
     }
 }
 </style>

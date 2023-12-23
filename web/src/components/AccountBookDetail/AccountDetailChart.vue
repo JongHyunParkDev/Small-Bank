@@ -119,7 +119,7 @@ function updateChart(newAccountList) {
                     filter: {
                         property: 'percentage',
                         operator: '>',
-                        value: 10,
+                        value: 7,
                     },
                     formatter: function (this: PointLabelObject): string | undefined {
                         return (
