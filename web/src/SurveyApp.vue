@@ -48,7 +48,7 @@
             </div>
         </div>
         <QDialog
-            class="is-form-dialog"
+            class="form-dialog"
             v-model="isFormDialog"
             persistent
         >
@@ -57,7 +57,6 @@
                     <QCardSection class="bg-primary">
                         <div class="text-h6 text-white">정보 입력</div>
                     </QCardSection>
-
                     <QCardSection class="q-pa-md content">
                         <QInput
                             class="q-mb-sm"
@@ -151,7 +150,7 @@ import { useRoute } from 'vue-router';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
-import { SurveyDetail } from '@/types/SurveyTypes';
+import { SurveyDetail, SurveyResult } from '@/types/SurveyTypes';
 import { datestrToApiDateStr } from '@/lib/DateUtil';
 import { useErrorStore } from '@/stores/ErrorStore';
 
@@ -185,24 +184,22 @@ const formInput = ref({
 
 function submit() {
     PROCESS(upProcessSpinner, downProcessSpinner, async () => {
-        try {
-            const list = createSummary();
-            await Api.post('anon/surveyResult', {
-                surveyId: surveyId,
-                name: formInput.value.name,
-                birthDay: datestrToApiDateStr(formInput.value.birth),
-                dept: formInput.value.dept,
-                gender: formInput.value.gender,
-                list: list,
-            });
+        const list = createSummary();
+        await Api.post('anon/surveyResult', {
+            surveyId: surveyId,
+            name: formInput.value.name,
+            birthDay: datestrToApiDateStr(formInput.value.birth),
+            dept: formInput.value.dept,
+            gender: formInput.value.gender,
+            list: list,
+        });
 
-            isFormDialog.value = false;
+        isFormDialog.value = false;
 
-            $q.notify({
-                type: 'positive',
-                message: '제출이 완료되었습니다.',
-            });
-        } catch (e) {}
+        $q.notify({
+            type: 'positive',
+            message: '제출이 완료되었습니다.',
+        });
     });
 }
 
@@ -214,7 +211,7 @@ function showCheck() {
 
 function createSummary() {
     const map = {};
-    const list: any[] = [];
+    const list: SurveyResult[] = [];
 
     inputList.value.forEach((input) => {
         if (map[input.category]) {
@@ -398,9 +395,9 @@ onMounted(() => {
     }
 }
 
-.is-form-dialog {
+.form-dialog {
     .form-card {
-        min-width: 300px;
+        min-width: 350px;
     }
 }
 </style>

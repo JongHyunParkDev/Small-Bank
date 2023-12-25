@@ -1,5 +1,37 @@
 <template>
     <div class="survey-base">
+        <div class="header text-right q-ma-sm">
+            <QBtn
+                class="q-mr-sm"
+                color="primary"
+                text-color="white"
+                label="추가"
+                @click="showAddDialog"
+            />
+            <QBtn
+                class="q-mr-sm"
+                color="positive"
+                text-color="white"
+                label="수정"
+                :disable="selectedRow.length === 0"
+                @click="showModifyDialog"
+            />
+            <QBtn
+                class="q-mr-sm"
+                color="secondary"
+                text-color="white"
+                label="활성화"
+                :disable="selectedRow.length === 0"
+                @click="toggleRow"
+            />
+            <QBtn
+                color="negative"
+                text-color="white"
+                label="삭제"
+                :disable="selectedRow.length === 0"
+                @click="deleteRow"
+            />
+        </div>
         <QTable
             class="sppd-table table"
             :columns="columns"
@@ -13,63 +45,12 @@
             @selection="selectRow"
             :separator="'cell'"
         />
-        <QPageSticky
-            position="bottom-right"
-            :offset="[18, 64]"
-        >
-            <QFab
-                color="naver-bs"
-                text-color="white"
-                icon="keyboard_arrow_left"
-                direction="left"
-            >
-                <QFabAction
-                    external-label
-                    label-position="top"
-                    color="primary"
-                    text-color="white"
-                    icon="add"
-                    label="추가"
-                    @click="showAddDialog"
-                />
-                <QFabAction
-                    external-label
-                    label-position="top"
-                    color="positive"
-                    text-color="white"
-                    icon="edit"
-                    label="수정"
-                    :disable="selectedRow.length === 0"
-                    @click="showModifyDialog"
-                />
-                <QFabAction
-                    external-label
-                    label-position="top"
-                    color="secondary"
-                    text-color="white"
-                    icon="check"
-                    label="활성화"
-                    :disable="selectedRow.length === 0"
-                    @click="toggleRow"
-                />
-                <QFabAction
-                    external-label
-                    label-position="top"
-                    color="negative"
-                    text-color="white"
-                    icon="close"
-                    label="삭제"
-                    :disable="selectedRow.length === 0"
-                    @click="deleteRow"
-                />
-            </QFab>
-        </QPageSticky>
         <QDialog
-            class="survey-add-dialog"
+            class="form-dialog"
             v-model="addDialogOption.visible"
             persistent
         >
-            <QCard class="survey-card">
+            <QCard class="form-card">
                 <QForm @submit="addSurvey">
                     <QCardSection class="bg-primary">
                         <div class="text-h6 text-white">설문조사 추가하기</div>
@@ -167,11 +148,11 @@
             </QCard>
         </QDialog>
         <QDialog
-            class="survey-modify-dialog"
+            class="form-dialog"
             v-model="modifyDialogOption.visible"
             persistent
         >
-            <QCard class="survey-card">
+            <QCard class="form-card">
                 <QForm @submit="modifySurvey">
                     <QCardSection class="bg-primary">
                         <div class="text-h6 text-white">설문조사 변경하기</div>
@@ -275,7 +256,7 @@
 import { ref, Ref, defineEmits, inject } from 'vue';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
-import { useQuasar } from 'quasar';
+import { useQuasar, QTableColumn } from 'quasar';
 import { dateToDateStr, datestrToApiDateStr } from '@/lib/DateUtil';
 import { Survey } from '@/types/SurveyTypes';
 
@@ -307,7 +288,7 @@ const pagination = ref({
     rowsPerPage: 0,
 });
 
-const columns = ref([
+const columns: Ref<Array<QTableColumn>> = ref([
     {
         name: 'num',
         label: 'Num',
@@ -427,7 +408,7 @@ function modifySurvey() {
     }
 }
 
-function toggleRow(evt: Event) {
+function toggleRow() {
     $q.notify({
         type: 'warning',
         position: 'center',
@@ -473,7 +454,7 @@ function toggleRow(evt: Event) {
     }
 }
 
-function deleteRow(evt: Event) {
+function deleteRow() {
     $q.notify({
         type: 'warning',
         position: 'center',
@@ -544,9 +525,8 @@ function showModifyDialog() {
     }
 }
 
-.survey-add-dialog,
-.survey-modify-dialog {
-    .survey-card {
+.form-dialog {
+    .form-card {
         min-width: 350px;
     }
 }

@@ -2,7 +2,7 @@ package com.dev.was.oauth2;
 
 import java.util.Map;
 
-public class GoogleUser implements OAuthUser{
+public class GoogleUser implements OAuthUser {
 
     public GoogleUser(Map<String, Object> attributes) {
         this.attributes = attributes;

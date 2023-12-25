@@ -22,38 +22,28 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public UserDto joinUserInfo(String email, String password, String name, String phone) {
-        try {
-            if (userRepository.findByEmail(email) != null)
-                throw new ApiException(ExceptionCodeEnum.DUPLICATE_EMAIL);
+        if (userRepository.existsByEmail(email))
+            throw new ApiException(ExceptionCodeEnum.DUPLICATE_EMAIL);
 
-            UserEntity userEntity = userRepository.save(
-                    UserEntity.builder()
-                            .email(email)
-                            .password(passwordEncoder.encode(password))
-                            .name(name)
-                            .phone(phone)
-                            .role("ROLE_USER")
-                            .profileImg("https://ssl.pstatic.net/static/pwe/address/img_profile.png")
-                            .build()
-            );
-            if (userEntity == null)
-                throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT);
-            return new UserDto(userEntity);
-        }
-        catch (ApiException e) {
-            throw e;
-        }
-        catch(RuntimeException e) {
-            throw new ApiException(ExceptionCodeEnum.DB_ERROR);
-        }
+        UserEntity userEntity = userRepository.save(
+                UserEntity.builder()
+                        .email(email)
+                        .password(passwordEncoder.encode(password))
+                        .name(name)
+                        .phone(phone)
+                        .role("ROLE_USER")
+                        .profileImg("https://ssl.pstatic.net/static/pwe/address/img_profile.png")
+                        .build()
+        );
+
+        return new UserDto(userEntity);
     }
 
     public UserDto getUserInfo(Long id) {
-        Optional<UserEntity> userEntity = userRepository.findById(id);
+        UserEntity userEntity = userRepository.findById(id)
+                .orElseThrow(() -> new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT));
 
-        if (userEntity.isEmpty())
-            throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT);
-        return new UserDto(userEntity.get());
+        return new UserDto(userEntity);
     }
 
     public void saveUserInfo(
@@ -62,21 +52,17 @@ public class UserService {
             String phone,
             String name
     ) {
-        Optional<UserEntity> userEntity = userRepository.findById(id);
+        UserEntity userEntity = userRepository.findById(id)
+                .orElseThrow(() -> new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT));
 
-        if (userEntity.isEmpty())
-            throw new ApiException(ExceptionCodeEnum.INVALID_ARGUMENT);
-
-        UserEntity saveUserEntity = userEntity.get();
-
-        saveUserEntity.setName(name);
-        saveUserEntity.setPhone(phone);
+        userEntity.setName(name);
+        userEntity.setPhone(phone);
 
         if (password != null) {
-            saveUserEntity.setPassword(passwordEncoder.encode(password));
+            userEntity.setPassword(passwordEncoder.encode(password));
         }
 
-        userRepository.save(saveUserEntity);
+        userRepository.save(userEntity);
     }
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);

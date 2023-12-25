@@ -55,11 +55,12 @@ public class SurveyService {
             throw new ApiException(ExceptionCodeEnum.UNAVAILABLE_DATA, "Survey Detail is empty");
 
         SurveyDto surveyDto = new SurveyDto(surveyEntity);
-        surveyDto.setSurveyDetailDtoList(surveyEntity
+        surveyDto.setSurveyDetailDtoList(
+            surveyEntity
                 .getSurveyDetailEntityList()
-                .stream()
-                .map(SurveyDetailDto::new)
-                .collect(Collectors.toList())
+                    .stream()
+                    .map(SurveyDetailDto::new)
+                    .collect(Collectors.toList())
                 );
 
         return surveyDto;
@@ -91,15 +92,15 @@ public class SurveyService {
             LocalDate startDate,
             LocalDate endDate
     ) {
-        SurveyEntity surveyEntity = surveyRepository.findById(id)
+        SurveyEntity saveSurveyEntity = surveyRepository.findById(id)
                 .orElseThrow(() -> new ApiException(ExceptionCodeEnum.DB_ERROR, "Not Found Survey Id"));
 
-        surveyEntity.setTitle(title);
-        surveyEntity.setStartDate(startDate);
-        surveyEntity.setEndDate(endDate);
+        saveSurveyEntity.setTitle(title);
+        saveSurveyEntity.setStartDate(startDate);
+        saveSurveyEntity.setEndDate(endDate);
 
-        SurveyEntity resultSurveyEntity = surveyRepository.save(surveyEntity);
-        return new SurveyDto(resultSurveyEntity);
+        SurveyEntity surveyEntity = surveyRepository.save(saveSurveyEntity);
+        return new SurveyDto(surveyEntity);
     }
 
     @Transactional
@@ -128,19 +129,13 @@ public class SurveyService {
     public List<SurveyDetailDto> getSurveyDetailsBySurveyId(
             Long surveyId
     ) {
-        Optional<SurveyEntity> surveyEntityOptional = surveyRepository.findById(surveyId);
+        SurveyEntity surveyEntity = surveyRepository.findById(surveyId)
+                .orElseThrow(() -> new ApiException(ExceptionCodeEnum.DB_ERROR, "Not Found Survey Id"));
 
-        if (surveyEntityOptional.isPresent()) {
-            SurveyEntity surveyEntity = surveyEntityOptional.get();
-
-            return surveyEntity.getSurveyDetailEntityList()
-                    .stream()
-                    .map(SurveyDetailDto::new)
-                    .collect(Collectors.toList());
-        }
-        else {
-            throw new ApiException(ExceptionCodeEnum.DB_ERROR, "Failed to DB insert");
-        }
+        return surveyEntity.getSurveyDetailEntityList()
+                .stream()
+                .map(SurveyDetailDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -150,30 +145,19 @@ public class SurveyService {
             String category,
             Boolean isSort
     ) {
-        Optional<SurveyEntity> surveyEntityOptional = surveyRepository.findById(surveyId);
+        SurveyEntity surveyEntity = surveyRepository.findById(surveyId)
+                .orElseThrow(() -> new ApiException(ExceptionCodeEnum.DB_ERROR, "Not Found Survey Id"));
 
-        if (surveyEntityOptional.isPresent()) {
-            SurveyEntity surveyEntity = surveyEntityOptional.get();
+        SurveyDetailEntity surveyDetailEntity = SurveyDetailEntity.builder()
+                .content(content)
+                .category(category)
+                .isSort(isSort)
+                .surveyEntity(surveyEntity)
+                .build();
 
-            SurveyDetailEntity surveyDetailEntity = SurveyDetailEntity.builder()
-                    .content(content)
-                    .category(category)
-                    .isSort(isSort)
-                    .surveyEntity(surveyEntity)
-                    .build();
+        surveyDetailEntity = surveyDetailRepository.save(surveyDetailEntity);
 
-            surveyDetailEntity.setSurveyEntity(surveyEntity);
-
-            surveyDetailEntity = surveyDetailRepository.save(surveyDetailEntity);
-
-//            surveyEntity.getSurveyDetailEntityList().add(surveyDetailEntity);
-//
-//            surveyRepository.save(surveyEntity);
-            return new SurveyDetailDto(surveyDetailEntity);
-        }
-        else {
-            throw new ApiException(ExceptionCodeEnum.DB_ERROR, "Failed to DB insert");
-        }
+        return new SurveyDetailDto(surveyDetailEntity);
     }
 
     public SurveyDetailDto updateSurveyDetail(
@@ -182,21 +166,15 @@ public class SurveyService {
             String category,
             Boolean isSort
     ) {
-        Optional<SurveyDetailEntity> surveyEntityDeOptional = surveyDetailRepository.findById(surveyDetailId);
+        SurveyDetailEntity surveyDetailEntity = surveyDetailRepository.findById(surveyDetailId)
+                .orElseThrow(() -> new ApiException(ExceptionCodeEnum.DB_ERROR, "Not Found Survey Detail Id"));
 
-        if (surveyEntityDeOptional.isPresent()) {
-            SurveyDetailEntity surveyDetailEntity = surveyEntityDeOptional.get();
+        surveyDetailEntity.setContent(content);
+        surveyDetailEntity.setCategory(category);
+        surveyDetailEntity.setSort(isSort);
 
-            surveyDetailEntity.setContent(content);
-            surveyDetailEntity.setCategory(category);
-            surveyDetailEntity.setSort(isSort);
-
-            surveyDetailRepository.save(surveyDetailEntity);
-            return new SurveyDetailDto(surveyDetailEntity);
-        }
-        else {
-            throw new ApiException(ExceptionCodeEnum.DB_ERROR, "Failed to DB update");
-        }
+        surveyDetailRepository.save(surveyDetailEntity);
+        return new SurveyDetailDto(surveyDetailEntity);
     }
 
     public void deleteSurveyDetail(Long surveyDetailId) {
@@ -217,12 +195,15 @@ public class SurveyService {
                 .build();
 
         List<SurveyUserResultEntity> surveyUserResultEntityList = new ArrayList<>();
+
         list.forEach(map -> {
-            surveyUserResultEntityList.add(SurveyUserResultEntity.builder()
+            surveyUserResultEntityList.add(
+                SurveyUserResultEntity.builder()
                     .category((String) map.get("category"))
                     .score(((Integer)map.get("value")).longValue())
                     .surveyUserEntity(surveyUserEntity)
-                    .build());
+                    .build()
+            );
         });
 
         surveyUserEntity.setSurveyUserResultEntityList(surveyUserResultEntityList);
@@ -242,16 +223,7 @@ public class SurveyService {
             surveyUserEntity.getSurveyUserResultEntityList().forEach(surveyUserResultEntity ->
                     surveyUserResultDtoList.add(new SurveyUserResultDto(surveyUserResultEntity)));
 
-            surveyUserDtoList.add(
-                    SurveyUserDto.builder()
-                            .id(surveyUserEntity.getId())
-                            .name(surveyUserEntity.getName())
-                            .dept(surveyUserEntity.getDept())
-                            .gender(surveyUserEntity.isGender())
-                            .birthDay(surveyUserEntity.getBirthDay())
-                            .surveyUserResultDtoList(surveyUserResultDtoList)
-                            .build()
-            );
+            surveyUserDtoList.add(new SurveyUserDto(surveyUserEntity));
         });
 
         return new PageImpl<>(surveyUserDtoList, pageable, surveyUserEntityList.getTotalElements());

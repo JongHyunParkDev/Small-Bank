@@ -21,9 +21,9 @@ import java.util.List;
 public class SurveyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; //기본키
+    private Long id;
     @Column(nullable = false)
-    private Long userId; // userEntity id
+    private Long userId;
 
     @Column(nullable = false)
     private String title;
@@ -42,7 +42,7 @@ public class SurveyEntity {
     private List<SurveyUserEntity> surveyUserEntityList;
 
     @BatchSize(size = 100)
-    @OneToMany(mappedBy = "surveyEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "surveyEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SurveyDetailEntity> surveyDetailEntityList;
 
     @CreatedDate

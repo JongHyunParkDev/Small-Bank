@@ -16,3 +16,8 @@ export type SurveyDetail = {
     valueList?: Array<number>;
     selectInput?: number;
 };
+
+export type SurveyResult = {
+    category: string;
+    value: string;
+};

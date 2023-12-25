@@ -52,7 +52,7 @@
  */
 
  function str_repeat(i: string, m: number): string {
-    const o = [];
+    const o: Array<string> = [];
     while (m > 0) o[--m] = i;
     return o.join('');
 }
@@ -66,7 +66,7 @@ export function format(fmt: string, ...args: any[]): string {
         p,
         c,
         x;
-    const o = [],
+    const o: Array<string>  = [],
         s = '';
     while (f) {
         if ((m = /^[^\x25]+/.exec(f)) !== null) {

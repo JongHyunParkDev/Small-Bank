@@ -1,9 +1,9 @@
 <template>
-    <QLayout view="hHh lpR fFf">
-        <QHeader
-            elevated
-            class="header"
-        >
+    <QLayout
+        class="main-layout"
+        view="hHh lpR fFf"
+    >
+        <QHeader class="header">
             <QToolbar>
                 <QBtn
                     flat
@@ -46,6 +46,7 @@
 
         <QDrawer
             v-model="leftDrawerOpen"
+            class="drawer"
             bordered
             overlay
         >
@@ -58,64 +59,61 @@
             <RouterView />
         </QPageContainer>
         <QDialog
-            class="update-form-dialog"
+            class="form-dialog"
             v-model="isVisibleUpdateFormDialog"
             persistent
         >
-            <QCard class="update-form-card">
+            <QCard class="form-card">
                 <QForm @submit="updateSubmit">
-                    <QCardSection class="row items-center">
-                        <QToolbar>
-                            <QToolbarTitle> 사용자 정보 변경 </QToolbarTitle>
-                        </QToolbar>
-                        <div class="dialog-content">
-                            <QInput
-                                name="email"
-                                outlined
-                                stack-label
-                                label="이메일"
-                                v-model="updateEmailInput"
-                                disable
-                                :rules="[(val) => true]"
-                            />
-                            <QInput
-                                name="password"
-                                type="password"
-                                outlined
-                                stack-label
-                                label="패스워드 (공백인 경우 변경하지 않습니다.)"
-                                v-model="updatePasswordInput"
-                                :rules="[
-                                    (val) =>
-                                        isPasswordValid(val) ||
-                                        '영문자, 숫자 필수이며, 6 ~ 12글자로 사용 가능합니다.',
-                                ]"
-                            />
-                            <QInput
-                                name="name"
-                                outlined
-                                stack-label
-                                label="이름"
-                                v-model="updateNameInput"
-                                :rules="[
-                                    (val) =>
-                                        (val.length >= 2 && val.length <= 6) ||
-                                        '이름은 2 ~ 6글자 사용 가능합니다.',
-                                ]"
-                            />
-                            <QInput
-                                name="phone"
-                                outlined
-                                stack-label
-                                label="전화번호"
-                                v-model="updatePhoneInput"
-                                :rules="[
-                                    (val) =>
-                                        validatePhone(val) ||
-                                        '010-0000-0000 형식으로 작성해주세요.',
-                                ]"
-                            />
-                        </div>
+                    <QCardSection class="bg-primary">
+                        <div class="text-h6 text-white">설문 항목 추가하기</div>
+                    </QCardSection>
+                    <QCardSection class="q-pa-md content">
+                        <QInput
+                            name="email"
+                            outlined
+                            stack-label
+                            label="이메일"
+                            v-model="updateEmailInput"
+                            disable
+                            :rules="[(val) => true]"
+                        />
+                        <QInput
+                            name="password"
+                            type="password"
+                            outlined
+                            stack-label
+                            label="패스워드 (공백인 경우 변경하지 않습니다.)"
+                            v-model="updatePasswordInput"
+                            :rules="[
+                                (val) =>
+                                    isPasswordValid(val) ||
+                                    '영문자, 숫자 필수이며, 6 ~ 12글자로 사용 가능합니다.',
+                            ]"
+                        />
+                        <QInput
+                            name="name"
+                            outlined
+                            stack-label
+                            label="이름"
+                            v-model="updateNameInput"
+                            :rules="[
+                                (val) =>
+                                    (val.length >= 2 && val.length <= 6) ||
+                                    '이름은 2 ~ 6글자 사용 가능합니다.',
+                            ]"
+                        />
+                        <QInput
+                            name="phone"
+                            outlined
+                            stack-label
+                            label="전화번호"
+                            v-model="updatePhoneInput"
+                            :rules="[
+                                (val) =>
+                                    validatePhone(val) || '010-0000-0000 형식으로 작성해주세요.',
+                            ]"
+                        />
                     </QCardSection>
                     <QCardActions align="right">
                         <QBtn
@@ -192,7 +190,7 @@ const goHome = () => {
 
 function updateSubmit() {
     PROCESS(upProcessSpinner, downProcessSpinner, async () => {
-        await Api.put('user/userinfo', {
+        await Api.put('user/userInfo', {
             password: updatePasswordInput.value === '' ? undefined : updatePasswordInput.value,
             name: updateNameInput.value,
             phone: updatePhoneInput.value,
@@ -256,77 +254,80 @@ provide('downProcessSpinner', downProcessSpinner);
 </script>
 
 <style lang="scss" scoped>
-.header {
-    background-color: $naver-bs;
-    color: white;
+.main-layout {
+    .header {
+        background-color: $naver-bs;
+        color: white;
 
-    .logo-text:hover {
-        cursor: pointer;
-    }
+        .logo-text:hover {
+            cursor: pointer;
+        }
 
-    .avatar-content {
-        display: flex;
-        flex-direction: row;
-
-        > .update-area {
+        .avatar-content {
             display: flex;
-            border-radius: 5%;
+            flex-direction: row;
 
-            &:hover {
-                cursor: pointer;
-                background-color: $naver-dk;
+            > .update-area {
+                display: flex;
+                border-radius: 5%;
+
+                &:hover {
+                    cursor: pointer;
+                    background-color: $naver-dk;
+                }
+
+                img {
+                    border: 1px solid $grey-7;
+                }
+
+                > .name {
+                    padding: $spacing-md;
+                }
             }
 
-            img {
-                border: 1px solid $grey-7;
-            }
-
-            > .name {
+            > .icon {
+                font-size: 1.4em;
                 padding: $spacing-md;
+                border-radius: 100%;
+
+                &:hover {
+                    cursor: pointer;
+                    background-color: $naver-dk;
+                }
             }
         }
+    }
 
-        > .icon {
-            font-size: 1.4em;
-            padding: $spacing-md;
-            border-radius: 100%;
+    &:deep(.drawer) {
+        color: $grey-10;
+    }
 
-            &:hover {
-                cursor: pointer;
-                background-color: $naver-dk;
+    .error-area {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        background-color: $red-9;
+        color: white;
+        border: 1px solid $red-10;
+        margin: $spacing-md;
+        padding: $spacing-sm;
+        max-width: 50%;
+        z-index: 999999;
+
+        > .action-btns {
+            text-align: end;
+            margin-left: $spacing-md;
+            margin-top: $spacing-sm;
+            > .btn {
+                border: 1px solid $grey-4;
+                width: 60px;
             }
         }
     }
 }
-
-.error-area {
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    background-color: $red-9;
-    color: white;
-    border: 1px solid $red-10;
-    margin: $spacing-md;
-    padding: $spacing-sm;
-    max-width: 50%;
-    z-index: 999999;
-
-    > .action-btns {
-        text-align: end;
-        margin-left: $spacing-md;
-        margin-top: $spacing-sm;
-        > .btn {
-            border: 1px solid $grey-4;
-            width: 60px;
-        }
-    }
-}
-
-.update-form-dialog {
-    .dialog-content {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
+.form-dialog {
+    .form-card {
+        min-width: 350px;
     }
 }
 </style>

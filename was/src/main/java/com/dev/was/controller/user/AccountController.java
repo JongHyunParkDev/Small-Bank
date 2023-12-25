@@ -18,7 +18,7 @@ import java.util.List;
 public class AccountController {
     private final AccountService accountService;
 
-    @GetMapping("/accounts")
+    @GetMapping("/account")
     public List<AccountDto> getAccounts(
         @RequestParam(value = "startDate") String startDate,
         @RequestParam(value = "endDate") String endDate) {
@@ -28,7 +28,7 @@ public class AccountController {
                 DBUtil.toLocalDate(startDate), DBUtil.toLocalDate(endDate));
     }
 
-    @PostMapping("/accounts")
+    @PostMapping("/account")
     public AccountDto addAccount(@RequestBody @Valid RequestAddAccountDto requestAddAccountDto) {
         Long id = AuthenticationUtil.getCurrentId();
 
@@ -44,7 +44,7 @@ public class AccountController {
         );
     }
 
-    @PutMapping("/accounts")
+    @PutMapping("/account")
     public AccountDto updateAccount(@RequestBody @Valid RequestUpdateAccountDto requestUpdateAccountDto) {
         Long id = AuthenticationUtil.getCurrentId();
 
@@ -60,7 +60,7 @@ public class AccountController {
         );
     }
 
-    @DeleteMapping("/accounts")
+    @DeleteMapping("/account")
     public void deleteAccount(@RequestBody @Valid RequestDeleteAccountDto requestDeleteAccountDto) {
         accountService.deleteAccount(requestDeleteAccountDto.id);
     }

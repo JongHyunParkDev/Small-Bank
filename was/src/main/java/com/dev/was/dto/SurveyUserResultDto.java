@@ -11,12 +11,6 @@ public class SurveyUserResultDto {
     private Long score;
 
     @Builder
-    public SurveyUserResultDto(Long id, String category, Long score) {
-        this.id = id;
-        this.category = category;
-        this.score = score;
-    }
-
     public SurveyUserResultDto(SurveyUserResultEntity surveyUserResultEntity) {
         this.id = surveyUserResultEntity.getId();
         this.category = surveyUserResultEntity.getCategory();

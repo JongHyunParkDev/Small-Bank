@@ -40,7 +40,7 @@ const routeList = ref<Route[]>([
     },
     {
         title: '설문조사',
-        caption: '설문조사',
+        caption: '설문조사 (for Desktop)',
         icon: 'description',
         to: '/SurveyForm',
     },

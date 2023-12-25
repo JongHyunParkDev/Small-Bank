@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class SurveyDetailEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; //기본키
+    private Long id;
 
     @Column(nullable = false)
     private String content;

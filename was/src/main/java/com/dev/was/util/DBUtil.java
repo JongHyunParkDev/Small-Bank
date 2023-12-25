@@ -2,16 +2,14 @@ package com.dev.was.util;
 
 import com.dev.was.controller.ApiException;
 import com.dev.was.controller.ExceptionCodeEnum;
+import lombok.experimental.UtilityClass;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@UtilityClass
 public class DBUtil {
-    private DBUtil() {
-        throw new IllegalStateException("Utility class");
-    }
-
     public static LocalDateTime toLocalDateTime(Object obj)
     {
         if (obj == null)

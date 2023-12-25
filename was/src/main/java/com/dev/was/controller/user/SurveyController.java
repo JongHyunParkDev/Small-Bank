@@ -81,8 +81,8 @@ public class SurveyController {
         public Long id;
     }
 
-    @GetMapping("/surveyDetails")
-    public List<SurveyDetailDto> getSurveyDetails(@RequestParam(value = "surveyId") Long surveyId) {
+    @GetMapping("/surveyDetail")
+    public List<SurveyDetailDto> getSurveyDetail(@RequestParam(value = "surveyId") Long surveyId) {
         return surveyService.getSurveyDetailsBySurveyId(surveyId);
     }
 
@@ -95,7 +95,7 @@ public class SurveyController {
     @PutMapping("/surveyDetail")
     public SurveyDetailDto updateSurveyDetail(@RequestBody @Valid RequestUpdateSurveyDetailDto requestUpdateSurveyDetailDto) {
         return surveyService.updateSurveyDetail(requestUpdateSurveyDetailDto.surveyDetailId,
-                requestUpdateSurveyDetailDto.content, requestUpdateSurveyDetailDto.content,
+                requestUpdateSurveyDetailDto.content, requestUpdateSurveyDetailDto.category,
                 requestUpdateSurveyDetailDto.isSort);
     }
 
@@ -133,8 +133,8 @@ public class SurveyController {
         public Long surveyDetailId;
     }
 
-    @GetMapping("/surveyUsers")
-    public Page<SurveyUserDto> getSurveyUsers(
+    @GetMapping("/surveyUser")
+    public Page<SurveyUserDto> getSurveyUser(
             @RequestParam(value = "surveyId") Long surveyId,
             @RequestParam(value = "name") String name,
             @RequestParam(value = "dept") String dept,

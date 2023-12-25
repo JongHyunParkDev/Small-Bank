@@ -1,11 +1,11 @@
 package com.dev.was.util;
 
+import lombok.experimental.UtilityClass;
+
 import java.time.format.DateTimeFormatter;
 
+@UtilityClass
 public class CommonUtil {
-    private CommonUtil() {
-        throw new IllegalStateException("Utility class");
-    }
 
     public static String toNotNullString(String s) {
         return (s == null) ? "" : s;

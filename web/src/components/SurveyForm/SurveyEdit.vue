@@ -1,5 +1,30 @@
 <template>
     <div class="survey-edit">
+        <div class="header text-right q-ma-sm">
+            <QBtn
+                class="q-mr-sm"
+                color="primary"
+                text-color="white"
+                label="추가"
+                @click="showAddDialog"
+            />
+            <QBtn
+                class="q-mr-sm"
+                color="positive"
+                text-color="white"
+                label="수정"
+                :disable="selectedRow.length === 0"
+                @click="showModifyDialog"
+            />
+            <QBtn
+                class="q-mr-sm"
+                color="negative"
+                text-color="white"
+                label="삭제"
+                :disable="selectedRow.length === 0"
+                @click="deleteRow"
+            />
+        </div>
         <QTable
             class="sppd-table table"
             :columns="columns"
@@ -13,53 +38,12 @@
             :hide-selected-banner="true"
             :hide-pagination="true"
         />
-        <QPageSticky
-            position="bottom-right"
-            :offset="[18, 64]"
-        >
-            <QFab
-                color="naver-bs"
-                text-color="white"
-                icon="keyboard_arrow_left"
-                direction="left"
-            >
-                <QFabAction
-                    external-label
-                    label-position="top"
-                    color="primary"
-                    text-color="white"
-                    icon="add"
-                    label="추가"
-                    @click="showAddDialog"
-                />
-                <QFabAction
-                    external-label
-                    label-position="top"
-                    color="positive"
-                    text-color="white"
-                    icon="edit"
-                    label="수정"
-                    :disable="selectedRow.length === 0"
-                    @click="showModifyDialog"
-                />
-                <QFabAction
-                    external-label
-                    label-position="top"
-                    color="negative"
-                    text-color="white"
-                    icon="close"
-                    label="삭제"
-                    :disable="selectedRow.length === 0"
-                    @click="deleteRow"
-                />
-            </QFab>
-        </QPageSticky>
         <QDialog
-            class="survey-add-dialog"
+            class="form-dialog"
             v-model="addDialogOption.visible"
             persistent
         >
-            <QCard class="survey-card">
+            <QCard class="form-card">
                 <QForm @submit="addSurvey">
                     <QCardSection class="bg-primary">
                         <div class="text-h6 text-white">설문 항목 추가하기</div>
@@ -107,11 +91,11 @@
             </QCard>
         </QDialog>
         <QDialog
-            class="survey-modify-dialog"
+            class="form-dialog"
             v-model="modifyDialogOption.visible"
             persistent
         >
-            <QCard class="survey-card">
+            <QCard class="form-card">
                 <QForm @submit="modifySurvey">
                     <QCardSection class="bg-primary">
                         <div class="text-h6 text-white">설문 항목 변경하기</div>
@@ -163,7 +147,7 @@
 
 <script setup lang="ts">
 import { defineProps, ref, Ref, inject } from 'vue';
-import { useQuasar } from 'quasar';
+import { useQuasar, QTableColumn } from 'quasar';
 import { Api } from '@/lib/Api';
 import { PROCESS } from '@/lib/Async';
 import { SurveyDetail } from '@/types/SurveyTypes';
@@ -188,7 +172,7 @@ const rows: Ref<Array<SurveyDetail>> = ref([]);
 
 const selectedRow: Ref<Array<SurveyDetail>> = ref([]);
 
-const columns = ref([
+const columns: Ref<Array<QTableColumn>> = ref([
     {
         name: 'num',
         label: 'Num',
@@ -237,7 +221,7 @@ init();
 function init() {
     if (upProcessSpinner && downProcessSpinner) {
         PROCESS(upProcessSpinner, downProcessSpinner, async () => {
-            const result: Array<SurveyDetail> = await Api.get('user/surveyDetails', {
+            const result: Array<SurveyDetail> = await Api.get('user/surveyDetail', {
                 surveyId: props.selectedSurveyIdx,
             });
             result.forEach((el, idx) => {
@@ -335,7 +319,7 @@ function vaildSurvey() {
     return true;
 }
 
-function deleteRow(evt: Event) {
+function deleteRow() {
     if (!vaildSurvey()) return;
 
     $q.notify({
@@ -386,9 +370,8 @@ function deleteRow(evt: Event) {
     }
 }
 
-.survey-add-dialog,
-.survey-modify-dialog {
-    .survey-card {
+.form-dialog {
+    .form-card {
         min-width: 350px;
     }
 }

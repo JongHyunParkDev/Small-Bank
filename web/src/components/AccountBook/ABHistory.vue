@@ -6,14 +6,13 @@
                 :key="idx"
                 class="history-row"
             >
-                <!-- TODO API 구현 후 변경 가능성 많음 -->
                 <div class="btn item">
                     <QBtn
-                        color="white"
-                        text-color="black"
+                        flat
+                        dense
+                        padding="sm"
                         icon="edit"
                         size="sm"
-                        padding="sm"
                         :ripple="false"
                         @click="modifyHistroy(idx)"
                     />
@@ -42,13 +41,13 @@
                 </div>
             </div>
         </div>
-        <div class="summary-row">
+        <div class="summary-row q-mx-sm">
             <div class="column">
                 <div class="spend">총 지출: {{ sumSpend.toLocaleString() }}</div>
                 <div class="income">총 수입: {{ sumIncome.toLocaleString() }}</div>
             </div>
             <div class="column last">
-                <div :class="sumIncome > sumSpend ? 'income' : 'spend' ">
+                <div :class="sumIncome > sumSpend ? 'income' : 'spend'">
                     총: {{ Math.abs(sumIncome - sumSpend).toLocaleString() }}
                 </div>
             </div>
@@ -65,32 +64,29 @@ const sumIncome = ref(0);
 
 const props = defineProps({
     dayAccountArr: {
-        type: [Array<DayAccount>],
+        type: Array<DayAccount>,
         required: true,
-    }
+    },
 });
 const emit = defineEmits(['modify-history']);
 
 watch(
     () => props.dayAccountArr,
-    (newArray, oldArray) => {
+    (newArray) => {
         sumSpend.value = 0;
         sumIncome.value = 0;
 
-        newArray.forEach(el => {
-            if (el.type === 'spend')
-                sumSpend.value += el.money;
-            else 
-                sumIncome.value += el.money;
-        })
+        newArray.forEach((el) => {
+            if (el.type === 'spend') sumSpend.value += el.money;
+            else sumIncome.value += el.money;
+        });
     },
     { deep: true }
-)
+);
 
-function modifyHistroy(idx : number) {
+function modifyHistroy(idx: number) {
     emit('modify-history', idx);
 }
-
 </script>
 
 <style lang="scss" scoped>
@@ -109,9 +105,7 @@ function modifyHistroy(idx : number) {
 
         > .history-row {
             display: flex;
-            margin: $spacing-md;
-            font-size: 16px;
-            font-weight: bold;
+            margin: $spacing-sm;
 
             > .btn {
                 flex-grow: 1;
@@ -163,11 +157,9 @@ function modifyHistroy(idx : number) {
         right: 0px;
         display: flex;
         justify-content: space-around;
-        border-top: 1px solid $grey-5;
+        border-top: 1px solid $grey-3;
 
         > .column {
-            font-size: 16px;
-            font-weight: bold;
             text-align: center;
 
             > .spend {
