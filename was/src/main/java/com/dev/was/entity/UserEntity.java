@@ -2,6 +2,9 @@ package com.dev.was.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,8 +23,12 @@ public class UserEntity {
     private String profileImg;
     private String role; //유저 권한 (일반 유저, 관리자)
 
+    @BatchSize(size = 1000)
+    @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AccountCategoryEntity> accountCategoryEntityList;
+
     @Builder
-    public UserEntity(Long id, String userId, String name, String password, String email, String phone, String profileImg, String role) {
+    public UserEntity(Long id, String userId, String name, String password, String email, String phone, String profileImg, String role, List<AccountCategoryEntity> accountCategoryEntityList) {
         this.id = id;
         this.userId = userId;
         this.name = name;
@@ -30,5 +37,6 @@ public class UserEntity {
         this.phone = phone;
         this.profileImg = profileImg;
         this.role = role;
+        this.accountCategoryEntityList = accountCategoryEntityList;
     }
 }
