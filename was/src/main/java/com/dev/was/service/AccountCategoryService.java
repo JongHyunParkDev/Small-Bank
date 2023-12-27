@@ -10,11 +10,26 @@ import com.dev.was.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class AccountCategoryService {
     private final AccountCategoryRepository accountCategoryRepository;
     private final UserRepository userRepository;
+
+    public List<AccountCategoryDto> getAccountCategory(
+            Long userId
+    ) {
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ExceptionCodeEnum.DB_ERROR, "Not Found User Id"));
+
+        return userEntity.getAccountCategoryEntityList()
+                .stream()
+                .map(AccountCategoryDto::new)
+                .collect(Collectors.toList());
+    }
 
     public AccountCategoryDto saveAccountCategory(
             Long id,
@@ -26,12 +41,12 @@ public class AccountCategoryService {
 
         AccountCategoryEntity accountCategoryEntity =
                 accountCategoryRepository.save(
-                    AccountCategoryEntity.builder()
-                            .id(id)
-                            .category(category)
-                            .userEntity(userEntity)
-                            .build()
-                    );
+                        AccountCategoryEntity.builder()
+                                .id(id)
+                                .category(category)
+                                .userEntity(userEntity)
+                                .build()
+                        );
 
         return new AccountCategoryDto(accountCategoryEntity);
     }
