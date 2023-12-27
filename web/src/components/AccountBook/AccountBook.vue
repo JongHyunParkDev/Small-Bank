@@ -71,6 +71,8 @@
                                 </QIcon>
                             </template>
                         </QInput>
+                        <AccountCategory 
+                        />
                         <QInput
                             name="category"
                             outlined
@@ -169,13 +171,7 @@
                                 </QIcon>
                             </template>
                         </QInput>
-                        <QInput
-                            name="category"
-                            outlined
-                            stack-label
-                            label="카테고리"
-                            v-model="category"
-                            :rules="[(val) => val !== '' || '카테고리를 입력해주세요.']"
+                        <AccountCategory 
                         />
                         <QBtnToggle
                             v-model="type"
@@ -243,6 +239,7 @@ import { dateToApiDateStr } from '@/lib/DateUtil';
 import { DayAccount } from '@/types/AccountTypes';
 import ABCalendar from 'components/AccountBook/ABCalendar.vue';
 import ABHistory from 'components/AccountBook/ABHistory.vue';
+import AccountCategory from 'components/AccountBook/AccountCategory.vue';
 
 const upProcessSpinner = inject<() => void>('upProcessSpinner');
 const downProcessSpinner = inject<() => void>('downProcessSpinner');

@@ -29,7 +29,6 @@ public class AccountCategoryController {
         Long userId = AuthenticationUtil.getCurrentId();
 
         return accountCategoryService.saveAccountCategory(
-                requestAddAccountCategoryDto.id,
                 userId,
                 requestAddAccountCategoryDto.category);
     }
@@ -42,8 +41,6 @@ public class AccountCategoryController {
     }
 
     public static class RequestAddAccountCategoryDto {
-        @NotNull
-        public Long id;
         @NotNull
         public String category;
     }

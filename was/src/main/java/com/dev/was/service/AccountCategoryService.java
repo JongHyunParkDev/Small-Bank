@@ -32,7 +32,6 @@ public class AccountCategoryService {
     }
 
     public AccountCategoryDto saveAccountCategory(
-            Long id,
             Long userId,
             String category
     ) {
@@ -42,7 +41,6 @@ public class AccountCategoryService {
         AccountCategoryEntity accountCategoryEntity =
                 accountCategoryRepository.save(
                         AccountCategoryEntity.builder()
-                                .id(id)
                                 .category(category)
                                 .userEntity(userEntity)
                                 .build()
