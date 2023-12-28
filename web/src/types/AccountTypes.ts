@@ -18,6 +18,11 @@ export type DayAccount = {
     type: string;
 };
 
+export type AccountCategory = {
+    id: string;
+    category: string;
+};
+
 export type CategoryAccountMap = {
     [category: string]: CategoryAccountOjb;
 };

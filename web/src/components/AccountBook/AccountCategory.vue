@@ -1,8 +1,10 @@
 <template>
     <QBtnDropdown
-        content-class="category-dropdown"
         color="primary" 
-        :label="selectedCategory === undefined ? 'Select Category' : selectedCategory.text"
+        no-caps
+        menu-anchor="bottom left"
+        menu-self="top start"
+        :label="selectedCategory === undefined ? 'Select Category' : selectedCategory"
     >
       <QList>
             <QItem>
@@ -20,26 +22,29 @@
                         class="q-px-md"
                         label="추가"
                         color="primary"
-                        :disable="categoryText.length < 2"
+                        :disable="categoryText.length < 1"
                         @click.stop="saveAccountCategory"
                     />
                 </div>
             </QItem>
-            <QItem 
+            <QItem
+                v-for="(item, idx) in categoryList"
+                :key="idx"
                 dense
                 clickable 
                 v-close-popup 
-                @click="selectCategory"
+                @click="selectCategory(item)"
             >
                 <QItemSection>
                     <QItemLabel class="flex justify-between">
-                        <span class="category-label">
-                            Photos
+                        <span class="q-my-sm">
+                            {{ item.category }}
                         </span>
-                        <QIcon 
-                            class="category-icon" 
-                            name="close"
-                            @click.stop=""
+                        <QBtn
+                            dense
+                            flat 
+                            icon="close"
+                            @click.stop="deleteAccountCategory(item, idx)"   
                         />
                     </QItemLabel>
                 </QItemSection>
@@ -50,17 +55,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, computed, inject } from 'vue';
+import { ref, Ref, defineEmits, defineProps } from 'vue';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
+import { AccountCategory } from '@/types/AccountTypes';
 
-const categoryList = ref([]);
+const props = defineProps({
+    propCategory: {
+        type: String,
+        required: false,
+    },
+});
+
+const emit = defineEmits(['select-category']);
+
+const categoryList: Ref<Array<AccountCategory>> = ref([]);
 const selectedCategory = ref();
 const processCount: Ref<number> = ref(0);
 const categoryText = ref('');
 
-getAccountCategory();
+init()
 
 function upProcessSpinner() {
     processCount.value = 1;
@@ -71,7 +86,7 @@ function downProcessSpinner() {
 
 function getAccountCategory() {
     PROCESS(upProcessSpinner, downProcessSpinner, async () => {
-        const result: Array<any> = await Api.get('user/accountCategory');
+        const result: Array<AccountCategory> = await Api.get('user/accountCategory');
 
         result.forEach(item => {
             categoryList.value.push({
@@ -86,27 +101,39 @@ function getAccountCategory() {
 
 function saveAccountCategory() {
     PROCESS(upProcessSpinner, downProcessSpinner, async () => {
-        const result = await Api.post('user/accountCategory', {
+        const result: AccountCategory = await Api.post('user/accountCategory', {
             category: categoryText.value
         });
 
-        console.log(result);
-    });
-}
-
-function deleteAccountCategory() {
-    PROCESS(upProcessSpinner, downProcessSpinner, async () => {
-        const result = await Api.delete('user/accountCategory', {
-            id: selectedCategory.value.id
+        categoryList.value.push({
+            id: result.id,
+            category: result.category
         });
 
-        console.log(result);
+        categoryText.value = '';
     });
 }
 
+function deleteAccountCategory(item, idx) {
+    PROCESS(upProcessSpinner, downProcessSpinner, async () => {
+        await Api.delete('user/accountCategory', {
+            id: item.id
+        });
 
-function selectCategory() {
-    console.log('나에~');
-}   
+        categoryList.value.splice(idx, 1);
+    });
+}
+
+function selectCategory(item) {
+    selectedCategory.value = item.category;
+    emit('select-category', item.category);
+}
+
+function init() {
+    if (props.propCategory) {
+        selectedCategory.value = props.propCategory;
+    }
+    getAccountCategory();
+}
 
 </script>
