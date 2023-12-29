@@ -1,12 +1,12 @@
 <template>
     <QBtnDropdown
-        color="primary" 
+        color="primary"
         no-caps
         menu-anchor="bottom left"
         menu-self="top start"
         :label="selectedCategory === undefined ? 'Select Category' : selectedCategory"
     >
-      <QList>
+        <QList>
             <QItem>
                 <div class="flex">
                     <QInput
@@ -22,40 +22,42 @@
                         class="q-px-md"
                         label="추가"
                         color="primary"
-                        :disable="categoryText.length < 1"
+                        :disable="!enableAddCategory"
                         @click.stop="saveAccountCategory"
                     />
                 </div>
             </QItem>
-            <QItem
-                v-for="(item, idx) in categoryList"
-                :key="idx"
-                dense
-                clickable 
-                v-close-popup 
-                @click="selectCategory(item)"
-            >
-                <QItemSection>
-                    <QItemLabel class="flex justify-between">
-                        <span class="q-my-sm">
-                            {{ item.category }}
-                        </span>
-                        <QBtn
-                            dense
-                            flat 
-                            icon="close"
-                            @click.stop="deleteAccountCategory(item, idx)"   
-                        />
-                    </QItemLabel>
-                </QItemSection>
-            </QItem>
+            <QScrollArea style="height: 200px">
+                <QItem
+                    v-for="(item, idx) in categoryList"
+                    :key="idx"
+                    dense
+                    clickable
+                    v-close-popup
+                    @click="selectCategory(item)"
+                >
+                    <QItemSection>
+                        <QItemLabel class="flex justify-between">
+                            <span class="q-my-sm">
+                                {{ item.category }}
+                            </span>
+                            <QBtn
+                                dense
+                                flat
+                                icon="close"
+                                @click.stop="deleteAccountCategory(item, idx)"
+                            />
+                        </QItemLabel>
+                    </QItemSection>
+                </QItem>
+            </QScrollArea>
         </QList>
         <ProcessSpinner v-if="processCount > 0" />
     </QBtnDropdown>
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, defineEmits, defineProps } from 'vue';
+import { ref, Ref, computed, defineEmits, defineProps } from 'vue';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
@@ -70,12 +72,19 @@ const props = defineProps({
 
 const emit = defineEmits(['select-category']);
 
+const enableAddCategory = computed(() => {
+    return (
+        categoryText.value.length > 0 &&
+        categoryList.value.every((item) => item.category !== categoryText.value)
+    );
+});
+
 const categoryList: Ref<Array<AccountCategory>> = ref([]);
 const selectedCategory = ref();
 const processCount: Ref<number> = ref(0);
 const categoryText = ref('');
 
-init()
+init();
 
 function upProcessSpinner() {
     processCount.value = 1;
@@ -88,12 +97,12 @@ function getAccountCategory() {
     PROCESS(upProcessSpinner, downProcessSpinner, async () => {
         const result: Array<AccountCategory> = await Api.get('user/accountCategory');
 
-        result.forEach(item => {
+        result.forEach((item) => {
             categoryList.value.push({
                 id: item.id,
-                category: item.category
-            })
-        })
+                category: item.category,
+            });
+        });
 
         console.log(result);
     });
@@ -102,12 +111,12 @@ function getAccountCategory() {
 function saveAccountCategory() {
     PROCESS(upProcessSpinner, downProcessSpinner, async () => {
         const result: AccountCategory = await Api.post('user/accountCategory', {
-            category: categoryText.value
+            category: categoryText.value,
         });
 
         categoryList.value.push({
             id: result.id,
-            category: result.category
+            category: result.category,
         });
 
         categoryText.value = '';
@@ -117,7 +126,7 @@ function saveAccountCategory() {
 function deleteAccountCategory(item, idx) {
     PROCESS(upProcessSpinner, downProcessSpinner, async () => {
         await Api.delete('user/accountCategory', {
-            id: item.id
+            id: item.id,
         });
 
         categoryList.value.splice(idx, 1);
@@ -135,5 +144,4 @@ function init() {
     }
     getAccountCategory();
 }
-
 </script>
