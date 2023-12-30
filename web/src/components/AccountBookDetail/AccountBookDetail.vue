@@ -132,6 +132,7 @@ const summaryMonthMap = computed(() => {
 });
 
 const now = ref(new Date());
+now.value.setDate(1);
 
 const nowYear = ref(now.value.getFullYear());
 const nowMonth = ref(now.value.getMonth() + 1);
