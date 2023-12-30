@@ -27,7 +27,7 @@
                     />
                 </div>
             </QItem>
-            <QScrollArea style="height: 200px">
+            <div style="height: 200px; overflow-y: auto">
                 <QItem
                     v-for="(item, idx) in categoryList"
                     :key="idx"
@@ -50,7 +50,7 @@
                         </QItemLabel>
                     </QItemSection>
                 </QItem>
-            </QScrollArea>
+            </div>
         </QList>
         <ProcessSpinner v-if="processCount > 0" />
     </QBtnDropdown>
