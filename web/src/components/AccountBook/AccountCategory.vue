@@ -27,7 +27,7 @@
                     />
                 </div>
             </QItem>
-            <div style="height: 200px; overflow-y: auto">
+            <div style="max-height: 200px; overflow-y: auto">
                 <QItem
                     v-for="(item, idx) in categoryList"
                     :key="idx"
@@ -103,8 +103,6 @@ function getAccountCategory() {
                 category: item.category,
             });
         });
-
-        console.log(result);
     });
 }
 

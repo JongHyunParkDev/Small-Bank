@@ -28,83 +28,77 @@ const axios = defaultAxios.create({
 
 export const Api = {
     get: (url: string, params?: CustomObejct, config?: CustomAxiosRequestConfig) => {
-        params = params ? { params: params} : undefined;
+        params = params ? { params: params } : undefined;
         return process(axios.get(apiPrefix + url, appendAxiosConfig(params, config)));
     },
 
     post: (url: string, params?: CustomObejct, config?: CustomAxiosRequestConfig) => {
-        if (params === undefined)
-            params = {};
+        if (params === undefined) params = {};
         return process(axios.post(apiPrefix + url, appendAxiosConfig(params, config)));
     },
 
     put: (url: string, params?: CustomObejct, config?: CustomAxiosRequestConfig) => {
-        if (params === undefined)
-            params = {};
+        if (params === undefined) params = {};
         return process(axios.put(apiPrefix + url, appendAxiosConfig(params, config)));
     },
 
     delete: (url: string, params?: CustomObejct, config?: CustomAxiosRequestConfig) => {
-        params = params ? { data: params} : undefined;
+        params = params ? { data: params } : undefined;
         return process(axios.delete(apiPrefix + url, appendAxiosConfig(params, config)));
     },
 };
 
 function appendAxiosConfig(axiosConfig?: CustomObejct, config?: CustomAxiosRequestConfig) {
-    for (const key in config) if (Object.hasOwnProperty.call(config, key))
-    {
-        if (key === 'isBinary')
-            add('responseType', 'arraybuffer');
-        else if (key === 'isBlob')
-            add('responseType', 'blob');
-    }
+    for (const key in config)
+        if (Object.hasOwnProperty.call(config, key)) {
+            if (key === 'isBinary') add('responseType', 'arraybuffer');
+            else if (key === 'isBlob') add('responseType', 'blob');
+        }
     return axiosConfig;
 
-    function add(key: string, value: string)
-    {
-        if (axiosConfig === undefined)
-            axiosConfig = {};
+    function add(key: string, value: string) {
+        if (axiosConfig === undefined) axiosConfig = {};
         axiosConfig[key] = value;
     }
 }
 
 function process(axiosPromise: AxiosPromise) {
-    return axiosPromise.
-    then((response: AxiosResponse) => {
-        if (response === undefined)
-            return undefined;
-        return response.data;
-    }, (error: AxiosError) => {
-        console.error(error);
+    return axiosPromise.then(
+        (response: AxiosResponse) => {
+            if (response === undefined) return undefined;
+            return response.data;
+        },
+        (error: AxiosError) => {
+            console.error(error);
 
-        // client 발생 시점
-        if (error.response === undefined) {
-            const returnError = new ApiError(error.message, ApiCode.REQUEST_FAILED.toString());
-            return Promise.reject(returnError);
-        }
-
-        // server 발생 시점
-        if (isObject(error.response.data)) {
-            const data = error.response.data as BackEndError;
-
-            let message = ApiMessage[data.code];
-            if (message){
-                if (data.message)
-                    message += ' (' + data.message + ')';
-            }
-            else{
-                message = ApiMessage[ApiCode.UNKNOWN] + ' (' + data.code;
-                if (data.message)
-                    message += ': ' + data.message;
-                message += ')';
+            // client 발생 시점
+            if (error.response === undefined) {
+                const returnError = new ApiError(error.message, ApiCode.REQUEST_FAILED.toString());
+                return Promise.reject(returnError);
             }
 
-            const returnError = new ApiError(message, data.code ? data.code : ApiCode.UNKNOWN.toString());
+            // server 발생 시점
+            if (isObject(error.response.data)) {
+                const data = error.response.data as BackEndError;
 
-            return Promise.reject(returnError);
+                let message = ApiMessage[data.code];
+                if (message) {
+                    if (data.message) message += ' (' + data.message + ')';
+                } else {
+                    message = ApiMessage[ApiCode.UNKNOWN] + ' (' + data.code;
+                    if (data.message) message += ': ' + data.message;
+                    message += ')';
+                }
+
+                const returnError = new ApiError(
+                    message,
+                    data.code ? data.code : ApiCode.UNKNOWN.toString()
+                );
+
+                return Promise.reject(returnError);
+            } else {
+                Promise.reject(new Error(error.message));
+            }
         }
-        else {
-            Promise.reject(new Error(error.message));
-        }
-    })
+    );
 }
