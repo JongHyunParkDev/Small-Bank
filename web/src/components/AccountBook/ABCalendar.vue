@@ -71,6 +71,7 @@ import { AccountBookDay, DayAccount } from '@/types/AccountTypes';
 
 // Date 객체
 const now = ref(new Date());
+now.value.setDate(1);
 // ui
 const nowYear = ref(now.value.getFullYear());
 const nowMonth = ref(now.value.getMonth() + 1);

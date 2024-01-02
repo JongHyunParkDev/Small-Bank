@@ -166,7 +166,7 @@ import LogoSvgSrc from '@/assets/logo/logo.svg';
 import KakaoLoginBtnSrc from '@/assets/images/kakao_login_btn.png';
 import GoogleLoginBtnSrc from '@/assets/images/google_login_btn.svg';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
-import { ApiError, ApiMessage } from '@/lib/Errors';
+import { ApiMessage } from '@/lib/Errors';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
 import { useRouter } from 'vue-router';
@@ -287,8 +287,12 @@ function checkUrlFragment() {
                 if (ApiMessage[errorCode]) errorMessage = `${ApiMessage[errorCode]}` + errorMessage;
 
                 showError(`[${errorCode}] ${errorMessage}`);
-            } catch (error: any) {
-                showError(error.message);
+            } catch (error) {
+                if (error instanceof Error) {
+                    showError(error.message);
+                } else {
+                    showError('An unexpected error occurred.');
+                }
             }
         }
     });

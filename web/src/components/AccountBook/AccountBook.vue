@@ -71,14 +71,12 @@
                                 </QIcon>
                             </template>
                         </QInput>
-                        <QInput
-                            name="category"
-                            outlined
-                            stack-label
-                            label="카테고리"
-                            v-model="category"
-                            :rules="[(val) => val !== '' || '카테고리를 입력해주세요.']"
-                        />
+                        <div>
+                            <AccountCategory 
+                                class="q-mb-md"
+                                @selectCategory="category=$event"
+                            />
+                        </div>
                         <QBtnToggle
                             v-model="type"
                             toggle-color="primary"
@@ -117,6 +115,7 @@
                             v-close-popup
                         />
                         <QBtn
+                            :disable="category===''"
                             padding="xs lg"
                             type="submit"
                             label="추가"
@@ -169,14 +168,13 @@
                                 </QIcon>
                             </template>
                         </QInput>
-                        <QInput
-                            name="category"
-                            outlined
-                            stack-label
-                            label="카테고리"
-                            v-model="category"
-                            :rules="[(val) => val !== '' || '카테고리를 입력해주세요.']"
-                        />
+                        <div>
+                            <AccountCategory 
+                                class="q-mb-md"
+                                :propCategory="category"
+                                @selectCategory="category=$event"
+                            />
+                        </div>
                         <QBtnToggle
                             v-model="type"
                             toggle-color="primary"
@@ -243,6 +241,7 @@ import { dateToApiDateStr } from '@/lib/DateUtil';
 import { DayAccount } from '@/types/AccountTypes';
 import ABCalendar from 'components/AccountBook/ABCalendar.vue';
 import ABHistory from 'components/AccountBook/ABHistory.vue';
+import AccountCategory from 'components/AccountBook/AccountCategory.vue';
 
 const upProcessSpinner = inject<() => void>('upProcessSpinner');
 const downProcessSpinner = inject<() => void>('downProcessSpinner');
