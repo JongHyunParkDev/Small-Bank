@@ -1,0 +1,20 @@
+jenkins (docker-compose.yml)
+
+version: '1'
+
+services:
+  jenkins:
+    image: jenkins/jenkins:latest
+    container_name: jenkins
+    environment:
+      - TZ=Asia/Seoul # jenkins 시간
+    user: root
+    privileged: true
+    ports:
+      - 10001:8080   # jenkins 접속 port
+      - 10002:50000  # jenkins agent 통신
+    volumes:
+      - /home/docker_admin/docker_volumes/jenkins:/var/jenkins_home # jenkins 설치 폴더
+      - /var/run/docker.sock:/var/run/docker.sock # docker 실행 폴더 공유
+      - /home/docker_admin/docker:/home/docker_admin/docker
+    restart: always
