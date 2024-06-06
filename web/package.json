@@ -1,8 +1,8 @@
 {
-  "name": "sppd-webapp",
+  "name": "Small Bank",
   "version": "0.0.1",
-  "description": "A SPPD Project",
-  "productName": "SPPD App",
+  "description": "A Small Bank Project",
+  "productName": "Small Bank App",
   "author": "JongHyunParkDev <eomgr88@gmail.com>",
   "private": true,
   "scripts": {
