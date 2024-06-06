@@ -10,7 +10,6 @@ pipeline {
     tools {
         nodejs 'node16'
     	maven 'maven'
-        jdk 'java17'
     }
     stages {
         stage('Build') {
