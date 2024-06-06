@@ -34,7 +34,7 @@ pipeline {
 
                 stage('build - copy') {
                     steps {
-                        sh 'cp -Rf "$WEB_ROOT_PATH/target/SmallBank.jar" "$DOCKER_BUILD_PATH/SmallBank.jar"'
+                        sh 'cp -Rf "$WEB_ROOT_PATH/target/SmallBank-1.0.0.jar" "$DOCKER_BUILD_PATH/SmallBank.jar"'
                     }
                 }
             }
