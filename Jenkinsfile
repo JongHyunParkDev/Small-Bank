@@ -5,7 +5,6 @@ pipeline {
         WEBAPP_PATH = "$WORKSPACE/web"
         DOCKER_ROOT_PATH = "/home/docker_admin/docker/small_bank"
         DOCKER_BUILD_PATH = "$DOCKER_ROOT_PATH/was"
-        SSH_CONFIG_NAME = "Docker Container Server"
     }
     tools {
         nodejs 'node16'
@@ -34,68 +33,28 @@ pipeline {
 
                 stage('build - copy') {
                     steps {
-                        sh 'cp -Rf "$WEB_ROOT_PATH/target/SmallBank-1.0.0.jar" "$DOCKER_BUILD_PATH/SmallBank-1.0.0.jar"'
+                        sh 'cp -Rf "$WEB_ROOT_PATH/target/SmallBank-1.0.0.jar" "$DOCKER_BUILD_PATH/SmallBank.jar"'
                     }
                 }
             }
         }
-
         stage('Docker') {
             stages {
                 stage('docker - compose rm') {
                     steps {
-                        sshPublisher(
-                            publishers: [
-                                sshPublisherDesc(
-                                    configName: "${SSH_CONFIG_NAME}",
-                                    transfers: [
-                                        sshTransfer(
-                                            cleanRemote: false,
-                                            excludes: '',
-                                            execCommand: "cd ${DOCKER_ROOT_PATH} && docker-compose rm -fsv was", 
-                                        )
-                                    ]
-                                )
-                            ]
-                        )
+                        sh "cd ${DOCKER_ROOT_PATH} && docker-compose rm -fsv was"
                     }
                 }
 
                 stage('docker - image') {
                     steps {
-                        sshPublisher(
-                            publishers: [
-                                sshPublisherDesc(
-                                    configName: "${SSH_CONFIG_NAME}",
-                                    transfers: [
-                                        sshTransfer(
-                                            cleanRemote: false,
-                                            excludes: '',
-                                            execCommand: "cd \"${DOCKER_BUILD_PATH}\" && sh Dockerbuild.sh 0 && docker image prune -f",
-                                        )
-                                    ]
-                                )
-                            ]
-                        )
+                        sh "cd ${DOCKER_BUILD_PATH} && sh Dockerbuild.sh 0 && docker image prune -f"
                     }
                 }
 
                 stage('docker - compose up') {
                     steps {
-                        sshPublisher(
-                            publishers: [
-                                sshPublisherDesc(
-                                    configName: "${SSH_CONFIG_NAME}",
-                                    transfers: [
-                                        sshTransfer(
-                                            cleanRemote: false,
-                                            excludes: '',
-                                            execCommand: "cd ${DOCKER_ROOT_PATH} && docker-compose up -d was", 
-                                        )
-                                    ]
-                                )
-                            ]
-                        )
+                        sh "cd ${DOCKER_ROOT_PATH} && docker-compose up -d was"
                     }
                 }
             }

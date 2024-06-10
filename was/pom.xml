@@ -9,8 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.dev</groupId>
-	<artifactId>was</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>SmallBank</artifactId>
+	<version>1.0.0</version>
+	<packaging>jar</packaging>
 	<name>was</name>
 	<description>SPPD WAS</description>
 	<properties>

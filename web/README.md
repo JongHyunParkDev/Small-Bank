@@ -1,4 +1,4 @@
-# Quasar App (sppd-webapp)
+# Quasar App (Small Bank)
 
 A Quasar Project
 

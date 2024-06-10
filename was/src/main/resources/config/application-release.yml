@@ -9,5 +9,3 @@ server:
       timeout: 86400
       maximum-sessions: 1
       max-sessions-prevents-login: false
-  ssl:
-    key-store: C:\projects\run\keystore.p12
