@@ -56,7 +56,7 @@ server:
     key-store-password: sb1234!
     key-store-type: PKCS12
 #SSL free 발급
-#https://manage.sslforfree.com/certificates
+#https://manage.sslforfree.com/certificates 
 #자동 갱신
 #https://certbot.eff.org/instructions?ws=apache&os=windows
 # (command) openssl pkcs12 -export -out keystore.p12 -inkey private.key -in certificate.crt
