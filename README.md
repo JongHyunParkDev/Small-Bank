@@ -5,3 +5,4 @@
   - Spring security / Oauth 2.0
   - PostgreSQL 15.2
   - Vue3 / Quasar
+ 
