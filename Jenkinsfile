@@ -38,5 +38,26 @@ pipeline {
                 }
             }
         }
+        stage('Docker') {
+            stages {
+                stage('docker - compose rm') {
+                    steps {
+                        sh "cd ${DOCKER_ROOT_PATH} && docker-compose rm -fsv was"
+                    }
+                }
+
+                stage('docker - image') {
+                    steps {
+                        sh "cd ${DOCKER_BUILD_PATH} && sh Dockerbuild.sh 0 && docker image prune -f"
+                    }
+                }
+
+                stage('docker - compose up') {
+                    steps {
+                        sh "cd ${DOCKER_ROOT_PATH} && docker-compose up -d was"
+                    }
+                }
+            }
+        }
    }
 }
