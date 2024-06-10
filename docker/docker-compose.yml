@@ -18,8 +18,8 @@ services:
         ipv4_address: 172.15.0.13
     restart: always
   was:
-    image: sb_was
-    container_name: sb_was:latest
+    image: sb_was:latest
+    container_name: sb_was
     ports:
       - 443:443
     environment:
