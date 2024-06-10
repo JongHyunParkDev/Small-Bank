@@ -3,6 +3,10 @@ logging:
     com:
       dev: DEBUG
 
+spring:
+  datasource:
+    url: jdbc:postgresql://172.22.112.1:15432/sb_db
+
 server:
   servlet:
     session:
