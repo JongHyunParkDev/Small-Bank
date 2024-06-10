@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:15432/sb_db
     username: sb_db
-    password: smallback1234!
+    password: smallbank1234!
   security:
     oauth2:
       client:
@@ -52,7 +52,7 @@ server:
   port: 443
   ssl:
     enabled: true
-    key-store: src/main/resources/keystore.p12
+    key-store: classpath:keystore.p12
     key-store-password: sb1234!
     key-store-type: PKCS12
 #SSL free 발급
