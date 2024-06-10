@@ -1,0 +1,28 @@
+version: '1'
+
+networks:
+  sb_db_net:
+    ipam:
+      config:
+        - subnet: 172.15.0.0/24
+services:
+  db:
+    image: sb_db:latest
+    container_name: sb_db
+    ports:
+        - '15432:5432'
+    volumes:
+      - /home/docker_admin/docker_volumes/sb-db/db:/var/lib/postgresql/data
+    networks:
+      sb_db_net:
+        ipv4_address: 172.15.0.13
+    restart: always
+  was:
+    image: sb_was
+    container_name: sb_was:latest
+    ports:
+      - 443:443
+    environment:
+      - JAVA_OPTS=-XshowSettings:vm -Xmx2048m -Xms1024m
+      - TZ=Asia/Seoul
+    restart: always

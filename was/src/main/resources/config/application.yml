@@ -1,14 +1,14 @@
 spring:
   application:
-    name: SPPD-WAS
+    name: Small-Bank-WAS
   output:
     ansi:
       enabled: ALWAYS
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/sppd
-    username: sppd
-    password: sppd1234!
+    url: jdbc:postgresql://localhost:15432/sb_db
+    username: sb_db
+    password: smallback1234!
   security:
     oauth2:
       client:
@@ -53,7 +53,7 @@ server:
   ssl:
     enabled: true
     key-store: src/main/resources/keystore.p12
-    key-store-password: sppd1234!
+    key-store-password: sb1234!
     key-store-type: PKCS12
 #SSL free 발급
 #https://manage.sslforfree.com/certificates
