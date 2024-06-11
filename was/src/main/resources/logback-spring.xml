@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <springProperty name="logPath" source="sppd.logDir"/>
-    <springProperty name="logFileName" source="sppd.logFileName"/>
+    <springProperty name="logPath" source="smallbank.logDir"/>
+    <springProperty name="logFileName" source="smallbank.logFileName"/>
 
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
