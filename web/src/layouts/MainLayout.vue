@@ -19,7 +19,7 @@
                         class="logo-text"
                         @click="goHome"
                     >
-                        SPPD
+                        Small Bank
                     </span>
                 </QToolbarTitle>
 

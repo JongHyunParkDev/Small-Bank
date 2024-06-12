@@ -20,11 +20,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, } from 'vue';
 import { useAuthStore } from '@/stores/AuthStore';
 import { Route } from '@/types/LinkTypes';
 
-const isAdmin = useAuthStore().isAdmin;
 const routeList = ref<Route[]>([
     {
         title: '가계부',
@@ -37,23 +36,7 @@ const routeList = ref<Route[]>([
         caption: '간단한 가계부 서비스 (달)',
         icon: 'list',
         to: '/AccountBookDetail',
-    },
-    {
-        title: '설문조사',
-        caption: '설문조사 (for Desktop)',
-        icon: 'description',
-        to: '/SurveyForm',
-    },
+    }
 ]);
 
-onMounted(() => {
-    if (isAdmin) {
-        routeList.value.push({
-            title: 'Toy',
-            caption: 'Arduino Toy',
-            icon: 'developer_board',
-            to: '/Arduino',
-        });
-    }
-});
 </script>

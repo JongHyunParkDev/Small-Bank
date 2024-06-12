@@ -1,8 +1,8 @@
 {
-  "name": "Small Bank",
+  "name": "SmallBank-webapp",
   "version": "0.0.1",
-  "description": "A Small Bank Project",
-  "productName": "Small Bank App",
+  "description": "A SmallBank Project",
+  "productName": "SmallBank App",
   "author": "JongHyunParkDev <eomgr88@gmail.com>",
   "private": true,
   "scripts": {
