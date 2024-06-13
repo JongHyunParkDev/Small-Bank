@@ -1,10 +1,8 @@
 <template>
     <div class="login-app">
         <div class="login">
-            <img
+            <SbLogoCanvas
                 class="logo"
-                :src="LogoSvgSrc"
-                alt="logo"
             />
             <div class="login-area">
                 <QForm
@@ -46,7 +44,7 @@
                     </a>
                 </div>
                 <div
-                    v-if="enableOauth"
+                    v-if="! enableOauth"
                     class="login-hr-area"
                 >
                     <div class="login-hr" />
@@ -54,7 +52,7 @@
                     <div class="login-hr" />
                 </div>
                 <div
-                    v-if="enableOauth"
+                    v-if="! enableOauth"
                     class="login-btns"
                 >
                     <a
@@ -79,7 +77,6 @@
                     </a>
                 </div>
             </div>
-            <div class="footer"></div>
         </div>
         <ProcessSpinner v-if="processCount > 0" />
         <QDialog
@@ -162,10 +159,10 @@
 
 <script setup lang="ts">
 import { ref, Ref, watch } from 'vue';
-import LogoSvgSrc from '@/assets/logo/logo.svg';
 import KakaoLoginBtnSrc from '@/assets/images/kakao_login_btn.png';
 import GoogleLoginBtnSrc from '@/assets/images/google_login_btn.svg';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
+import SbLogoCanvas from '@/components/Main/SbLogoCanvas.vue';
 import { ApiMessage } from '@/lib/Errors';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
@@ -317,18 +314,17 @@ watch(errorStore.errors, async (newError) => {
     justify-content: center;
 
     > .login {
-        width: 350px;
-        height: 300px;
+        width: 400px;
+        height: auto;
 
         > .logo {
-            filter: drop-shadow(0 0 3px #4ec525);
             width: 100%;
             margin-bottom: 50px;
         }
 
         > .login-area {
             max-width: 300px;
-            margin: 0px 25px;
+            margin: 0px auto;
             > .login-form {
                 display: flex;
 
@@ -401,10 +397,6 @@ watch(errorStore.errors, async (newError) => {
                     }
                 }
             }
-        }
-
-        > .footer {
-            margin: 50px 0px;
         }
     }
 }
