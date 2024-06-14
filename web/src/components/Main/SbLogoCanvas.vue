@@ -1,6 +1,8 @@
 <template>
     <div class="sb-logo">
         <canvas
+            width="400"
+            height="200"
             class="canvas"
             ref="canvas" 
         />
@@ -8,7 +10,6 @@
 </template>
 
 <script setup lang="ts">
-import { GreaterDepth } from 'three';
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 // import { PROCESS } from '@/lib/Async';
 // import { Api } from '@/lib/Api';
@@ -22,28 +23,49 @@ import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 
 const canvas = ref<HTMLCanvasElement  | null>(null);
 let dotArray: Dot[][] = [];
-let ctx, row, col;
+let ctx, height, width;
+let realHeight, realWidth;
+let size = 10;
+let count = 10;
+
+setInterval(() => {
+    for(let i = 0; i < Math.floor(Math.random() * count); i++) {
+        const dot = randomDot();
+        if (dot.enable) i--;
+        else dot.enable = true;
+    }
+}, 100)
+
+
+function randomDot() {
+    const ranX = Math.floor(Math.random() * width ) ;
+    const ranY = Math.floor(Math.random() * height) ;
+
+    return dotArray[ranY][ranX];
+}
 
 onMounted(() => {
     if (canvas.value) {
         ctx = canvas.value.getContext("2d");
+        
+        realWidth = canvas.value.offsetWidth;
+        realHeight = canvas.value.offsetHeight;
 
-        row = canvas.value.offsetHeight;
-        col = canvas.value.offsetWidth;
+        width = canvas.value.offsetWidth / size + 1;
+        height = canvas.value.offsetHeight / size + 1;
 
-        dotArray = createDotArray(row, col);
-        // array init
+        dotArray = createDotArray(width, height);
       
         draw();
     }
 
-    function createDotArray(row: number, col: number) {
+    function createDotArray(width: number, height: number) {
         const grid: Dot[][] = [];
 
-        for (let x = 0; x < row; x++) {
+        for (let y = 0; y < height; y++) {
             let dotRow: Dot[] = [];
-            for (let y = 0; y < col; y++) {
-                dotRow.push(new Dot(x + row, y, getRandomRgb(), x, y));
+            for (let x = 0; x < width; x++) {
+                dotRow.push(new Dot(x * size, y * size + realHeight, getRandomRgb(), x * size, y * size));
             }
             grid.push(dotRow);
         }
@@ -52,24 +74,29 @@ onMounted(() => {
     }
 
     function getRandomRgb() {
-        const r = Math.floor(Math.random() * 255);
-        const g = Math.floor(Math.random() * 255);
-        const b = Math.floor(Math.random() * 255);
+        const r = Math.floor(Math.random() * 16) * 16;
+        const g = Math.floor(Math.random() * 16) * 16;
+        const b = Math.floor(Math.random() * 16) * 16;
     
         return `rgb(${r}, ${g}, ${b})`;
     }
 
     function draw() {
-        ctx.clearRect(0, 0, col, row);
-
-        for (let x = 0; x < row; x++) {
-            for (let y = 0; y < col; y++) {
-                const dot = dotArray[x][y];
+        ctx.clearRect(0, 0, realWidth, realHeight);
+   
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const dot = dotArray[y][x];
                 dot.move();
-                ctx.fillRect(dot.x, dot.y, 1, 1);
-                
+                ctx.fillStyle = dot.rgb;
+                ctx.fillRect(dot.x, dot.y, size, size);
             }
         }
+
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "black";
+        ctx.strokeRect(0, 0, 400, 200)
+
         requestAnimationFrame(draw);
     }
 });
@@ -81,6 +108,7 @@ class Dot {
     tx: number;
     ty: number;
     done: boolean;
+    enable: boolean;
 
     constructor(x: number, y: number, rgb: string, tx: number, ty: number) {
         this.x = x;
@@ -90,12 +118,17 @@ class Dot {
         this.tx = tx;
         this.ty = ty;
         this.done = false;
+        this.enable = false;
     }
     move() {
-        if (! this.done)
-            this.x--;
+        if (! this.enable) return;
 
-        if (this.tx < this.x) {
+        if (! this.done) {
+            if (this.tx <= this.x) this.x -= size;
+            if (this.ty <= this.y) this.y -= size;
+        }
+        
+        if (this.tx <= this.x && this.ty <= this.y) {
             this.done = true;
         }
     }
