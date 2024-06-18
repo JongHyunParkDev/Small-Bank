@@ -26,7 +26,7 @@ let dotArray: Dot[][] = [];
 let ctx, height, width;
 let realHeight, realWidth;
 let size = 10;
-let count = 10;
+let count = 50;
 
 setInterval(() => {
     for(let i = 0; i < Math.floor(Math.random() * count); i++) {
@@ -34,7 +34,11 @@ setInterval(() => {
         if (dot.enable) i--;
         else dot.enable = true;
     }
-}, 100)
+}, 50)
+
+// setTimeout(() => {
+    
+// }, 1000);
 
 
 function randomDot() {

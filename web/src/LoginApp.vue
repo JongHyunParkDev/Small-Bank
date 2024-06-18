@@ -19,6 +19,7 @@
                             v-model="email"
                             name="email"
                             type="email"
+                            autofocus
                         />
                         <QInput
                             outlined
@@ -63,6 +64,7 @@
                             class="google-img login-img"
                             :src="GoogleLoginBtnSrc"
                             alt="Google Login"
+                            title="Google Login"
                         />
                     </a>
                     <a
@@ -73,6 +75,7 @@
                             class="kakao-img login-img"
                             :src="KakaoLoginBtnSrc"
                             alt="Kakao Login"
+                            title="Kakao Login"
                         />
                     </a>
                 </div>
@@ -312,6 +315,7 @@ watch(errorStore.errors, async (newError) => {
     display: flex;
     align-items: center;
     justify-content: center;
+    user-select: none;
 
     > .login {
         width: 400px;
