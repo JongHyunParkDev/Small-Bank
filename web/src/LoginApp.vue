@@ -1,7 +1,8 @@
 <template>
     <div class="login-app">
         <div class="login">
-            <SbLogoCanvas
+            <img
+                :src="LogoSrc"
                 class="logo"
             />
             <div class="login-area">
@@ -45,7 +46,7 @@
                     </a>
                 </div>
                 <div
-                    v-if="! enableOauth"
+                    v-if="enableOauth"
                     class="login-hr-area"
                 >
                     <div class="login-hr" />
@@ -53,7 +54,7 @@
                     <div class="login-hr" />
                 </div>
                 <div
-                    v-if="! enableOauth"
+                    v-if="enableOauth"
                     class="login-btns"
                 >
                     <a
@@ -165,7 +166,7 @@ import { ref, Ref, watch } from 'vue';
 import KakaoLoginBtnSrc from '@/assets/images/kakao_login_btn.png';
 import GoogleLoginBtnSrc from '@/assets/images/google_login_btn.svg';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
-import SbLogoCanvas from '@/components/Main/SbLogoCanvas.vue';
+import LogoSrc from '@/assets/logo/logo.svg';
 import { ApiMessage } from '@/lib/Errors';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
@@ -322,8 +323,11 @@ watch(errorStore.errors, async (newError) => {
         height: auto;
 
         > .logo {
-            width: 100%;
-            margin-bottom: 50px;
+            filter: drop-shadow(0 5px #D6C4A8);
+            width: 60%;
+            margin: auto;
+            display: block;
+            margin-bottom: $spacing-md;
         }
 
         > .login-area {

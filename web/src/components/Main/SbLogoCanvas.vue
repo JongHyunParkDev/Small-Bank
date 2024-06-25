@@ -28,7 +28,7 @@ let realHeight, realWidth;
 let size = 10;
 let count = 50;
 
-setInterval(() => {
+const intervalId = setInterval(() => {
     for(let i = 0; i < Math.floor(Math.random() * count); i++) {
         const dot = randomDot();
         if (dot.enable) i--;
@@ -36,6 +36,19 @@ setInterval(() => {
     }
 }, 50)
 
+// compact 하게 사용
+// y - 4 ~ 17
+// x - 7 ~ 34
+
+// 4 ~ 17, 16 
+// 4 ~ 17, 25
+
+// 5, 7 ~ 34
+// 10, 7 ~ 34
+// 16, 7 ~ 34
+
+// 6 ~ 9, 7
+// 11 ~ 15, 34
 // setTimeout(() => {
     
 // }, 1000);
@@ -78,9 +91,9 @@ onMounted(() => {
     }
 
     function getRandomRgb() {
-        const r = Math.floor(Math.random() * 16) * 16;
-        const g = Math.floor(Math.random() * 16) * 16;
-        const b = Math.floor(Math.random() * 16) * 16;
+        const r = Math.floor(Math.random() * 2) * 2 + 200;
+        const g = Math.floor(Math.random() * 2) * 2 + 200;
+        const b = Math.floor(Math.random() * 2) * 2 + 200;
     
         return `rgb(${r}, ${g}, ${b})`;
     }
@@ -91,7 +104,7 @@ onMounted(() => {
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
                 const dot = dotArray[y][x];
-                dot.move();
+                dot.upMove();
                 ctx.fillStyle = dot.rgb;
                 ctx.fillRect(dot.x, dot.y, size, size);
             }
@@ -103,7 +116,11 @@ onMounted(() => {
 
         requestAnimationFrame(draw);
     }
-});
+})
+
+onUnmounted(() => {
+    clearInterval(intervalId);
+})
 
 class Dot {
     x: number;
@@ -124,7 +141,7 @@ class Dot {
         this.done = false;
         this.enable = false;
     }
-    move() {
+    upMove() {
         if (! this.enable) return;
 
         if (! this.done) {
@@ -136,6 +153,12 @@ class Dot {
             this.done = true;
         }
     }
+    //downMove() {
+
+    //}
+    //breathMove() {
+        //
+    //}
 }
 
 </script>

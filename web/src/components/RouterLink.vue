@@ -21,7 +21,6 @@
 
 <script setup lang="ts">
 import { ref, } from 'vue';
-import { useAuthStore } from '@/stores/AuthStore';
 import { Route } from '@/types/LinkTypes';
 
 const routeList = ref<Route[]>([

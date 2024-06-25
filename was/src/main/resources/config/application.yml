@@ -6,6 +6,9 @@ spring:
       enabled: ALWAYS
   datasource:
     driver-class-name: org.postgresql.Driver
+#    url: jdbc:postgresql://localhost:5432/sppd
+#    username: sppd
+#    password: sppd1234!
     url: jdbc:postgresql://localhost:15432/sb_db
     username: sb_db
     password: smallbank1234!

@@ -19,7 +19,11 @@
                         class="logo-text"
                         @click="goHome"
                     >
-                        Small Bank
+                        <img
+                            class="logo"
+                            :src="LogoSrc"
+                        >    
+                    SB
                     </span>
                 </QToolbarTitle>
 
@@ -140,6 +144,7 @@
 
 <script setup lang="ts">
 import { ref, Ref, watch, provide } from 'vue';
+import LogoSrc from '@/assets/logo/logo.svg';
 import RouterLink from 'components/RouterLink.vue';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { useAuthStore } from '@/stores/AuthStore';
@@ -255,12 +260,24 @@ provide('downProcessSpinner', downProcessSpinner);
 
 <style lang="scss" scoped>
 .main-layout {
+    user-select: none;
     .header {
         background-color: $naver-bs;
         color: white;
 
-        .logo-text:hover {
-            cursor: pointer;
+        .logo-text {
+            font-weight: bold;
+            font-style: italic;
+            display: inline-flex;
+            vertical-align: middle;
+            
+            > .logo {
+                height: $logo-height;
+            }
+
+            &:hover {
+                cursor: pointer;
+            }
         }
 
         .avatar-content {
