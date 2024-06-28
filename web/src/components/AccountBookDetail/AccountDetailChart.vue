@@ -95,6 +95,7 @@ function updateChart(newAccountList) {
     chartOptions = {
         chart: {
             type: 'pie',
+            backgroundColor:  $q.dark.isActive ? '#181818' : '#f0f0f0',
         },
         credits: {
             enabled: false,

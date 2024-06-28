@@ -95,6 +95,7 @@
                     </QCardSection>
                     <QCardSection class="q-pa-md content">
                         <QInput
+                            class="q-mb-sm"
                             name="email"
                             outlined
                             stack-label
@@ -103,6 +104,7 @@
                             :rules="[(val) => validateEmail(val) || '유효한 email 이 아닙니다.']"
                         />
                         <QInput
+                             class="q-mb-sm"
                             name="password"
                             type="password"
                             outlined
@@ -116,6 +118,7 @@
                             ]"
                         />
                         <QInput
+                            class="q-mb-sm"
                             name="name"
                             outlined
                             stack-label
@@ -128,6 +131,7 @@
                             ]"
                         />
                         <QInput
+                            class="q-mb-sm"
                             name="phone"
                             outlined
                             stack-label
@@ -345,8 +349,8 @@ watch(errorStore.errors, async (newError) => {
                     }
                 }
                 > .submit {
-                    background-color: $naver-bs;
-                    color: white;
+                    background-color: $base-bs;
+                    color: $grey-1;
                 }
             }
 

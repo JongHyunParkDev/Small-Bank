@@ -230,11 +230,11 @@ onMounted(() => {
         > .month-summary {
             font-weight: bold;
             > .spend {
-                color: $pink-14;
+                color: $pink;
             }
 
             > .income {
-                color: $indigo-14;
+                color: $indigo;
             }
         }
     }
@@ -242,7 +242,7 @@ onMounted(() => {
         flex: 1;
     }
     > .tabs {
-        background-color: $naver-bs;
+        background-color: $base-bs;
         color: white;
     }
 }
