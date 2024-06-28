@@ -4,20 +4,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 import com.dev.was.controller.ApiException;
-import com.dev.was.dto.AccountDto;
 import com.dev.was.repository.AccountRepository;
 import com.dev.was.repository.UserRepository;
 import com.dev.was.service.AccountService;
-import com.dev.was.service.SerialService;
 import com.dev.was.service.UserService;
-import com.dev.was.util.DBUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
 
 
 @SpringBootTest
@@ -34,14 +29,6 @@ class WasApplicationTests {
 
 	@Autowired
 	private AccountRepository accountRepository;
-
-	@Autowired
-	private SerialService service;
-
-	@Test
-	void SerialTest() throws Exception {
-		service.sendSerialMsg("HI TEST @");
-	}
 
 	@Test
 	void UserTest() throws Exception {

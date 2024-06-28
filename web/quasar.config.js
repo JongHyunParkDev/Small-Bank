@@ -48,6 +48,11 @@ module.exports = configure(function (/* ctx */) {
 
         // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
         build: {
+            env: {
+                VERSION: '1.0.0',
+                UPDATE_DATE: '2024.06.28 00:00',
+            },
+
             target: {
                 browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
                 node: 'node16',
@@ -99,7 +104,7 @@ module.exports = configure(function (/* ctx */) {
             autoImportComponentCase: 'pascal',
             // Quasar plugins
             plugins: [
-                'Notify'
+                'Notify', 'Dialog', 'AppFullscreen'
             ],
             config: {
                 notify: {
@@ -203,7 +208,7 @@ module.exports = configure(function (/* ctx */) {
             builder: {
                 // https://www.electron.build/configuration/configuration
 
-                appId: 'sppd-webapp',
+                appId: 'SmallBank-webapp',
             },
         },
 

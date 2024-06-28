@@ -10,10 +10,6 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../OauthCallback.vue'),
     },
     {
-        path: '/survey/:surveyId',
-        component: () => import('../SurveyApp.vue'),
-    },
-    {
         path: '/',
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
@@ -26,23 +22,14 @@ const routes: RouteRecordRaw[] = [
         meta: { isAuth: true },
     },
     {
-        path: '/surveyForm',
-        component: () => import('layouts/MainLayout.vue'),
-        children: [{ path: '', component: () => import('pages/SurveyFormPage.vue') }],
-        meta: { isAuth: true },
-    },
-    {
         path: '/accountBookDetail',
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/AccountBookDetailPage.vue') }],
         meta: { isAuth: true },
     },
-    {
-        path: '/arduino',
-        component: () => import('layouts/MainLayout.vue'),
-        children: [{ path: '', component: () => import('pages/ArduinoPage.vue') }],
-        meta: { isAuth: true, isAdmin: true },
-    },
+
+    // meta: { isAuth: true, isAdmin: true },
+
 
     // Always leave this as last one,
     // but you can also remove it

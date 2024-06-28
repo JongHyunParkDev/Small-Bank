@@ -22,7 +22,8 @@
             />
             <QTooltip
                 v-if="selectedDay === undefined"
-                class="bg-green"
+                class="bg-primary"
+                anchor="top left"
             >
                 일을 선택해주세요
             </QTooltip>
@@ -86,6 +87,7 @@
                             ]"
                         />
                         <QInput
+                            class="q-mb-sm"
                             name="money"
                             outlined
                             stack-label
@@ -420,7 +422,7 @@ function modifyHistory() {
         bottom: 10px;
         right: 10px;
         > .fab {
-            background-color: $naver-bs;
+            background-color: $base-bs;
             color: white;
         }
     }

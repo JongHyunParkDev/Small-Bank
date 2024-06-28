@@ -12,34 +12,33 @@
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
-$primary: #1976d2;
-$secondary: #26a69a;
-$accent: #9c27b0;
-
 $dark: #1d1d1d;
 $dark-page: #121212;
 
-$positive: #21ba45;
-$negative: #c10015;
-$info: #31ccec;
-$warning: #f2c037;
+$primary: #6caf88;
+$secondary: #6c72af;
+$accent: #aa6caf;
+$positive: #6caf88;
+$negative: #af6c72;
+$info: #6c93af;
+$warning: #afaa6c;
 
 // base https://quasar.dev/style/color-palette
 // custom
-$naver-mlt: #9afcc6;
-$naver-blt: #4ffa9c;
-$naver-lt: #04f972;
-$naver-bs: #03c75b;
-$naver-dk: #029544;
-$naver-bdk: #01682f;
-$naver-mdk: #003b1b;
+$base-mlt: #cab09e;
+$base-blt: #c1a38d;
+$base-lt: #b8957d;
+$base-bs: #af886c;
+$base-dk: #a67b5b;
+$base-bdk: #966e52;
+$base-mdk: #866249;
 
 
-.bg-naver-bs {
-    background: $naver-bs !important;
+.bg-base-bs {
+    background: $base-bs !important;
 }
-.bg-naver-dk {
-    background: $naver-dk !important;
+.bg-base-dk {
+    background: $base-dk !important;
 }
 
 $spacing-tn: 3px;
@@ -48,4 +47,6 @@ $spacing-md: 10px;
 $spacing-ml: 12px;
 $spacing-lg: 15px;
 $spacing-xl: 20px;
+
+$logo-height: 30px;
 

@@ -32,7 +32,7 @@
                 <div class="memo item text">
                     {{ dayAccount.memo }}
                     <QTooltip
-                        class="bg-green"
+                        class="bg-primary"
                         anchor="top middle"
                         self="center middle"
                     >
@@ -92,7 +92,6 @@ function modifyHistroy(idx: number) {
 <style lang="scss" scoped>
 .abhistory {
     $fixed-height: 70px;
-
     position: relative;
     display: flex;
     flex-direction: column;
@@ -130,11 +129,11 @@ function modifyHistroy(idx: number) {
             }
 
             > .spend {
-                color: $pink-14;
+                color: $pink;
             }
 
             > .income {
-                color: $indigo-14;
+                color: $indigo;
             }
 
             > .memo {
@@ -163,12 +162,12 @@ function modifyHistroy(idx: number) {
             text-align: center;
 
             > .spend {
-                color: $pink-14;
+                color: $pink;
                 margin: $spacing-sm;
             }
 
             > .income {
-                color: $indigo-14;
+                color: $indigo;
                 margin: $spacing-sm;
             }
         }

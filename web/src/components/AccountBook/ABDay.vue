@@ -2,7 +2,9 @@
     <div class="ab-day">
         <div
             v-if="props.item.num"
-            :class="{ selected: props.selectedAbday?.num === props.item.num }"
+            :class="{ selected: props.selectedAbday?.num === props.item.num, 
+                dark: $q.dark.isActive
+             }"
             class="day"
             @click="selectDay"
         >
@@ -37,6 +39,9 @@
 <script setup lang="ts">
 import { PropType, defineEmits, defineProps } from 'vue';
 import { AccountBookDay } from '@/types/AccountTypes';
+import { useQuasar } from 'quasar';
+
+const $q = useQuasar();
 
 const props = defineProps({
     item: {
@@ -61,6 +66,7 @@ function selectDay() {
 
 <style lang="scss" scoped>
 .ab-day {
+
     > .day {
         border-radius: $spacing-md;
         height: 100%;
@@ -70,20 +76,29 @@ function selectDay() {
                 padding: 0px $spacing-tn;
             }
             > .spend {
-                color: $pink-14;
+                color: $pink;
             }
 
             > .income {
-                color: $indigo-14;
+                color: $indigo;
             }
         }
 
         &:hover {
-            background-color: $grey-3;
+            background-color: $grey-2;
         }
 
         &.selected {
-            background-color: $grey-5;
+            background-color: $grey-4;
+        }
+    }
+    > .dark {
+        &:hover {
+            background-color: $grey-9;
+        }
+
+        &.selected {
+            background-color: $grey-7;
         }
     }
 }

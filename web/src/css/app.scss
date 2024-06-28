@@ -10,13 +10,13 @@ body {
     color: $grey-8;
 }
 
-.sppd-table {
+.sb-table {
     thead {
         position: sticky;
         top: 0;
         z-index: 1;
 
-        background: $naver-dk;
+        background: $base-dk;
         color: white;
     }
 
@@ -24,6 +24,31 @@ body {
         font-weight: bold;
         font-size: 1.1em !important;
     }
+}
+
+.form-dialog {
+    user-select: none;
+}
+
+// 크롬 자동 완성시 css 적용 x
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	-webkit-text-fill-color: #000;
+    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    box-shadow: 0 0 0px 1000px #fff inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+input:autofill,
+input:autofill:hover,
+input:autofill:focus,
+input:autofill:active {
+	-webkit-text-fill-color: #000;
+    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    box-shadow: 0 0 0px 1000px #fff inset;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 ::-webkit-scrollbar {

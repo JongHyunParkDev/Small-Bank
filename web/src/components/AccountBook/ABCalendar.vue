@@ -221,11 +221,11 @@ onMounted(() => {
         }
 
         > .red {
-            color: red;
+            color: $red;
         }
 
         > .blue {
-            color: blue;
+            color: $blue;
         }
         > .row-item {
             position: relative;

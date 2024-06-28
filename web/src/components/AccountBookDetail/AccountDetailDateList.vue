@@ -127,11 +127,11 @@ const dateList: Ref<DateAccountMap> = computed(() => {
         }
 
         .spend {
-            color: $pink-14;
+            color: $pink;
         }
 
         .income {
-            color: $indigo-14;
+            color: $indigo;
         }
     }
 }

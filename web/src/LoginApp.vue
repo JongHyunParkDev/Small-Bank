@@ -2,9 +2,8 @@
     <div class="login-app">
         <div class="login">
             <img
+                :src="LogoSrc"
                 class="logo"
-                :src="LogoSvgSrc"
-                alt="logo"
             />
             <div class="login-area">
                 <QForm
@@ -21,6 +20,7 @@
                             v-model="email"
                             name="email"
                             type="email"
+                            autofocus
                         />
                         <QInput
                             outlined
@@ -65,6 +65,7 @@
                             class="google-img login-img"
                             :src="GoogleLoginBtnSrc"
                             alt="Google Login"
+                            title="Google Login"
                         />
                     </a>
                     <a
@@ -75,11 +76,11 @@
                             class="kakao-img login-img"
                             :src="KakaoLoginBtnSrc"
                             alt="Kakao Login"
+                            title="Kakao Login"
                         />
                     </a>
                 </div>
             </div>
-            <div class="footer"></div>
         </div>
         <ProcessSpinner v-if="processCount > 0" />
         <QDialog
@@ -94,6 +95,7 @@
                     </QCardSection>
                     <QCardSection class="q-pa-md content">
                         <QInput
+                            class="q-mb-sm"
                             name="email"
                             outlined
                             stack-label
@@ -102,6 +104,7 @@
                             :rules="[(val) => validateEmail(val) || '유효한 email 이 아닙니다.']"
                         />
                         <QInput
+                             class="q-mb-sm"
                             name="password"
                             type="password"
                             outlined
@@ -115,6 +118,7 @@
                             ]"
                         />
                         <QInput
+                            class="q-mb-sm"
                             name="name"
                             outlined
                             stack-label
@@ -127,6 +131,7 @@
                             ]"
                         />
                         <QInput
+                            class="q-mb-sm"
                             name="phone"
                             outlined
                             stack-label
@@ -162,10 +167,10 @@
 
 <script setup lang="ts">
 import { ref, Ref, watch } from 'vue';
-import LogoSvgSrc from '@/assets/logo/logo.svg';
 import KakaoLoginBtnSrc from '@/assets/images/kakao_login_btn.png';
 import GoogleLoginBtnSrc from '@/assets/images/google_login_btn.svg';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
+import LogoSrc from '@/assets/logo/logo.svg';
 import { ApiMessage } from '@/lib/Errors';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
@@ -315,20 +320,23 @@ watch(errorStore.errors, async (newError) => {
     display: flex;
     align-items: center;
     justify-content: center;
+    user-select: none;
 
     > .login {
-        width: 350px;
-        height: 300px;
+        width: 400px;
+        height: auto;
 
         > .logo {
-            filter: drop-shadow(0 0 3px #4ec525);
-            width: 100%;
-            margin-bottom: 50px;
+            filter: drop-shadow(0 5px #D6C4A8);
+            width: 60%;
+            margin: auto;
+            display: block;
+            margin-bottom: $spacing-md;
         }
 
         > .login-area {
             max-width: 300px;
-            margin: 0px 25px;
+            margin: 0px auto;
             > .login-form {
                 display: flex;
 
@@ -341,8 +349,8 @@ watch(errorStore.errors, async (newError) => {
                     }
                 }
                 > .submit {
-                    background-color: $naver-bs;
-                    color: white;
+                    background-color: $base-bs;
+                    color: $grey-1;
                 }
             }
 
@@ -401,10 +409,6 @@ watch(errorStore.errors, async (newError) => {
                     }
                 }
             }
-        }
-
-        > .footer {
-            margin: 50px 0px;
         }
     }
 }

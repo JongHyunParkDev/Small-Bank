@@ -19,7 +19,11 @@
                         class="logo-text"
                         @click="goHome"
                     >
-                        SPPD
+                        <img
+                            class="logo"
+                            :src="LogoSrc"
+                        >    
+                    SB
                     </span>
                 </QToolbarTitle>
 
@@ -50,9 +54,10 @@
             bordered
             overlay
         >
-            <QList>
+            <QList class="sm-list">
                 <QItemLabel header> Menu </QItemLabel>
-                <RouterLink> </RouterLink>
+                <RouterList />
+                <OptionList class="footer"/>
             </QList>
         </QDrawer>
         <QPageContainer>
@@ -140,7 +145,9 @@
 
 <script setup lang="ts">
 import { ref, Ref, watch, provide } from 'vue';
-import RouterLink from 'components/RouterLink.vue';
+import LogoSrc from '@/assets/logo/logo.svg';
+import RouterList from 'components/RouterList.vue';
+import OptionList from 'components/OptionList.vue';
 import ProcessSpinner from '@/components/ProcessSpinner.vue';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useErrorStore } from '@/stores/ErrorStore';
@@ -255,12 +262,35 @@ provide('downProcessSpinner', downProcessSpinner);
 
 <style lang="scss" scoped>
 .main-layout {
+    user-select: none;
+
+    .sm-list {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .footer {
+            margin-top: auto
+        }
+    }
+
     .header {
-        background-color: $naver-bs;
+        background-color: $base-bs;
         color: white;
 
-        .logo-text:hover {
-            cursor: pointer;
+        .logo-text {
+            font-weight: bold;
+            font-style: italic;
+            display: inline-flex;
+            vertical-align: middle;
+            
+            > .logo {
+                height: $logo-height;
+            }
+
+            &:hover {
+                cursor: pointer;
+            }
         }
 
         .avatar-content {
@@ -273,7 +303,7 @@ provide('downProcessSpinner', downProcessSpinner);
 
                 &:hover {
                     cursor: pointer;
-                    background-color: $naver-dk;
+                    background-color: $base-dk;
                 }
 
                 img {
@@ -292,7 +322,7 @@ provide('downProcessSpinner', downProcessSpinner);
 
                 &:hover {
                     cursor: pointer;
-                    background-color: $naver-dk;
+                    background-color: $base-dk;
                 }
             }
         }

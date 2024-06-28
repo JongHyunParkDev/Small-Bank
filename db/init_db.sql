@@ -1,22 +1,24 @@
-create role sppd with
+-- for 온프레미스 start
+create role sb_db with
     login
     nosuperuser
     inherit
     createdb
     nocreaterole
     noreplication
-    PASSWORD 'sppd1234!';
+    PASSWORD 'sb1234!';
 
-create tablespace sppd
-    owner sppd
-    location 'C:\projects\sppd\tablespace';
+create tablespace sb_db
+    owner sb_db
+    location 'C:\projects\sb_db\tablespace';
     -- linux의 경우 경로를 변경한다.
 
-create database sppd
+create database sb_db
     with
-    owner = sppd
+    owner = sb_db
     encoding = 'UTF8'
-    tablespace = sppd;
+    tablespace = sb_db;
+-- for 온프레미스 end
 
 CREATE TABLE tm_user (
 	id bigserial NOT NULL,
