@@ -24,6 +24,10 @@ export function datestrToApiDateStr(dateStr: string): string {
     return dateStr.replaceAll('-', '').trim();
 }
 
-export function dateToApiDateStr(year: number, month: number, day: number): string {
+export function yearMonthDayToApiDateStr(year: number, month: number, day: number): string {
     return format('%04d%02d%02d', year, month, day);
+}
+
+export function dateToApiDateStr(date: Date): string {
+    return format('%04d%02d%02d', date.getFullYear(), date.getMonth() + 1, date.getDate());
 }

@@ -26,6 +26,14 @@
                     v-model.number="nowMonth"
                     @update:model-value="updateMonth"
                 />
+                <QInput
+                    class="abc-outer"
+                    dense
+                    borderless
+                    input-class="text-center"
+                    v-model.number="nowDay"
+                    @update:model-value="updateDay"
+                />
                 <QBtn
                     class="btn-right"
                     icon="chevron_right"
@@ -87,7 +95,7 @@
 import { ref, Ref, inject, onMounted, computed } from 'vue';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
-import { dateToApiDateStr } from '@/lib/DateUtil';
+import { dateToApiDateStr, dateToDatetimeStr } from '@/lib/DateUtil';
 import { DayAccount } from '@/types/AccountTypes';
 import { compare } from '@/lib/StrUtil';
 import { cloneDeep } from 'lodash';
@@ -136,6 +144,7 @@ now.value.setDate(1);
 
 const nowYear = ref(now.value.getFullYear());
 const nowMonth = ref(now.value.getMonth() + 1);
+const nowDay = ref(1);
 
 function setMonth(num: number) {
     now.value.setMonth(now.value.getMonth() + num);
@@ -171,21 +180,33 @@ function updateMonth(value: string | number | null) {
     getAccounts();
 }
 
+function updateDay(value: string | number | null) {
+    if (value === null) return;
+    else if (typeof value === 'string') value = +value;
+    if (value < 0) value = 1;
+    if (value > 28) value = 28;
+
+    nowDay.value = value;
+    getAccounts();
+}
+
 function getAccounts() {
     const year = nowYear.value;
     const month = nowMonth.value;
+    const day = nowDay.value;
 
-    const lastDay = new Date(year, month, 0).getDate();
+    const startDate = new Date(year, month -1, day);
+    const endDate = new Date(year, month, day - 1);
 
-    const startDate = dateToApiDateStr(year, month, 1);
-    const endDate = dateToApiDateStr(year, month, lastDay);
+    const apiStartDate = dateToApiDateStr(startDate);
+    const apiEndDate = dateToApiDateStr(endDate);
 
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
         PROCESS(upProcessSpinner, downProcessSpinner, async () => {
             const resultAccountList: Array<DayAccount> = await Api.get('user/account', {
-                startDate: startDate,
-                endDate: endDate,
+                startDate: apiStartDate,
+                endDate: apiEndDate,
             });
 
             acccountList.value = resultAccountList;

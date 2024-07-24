@@ -239,7 +239,7 @@ import { ref, Ref, computed, inject } from 'vue';
 import { compare } from '@/lib/StrUtil';
 import { PROCESS } from '@/lib/Async';
 import { Api } from '@/lib/Api';
-import { dateToApiDateStr } from '@/lib/DateUtil';
+import { yearMonthDayToApiDateStr } from '@/lib/DateUtil';
 import { DayAccount } from '@/types/AccountTypes';
 import ABCalendar from 'components/AccountBook/ABCalendar.vue';
 import ABHistory from 'components/AccountBook/ABHistory.vue';
@@ -274,8 +274,8 @@ function updateCalendar({ year, month }: { year: number; month: number }) {
     const lastDay = new Date(year, month, 0).getDate();
 
     selectedDay.value = undefined;
-    const startDate = dateToApiDateStr(year, month, 1);
-    const endDate = dateToApiDateStr(year, month, lastDay);
+    const startDate = yearMonthDayToApiDateStr(year, month, 1);
+    const endDate = yearMonthDayToApiDateStr(year, month, lastDay);
 
     // 사실 ProcesSpinner 가 없는 경우는 없다. typescript 을 위해서...
     if (upProcessSpinner && downProcessSpinner) {
