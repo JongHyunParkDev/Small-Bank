@@ -66,7 +66,7 @@
 <script setup lang="ts">
 import { ref, Ref, PropType, computed, onMounted, defineProps } from 'vue';
 import ABDay from '@/components/AccountBook/ABDay.vue';
-import { dateToApiDateStr } from '@/lib/DateUtil';
+import { yearMonthDayToApiDateStr } from '@/lib/DateUtil';
 import { AccountBookDay, DayAccount } from '@/types/AccountTypes';
 
 // Date 객체
@@ -184,7 +184,7 @@ function updateMonth(value: string | number | null) {
 
 function selectDay(day: AccountBookDay) {
     selectedABDay.value = day;
-    if (day.num) emit('select-day', dateToApiDateStr(nowYear.value, nowMonth.value, day.num));
+    if (day.num) emit('select-day', yearMonthDayToApiDateStr(nowYear.value, nowMonth.value, day.num));
 }
 
 onMounted(() => {
