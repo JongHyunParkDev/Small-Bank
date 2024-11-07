@@ -9,7 +9,7 @@ spring:
 #    url: jdbc:postgresql://localhost:5432/sppd
 #    username: sppd
 #    password: sppd1234!
-    url: jdbc:postgresql://localhost:15432/sb_db
+    url: jdbc:postgresql://smallbank.kro.kr:15432/sb_db
     username: sb_db
     password: smallbank1234!
   security:
