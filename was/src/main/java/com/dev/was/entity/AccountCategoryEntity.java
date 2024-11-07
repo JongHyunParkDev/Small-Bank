@@ -21,8 +21,7 @@ public class AccountCategoryEntity {
     private Long id;
     @Column(nullable = false)
     private String category;
-    @ManyToOne
-    @JoinColumn(name = "fk_user_id")
+
     private UserEntity userEntity;
 
     @CreatedDate
