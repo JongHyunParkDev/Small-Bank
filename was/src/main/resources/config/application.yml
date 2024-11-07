@@ -52,7 +52,7 @@ logging:
   config: classpath:logback-spring.xml
 
 server:
-  port: 443
+  port: 80
 
 smallbank:
   homeDir: ${user.dir}
