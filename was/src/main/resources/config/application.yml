@@ -55,8 +55,9 @@ server:
   port: 443
   ssl:
     enabled: true
-    certificate: { SSL_CERT }
-    certificate-private-key: { SSL_CERT_PRIVATE_KEY }
+    key-store: { CERT_PATH }
+    key-store-password: { CERT_PASSWORD }
+    key-store-type: { CERT_TYPE }
   http2:
     enabled: true
 
