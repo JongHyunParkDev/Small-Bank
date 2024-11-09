@@ -52,7 +52,13 @@ logging:
   config: classpath:logback-spring.xml
 
 server:
-  port: 80
+  port: 443
+  ssl:
+    enabled: true
+    certificate: { SSL_CERT }
+    certificate-private-key: { SSL_CERT_PRIVATE_KEY }
+  http2:
+    enabled: true
 
 smallbank:
   homeDir: ${user.dir}
