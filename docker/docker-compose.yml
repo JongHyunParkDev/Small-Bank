@@ -27,4 +27,7 @@ services:
     environment:
       - JAVA_OPTS=-XshowSettings:vm -Xmx2048m -Xms1024m
       - TZ=Asia/Seoul
+      - CERT_PATH=${CERT_PATH}
+      - CERT_PASSWORD=${CERT_PASSWORD}
+      - CERT_TYPE=${CERT_TYPE}
     restart: always
